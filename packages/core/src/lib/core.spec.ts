@@ -7,86 +7,15 @@ import { ACCESS_TOKEN_EXPIRATION } from './constants'
 import * as SUT from './core'
 
 describe('./siwt', () => {
-  describe('createMessagePayload', () => {
-    it('should create the message payload to be signed', () => {
-      // when ... we want to create a message for signing
-      // then ... it should create the message as expected
-      const signatureRequest = {
-        dappUrl: 'URL',
-        pkh: 'PKH',
-      }
-      const expected = {
-        payload: expect.any(String),
-        signingType: 'micheline',
-        sourceAddress: 'PKH',
-      }
-      const httpStub = jest.fn().mockReturnValue(true) as any
-      const jwtStub = jest.fn() as any
-      const siwt = SUT._siwt(
-        httpStub,
-        jwtStub,
-      )({
-        accessTokenSecret: 'ACCESS TOKEN SECRET',
-        refreshTokenSecret: 'REFRESH TOKEN SECRET',
-        idTokenSecret: 'ID TOKEN SECRET',
-      })
-      const result = siwt.createMessagePayload(signatureRequest)
-
-      expect(result).toEqual(expected)
-    })
-  })
-
-  describe('signIn', () => {
-    it('should call the sign in api endpoint', () => {
-      // when ... we want to sign in
-      // then ... it should call the sign in endpoint as expected
-      const httpStub = jest.fn().mockReturnValue(true) as any
-      const jwtStub = jest.fn() as any
-      const siwt = SUT._siwt(
-        httpStub,
-        jwtStub,
-      )({
-        accessTokenSecret: 'ACCESS TOKEN SECRET',
-        refreshTokenSecret: 'REFRESH TOKEN SECRET',
-        idTokenSecret: 'ID TOKEN SECRET',
-      })
-
-      const result = siwt.signIn({
-        baseUrl: 'URL',
-        payload: {
-          message: 'MESSAGE',
-          signature: 'SIGNATURE',
-          pk: 'PUBLIC KEY',
-          pkh: 'PUBLIC KEY HASH',
-        },
-      })
-
-      expect(result).toEqual(true)
-      expect(httpStub).toHaveBeenCalledWith({
-        baseURL: 'URL',
-        method: 'POST',
-        url: '/signin',
-        data: {
-          message: 'MESSAGE',
-          signature: 'SIGNATURE',
-          pk: 'PUBLIC KEY',
-          pkh: 'PUBLIC KEY HASH',
-        },
-      })
-    })
-  })
-
   describe('generateIdToken', () => {
     it('should generate the id token', () => {
       // when ... we want to get the ID token
       // then ... it should generate and sign as expected
-      const httpStub = jest.fn().mockReturnValue(true) as any
       const signStub = jest.fn().mockReturnValue('JWT')
       const jwtStub = {
         sign: signStub,
       }
       const siwt = SUT._siwt(
-        httpStub,
         jwtStub,
       )({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
@@ -124,7 +53,6 @@ describe('./siwt', () => {
         sign: signStub,
       }
       const siwt = SUT._siwt(
-        httpStub,
         jwtStub,
       )({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
@@ -161,7 +89,6 @@ describe('./siwt', () => {
         sign: signStub,
       }
       const siwt = SUT._siwt(
-        httpStub,
         jwtStub,
       )({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
@@ -189,7 +116,6 @@ describe('./siwt', () => {
         verify: verifyStub,
       }
       const siwt = SUT._siwt(
-        httpStub,
         jwtStub,
       )({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
@@ -215,7 +141,6 @@ describe('./siwt', () => {
         verify: verifyStub,
       }
       const siwt = SUT._siwt(
-        httpStub,
         jwtStub,
       )({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
@@ -243,7 +168,6 @@ describe('./siwt', () => {
         verify: verifyStub,
       }
       const siwt = SUT._siwt(
-        httpStub,
         jwtStub,
       )({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
@@ -269,7 +193,6 @@ describe('./siwt', () => {
         verify: verifyStub,
       }
       const siwt = SUT._siwt(
-        httpStub,
         jwtStub,
       )({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
