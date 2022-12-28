@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@siwt/acq": ["packages/acq/src/index.ts"],
+      "@siwt/core": ["packages/core/src/index.ts"],
+      "@siwt/utils": ["packages/utils/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

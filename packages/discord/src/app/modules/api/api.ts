@@ -1,3 +1,5 @@
+import { queryAccessControl } from '@siwt/acq'
+import { verifySignature } from '@siwt/core'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
@@ -5,6 +7,7 @@ import express from 'express'
 import { findVerificationById, verifyUser } from '../../common/database'
 import { client } from '../../common/discord'
 import { getMember } from '../../common/discord/utils'
+import { accessControlQuery } from '../../config/config'
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -15,11 +18,16 @@ app.use(cors())
 app.post('/verification/:verificationId', async (req, res) => {
   try {
     const { verificationId } = req.params
+    const { message, pk, signature, pkh } = req.body
     const { guildId, roleId, discordUserId } = await findVerificationById(verificationId)
-    const isValidSignature = true
+    const isValidSignature = verifySignature(message, pk, signature)
 
-    // check signature
+    // guards
     if (!isValidSignature || !guildId || !roleId || !discordUserId) return res.status(401).send()
+
+    // use SIWT to check if the user has all the requirements
+    // if not, return 401
+    await queryAccessControl(accessControlQuery(pkh))
 
     const member = getMember({ guildId, discordUserId })(client)
 
