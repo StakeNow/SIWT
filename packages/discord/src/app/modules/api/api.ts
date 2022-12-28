@@ -1,5 +1,5 @@
 import { queryAccessControl } from '@siwt/acq'
-import { verifySignature } from '@siwt/core'
+import { verifySignature } from '@siwt/utils'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
@@ -27,9 +27,15 @@ app.post('/verification/:verificationId', async (req, res) => {
 
     // use SIWT to check if the user has all the requirements
     // if not, return 401
-    await queryAccessControl(accessControlQuery(pkh))
-
+    const { testResults: { passed } } = await queryAccessControl(accessControlQuery(pkh))
     const member = getMember({ guildId, discordUserId })(client)
+
+    if (!passed) {
+      member.send(
+        'We were unable to verify you. If you believe this is an error please get in touch with an administrator of the Discord server.',
+      ) 
+      return res.status(401).send()
+    }
 
     member && roleId && (await member.roles.add(roleId))
     await verifyUser(verificationId)

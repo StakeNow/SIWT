@@ -15,9 +15,7 @@ describe('./siwt', () => {
       const jwtStub = {
         sign: signStub,
       }
-      const siwt = SUT._siwt(
-        jwtStub,
-      )({
+      const siwt = SUT._siwt(jwtStub)({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
         refreshTokenSecret: 'REFRESH TOKEN SECRET',
         idTokenSecret: 'ID TOKEN SECRET',
@@ -52,9 +50,7 @@ describe('./siwt', () => {
       const jwtStub = {
         sign: signStub,
       }
-      const siwt = SUT._siwt(
-        jwtStub,
-      )({
+      const siwt = SUT._siwt(jwtStub)({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
         refreshTokenSecret: 'REFRESH TOKEN SECRET',
         idTokenSecret: 'ID TOKEN SECRET',
@@ -88,9 +84,7 @@ describe('./siwt', () => {
       const jwtStub = {
         sign: signStub,
       }
-      const siwt = SUT._siwt(
-        jwtStub,
-      )({
+      const siwt = SUT._siwt(jwtStub)({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
         refreshTokenSecret: 'REFRESH TOKEN SECRET',
         idTokenSecret: 'ID TOKEN SECRET',
@@ -115,9 +109,7 @@ describe('./siwt', () => {
       const jwtStub = {
         verify: verifyStub,
       }
-      const siwt = SUT._siwt(
-        jwtStub,
-      )({
+      const siwt = SUT._siwt(jwtStub)({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
         refreshTokenSecret: 'REFRESH TOKEN SECRET',
         idTokenSecret: 'ID TOKEN SECRET',
@@ -140,9 +132,7 @@ describe('./siwt', () => {
       const jwtStub = {
         verify: verifyStub,
       }
-      const siwt = SUT._siwt(
-        jwtStub,
-      )({
+      const siwt = SUT._siwt(jwtStub)({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
         refreshTokenSecret: 'REFRESH TOKEN SECRET',
         idTokenSecret: 'ID TOKEN SECRET',
@@ -167,9 +157,7 @@ describe('./siwt', () => {
       const jwtStub = {
         verify: verifyStub,
       }
-      const siwt = SUT._siwt(
-        jwtStub,
-      )({
+      const siwt = SUT._siwt(jwtStub)({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
         refreshTokenSecret: 'REFRESH TOKEN SECRET',
         idTokenSecret: 'ID TOKEN SECRET',
@@ -192,9 +180,7 @@ describe('./siwt', () => {
       const jwtStub = {
         verify: verifyStub,
       }
-      const siwt = SUT._siwt(
-        jwtStub,
-      )({
+      const siwt = SUT._siwt(jwtStub)({
         accessTokenSecret: 'ACCESS TOKEN SECRET',
         refreshTokenSecret: 'REFRESH TOKEN SECRET',
         idTokenSecret: 'ID TOKEN SECRET',

@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { verifySignature as taquitoVerifySignature } from '@taquito/utils'
 import * as jwt from 'jsonwebtoken'
 
 import { ACCESS_TOKEN_EXPIRATION, ID_TOKEN_EXPIRATION, REFRESH_TOKEN_EXPIRATION } from './constants'
@@ -52,4 +51,3 @@ export const _siwt =
   })
 
 export const siwt = _siwt(jwt)
-export const verifySignature = taquitoVerifySignature
