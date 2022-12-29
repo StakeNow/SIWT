@@ -32,18 +32,25 @@ const onVerifyWallet =
     try {
       // find user in db
       const verification = await findVerificationByDiscordUserId(userId)
-      const v = await verifyUser()
       // if user in db
       if (verification) {
         // if user has verified role
         if (verification.status === 'verified') {
           if (complement(includes('Verified'))(memberRoleNames)) {
             verifiedRole && (await memberRoles.add(verifiedRole))
-            return interaction.reply({
-              content: 'You are verified!',
-              ephemeral: true,
-            })
           }
+          return interaction.reply({
+            content: 'You are verified!',
+            ephemeral: true,
+          })
+        } else {
+          const { embeds, components } = signInEmbed(verification.id)
+          return interaction.reply({
+            content: 'Sign in with your Tezos wallet',
+            embeds,
+            components,
+            ephemeral: true,
+          })
         }
       }
 
