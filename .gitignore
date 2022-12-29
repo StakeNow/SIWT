@@ -5,6 +5,9 @@ dist
 tmp
 /out-tsc
 *.db
+.env
+.env.*
+
 
 # dependencies
 node_modules
