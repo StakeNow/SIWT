@@ -15,7 +15,6 @@ export const Connect = () => {
 
   useEffect(() => {
     if (!requestId) return
-    console.log(requestId)
     const getUserInformation = async () => {
       try {
         const data = await axios.get(`${process.env.NX_API_URL ||''}/verification/${requestId}/user`)
