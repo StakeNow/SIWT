@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { invalidPkh, validPkh } from '../fixtures'
+
 import * as SUT from './utils'
 
 describe('utils/siwt.utils', () => {

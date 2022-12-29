@@ -1,5 +1,7 @@
-import axios, { AxiosInstance } from 'axios'
+/*}
+ * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ *
+ * SPDX-License-Identifier: MIT
+ */
 
-export const http: AxiosInstance = axios.create({
-  timeout: 1000,
-})
+export { http } from './http'

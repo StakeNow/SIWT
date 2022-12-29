@@ -1,3 +1,9 @@
+/*}
+ * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 import * as SUT from './acq'
 import { validPkh } from './fixtures'
 import { Comparator, ConditionType, Network } from './types'

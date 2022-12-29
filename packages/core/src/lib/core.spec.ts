@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
 import { ACCESS_TOKEN_EXPIRATION } from './constants'
 import * as SUT from './core'
 
