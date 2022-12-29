@@ -26,14 +26,11 @@ describe('utils', () => {
       // then ... it should call the sign in endpoint as expected
       const httpStub = jest.fn().mockReturnValue(true) as any
 
-      const result = SUT._signIn(httpStub)({
-        baseUrl: 'URL',
-        payload: {
+      const result = SUT._signIn(httpStub)('URL')({
           message: 'MESSAGE',
           signature: 'SIGNATURE',
           pk: 'PUBLIC KEY',
           pkh: 'PUBLIC KEY HASH',
-        },
       })
 
       expect(result).toEqual(true)
