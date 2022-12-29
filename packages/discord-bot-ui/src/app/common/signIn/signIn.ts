@@ -1,5 +1,5 @@
 import { DAppClient, NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
-import * as SIWT from '@siwt/utils'
+import { useSiwt } from '@siwt/react'
 import axios from 'axios'
 import { prop } from 'ramda'
 
@@ -24,6 +24,8 @@ const verifyWithDiscord = (id: string) => async (params: any) => {
 }
 
 const login = async (onVerify: (x: any) => void) => {
+  const { createMessagePayload } = useSiwt()
+
   try {
     const requestId = getRequestId()
     if (!requestId) return
@@ -36,7 +38,7 @@ const login = async (onVerify: (x: any) => void) => {
     })
 
     // create the message to be signed
-    const messagePayload = SIWT.createMessagePayload({
+    const messagePayload = createMessagePayload({
       dappUrl: process.env.NX_APPLICATION_URL || '',
       pkh: walletPermissions.address,
     })

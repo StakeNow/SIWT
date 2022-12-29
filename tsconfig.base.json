@@ -17,6 +17,7 @@
     "paths": {
       "@siwt/acq": ["packages/acq/src/index.ts"],
       "@siwt/core": ["packages/core/src/index.ts"],
+      "@siwt/react": ["packages/react/src/index.ts"],
       "@siwt/utils": ["packages/utils/src/index.ts"]
     }
   },

@@ -27,8 +27,10 @@ export const verifyUser = (db: Database) => async (discordUserId: string) =>
   new Promise((resolve, reject) =>
     db.get(sql.verifyUser, [discordUserId], (err: Error, row: any) => {
       if (err) {
+        console.log(err)
         reject(err)
       }
+      console.log(row)
       resolve(row)
     }),
   )

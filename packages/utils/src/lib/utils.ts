@@ -7,10 +7,10 @@ import { SignInMessageData, SignInPayload } from './types'
 import { constructSignPayload, generateMessageData, packMessagePayload } from './utils/index'
 
 export const _signIn =
-  (http: AxiosInstance) =>
-  ({ baseUrl, payload }: { baseUrl: string; payload: SignInPayload }) =>
+  (http: AxiosInstance) => (apiUrl: string) =>
+  (payload: SignInPayload) =>
     http({
-      baseURL: baseUrl,
+      baseURL: apiUrl,
       method: 'POST',
       url: '/signin',
       data: payload,

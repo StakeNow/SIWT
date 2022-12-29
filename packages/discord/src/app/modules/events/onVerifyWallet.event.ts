@@ -1,7 +1,7 @@
 import { ButtonInteraction, Events, GuildMemberRoleManager, Role } from 'discord.js'
 import { complement, find, includes, map, pathOr, pipe, prop, propEq, propOr } from 'ramda'
 
-import { createVerification, findVerificationByDiscordUserId } from '../../common/database'
+import { createVerification, findVerificationByDiscordUserId, verifyUser } from '../../common/database'
 import { signInEmbed } from '../embeds'
 
 const onVerifyWallet =
@@ -32,6 +32,7 @@ const onVerifyWallet =
     try {
       // find user in db
       const verification = await findVerificationByDiscordUserId(userId)
+      const v = await verifyUser()
       // if user in db
       if (verification) {
         // if user has verified role
