@@ -16,7 +16,7 @@
         "main": "packages/discord-bot-ui/src/main.tsx",
         "polyfills": "packages/discord-bot-ui/src/polyfills.ts",
         "tsConfig": "packages/discord-bot-ui/tsconfig.app.json",
-        "assets": ["packages/discord-bot-ui/src/favicon.ico", "packages/discord-bot-ui/src/assets"],
+        "assets": ["packages/discord-bot-ui/src/favicon.svg", "packages/discord-bot-ui/src/assets"],
         "styles": [],
         "scripts": [],
         "webpackConfig": "packages/discord-bot-ui/webpack.config.js",
