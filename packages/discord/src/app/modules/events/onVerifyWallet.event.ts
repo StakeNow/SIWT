@@ -83,4 +83,4 @@ const event = {
   }),
 }
 
-export default event
+export { event }

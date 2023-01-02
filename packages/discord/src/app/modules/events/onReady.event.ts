@@ -16,4 +16,4 @@ const event = {
   execute: onReady,
 }
 
-export default event
+export { event }

@@ -48,4 +48,4 @@ const event = {
   execute: onGuildCreate,
 }
 
-export default event
+export { event }

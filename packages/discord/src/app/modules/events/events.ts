@@ -4,26 +4,21 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Client } from 'discord.js'
-import fs from 'fs'
-import path from 'path'
+import { Client, Events } from 'discord.js'
 import { map } from 'ramda'
 
-export const load = (client: Client) => {
-  const eventsPath = path.join(process.cwd(), `${process.env.FOLDER_PREFIX || ''}/src/app/modules/events`)
-  const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.event.ts'))
-  return Promise.all(
-    map(async file => {
-      try {
-        const event = await import(`./${file}`)
-        if (event.default.once) {
-          client.once(event.default.name, (...args) => event.default.execute(...args))
-        } else {
-          client.on(event.default.name, (...args) => event.default.execute(...args))
-        }
-      } catch (e) {
-        console.log(e)
+import { event as onGuildCreateEvent } from './onGuildCreate.event'
+import { event as onReadyEvent } from './onReady.event'
+import { event as onVerifyWalletEvent } from './onVerifyWallet.event'
+
+export const load = (client: Client) => map((event: { name: any, once?: boolean, execute: Function }) => {
+    try {
+      if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args))
+      } else {
+        client.on(event.name, (...args) => event.execute(...args))
       }
-    })(eventFiles),
-  )
-}
+    } catch (e) {
+      console.log(e)
+    }
+  })([onReadyEvent, onGuildCreateEvent, onVerifyWalletEvent])
