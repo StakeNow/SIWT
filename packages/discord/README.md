@@ -27,6 +27,8 @@ To install the bot you'll need a developer account on Discord:
 
 ## Running the bot
 Now that we have the bot configured on Discord and the UI running, we can start up the bot.
+
+### Environment variables
 On your server, in the root folder create an environment file called `.env` looking as follows:
 
 ```
@@ -35,7 +37,11 @@ DISCORD_TOKEN="This is the token you created earlier"
 APP_URL="This is the url of you UI"
 ```
 
-After you have set the environment it is time to start the server.
+### Access control query
+Use the configuration in `/packages/discord/src/app/config` to set up the access control query.
+[More info on the access control query](https://github.com/StakeNow/SIWT/tree/develop/packages/acq)
+
+After you have set the environment and query it is time to start the server.
 On your server in the project folder run:
 ```
 node ./main.js
