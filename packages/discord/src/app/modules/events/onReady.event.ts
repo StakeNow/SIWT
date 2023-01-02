@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { Client, Events } from 'discord.js'
 
 const onReady = (client: Client) => {

@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js'
 
 const embed = new EmbedBuilder()

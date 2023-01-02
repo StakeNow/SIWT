@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { Client, GuildMember } from 'discord.js'
 import { find, pathOr, pipe, propEq } from 'ramda'
 

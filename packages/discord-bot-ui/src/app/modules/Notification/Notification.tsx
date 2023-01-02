@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { FC } from 'react'
 
 import { NotificationStatus } from '../../common/types'

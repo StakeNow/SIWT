@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import sqlite3, { Database } from 'sqlite3'
 import { v4 as uuidv4 } from 'uuid'
 

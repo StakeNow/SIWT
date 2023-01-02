@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { ChannelType, Events, Guild, TextChannel } from 'discord.js'
 import { find, pathOr, pipe, propEq } from 'ramda'
 

@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { Comparator, ConditionType, Network } from 'packages/acq/src/lib/types'
 
 export const accessControlQuery = (pkh: string) => ({

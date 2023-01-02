@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { assoc, curry, keys, prop, reduce } from 'ramda'
 
 import { VERIFICATION_DB_KEY_MAP } from '../constants'

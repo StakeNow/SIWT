@@ -3,17 +3,16 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { Client, REST } from 'discord.js'
-import { Database } from 'sqlite3'
 import * as dotenv from 'dotenv'
-dotenv.config()
+import { Database } from 'sqlite3'
 
 import { db, initDb } from './app/common/database'
 import { client, rest } from './app/common/discord'
 import { startApi } from './app/modules/api/api'
 import { load as loadEvents } from './app/modules/events'
 
+dotenv.config()
 
 client.login(process.env.DISCORD_TOKEN || '')
 

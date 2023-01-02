@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { validPkh } from '../fixtures'
 import { Network } from '../types'
 import * as SUT from './api'

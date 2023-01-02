@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import * as jwt from 'jsonwebtoken'
 
 import { ACCESS_TOKEN_EXPIRATION, ID_TOKEN_EXPIRATION, REFRESH_TOKEN_EXPIRATION } from './constants'

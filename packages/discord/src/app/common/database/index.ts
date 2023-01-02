@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import {
   createVerification as _createVerification,
   findVerificationByDiscordUserId as _findVerificationByDiscordUserId,

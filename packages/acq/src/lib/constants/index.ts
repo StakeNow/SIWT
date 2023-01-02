@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { complement, equals, gt, gte, includes, lt, lte } from 'ramda'
 
 import { Comparator } from '../types'

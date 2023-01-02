@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import * as SUT from './useSiwt'
 
 describe('./lib/hooks', () => {
@@ -12,8 +11,11 @@ describe('./lib/hooks', () => {
       // when ... we want to use Siwt
       const createMessagePayloadStub = jest.fn().mockReturnValue('MESSAGE PAYLOAD')
       const signInStub = () => jest.fn().mockResolvedValue('ACCESS TOKEN')
-      
-      const { createMessagePayload, signIn } = SUT._useSiwt({ createMessagePayload: createMessagePayloadStub, signIn: signInStub })()
+
+      const { createMessagePayload, signIn } = SUT._useSiwt({
+        createMessagePayload: createMessagePayloadStub,
+        signIn: signInStub,
+      })()
 
       // then ... we should be able to use createMessagePayload and signIn functions
       const payload = createMessagePayload()

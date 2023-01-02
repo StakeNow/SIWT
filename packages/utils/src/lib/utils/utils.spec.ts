@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import * as SUT from './utils'
 
 describe('utils/siwt.utils', () => {

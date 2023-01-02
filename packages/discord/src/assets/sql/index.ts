@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { readFileSync } from 'fs'
 import path from 'path'
 

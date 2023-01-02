@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { AxiosInstance } from 'axios'
 import { map, pathOr, paths, pick, pipe, prop } from 'ramda'
 

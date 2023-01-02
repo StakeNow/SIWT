@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { Collection, REST, Routes } from 'discord.js'
 import fs from 'fs'
 import path from 'path'

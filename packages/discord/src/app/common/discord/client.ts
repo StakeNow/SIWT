@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { Client, GatewayIntentBits } from 'discord.js'
 
 export const client = new Client({

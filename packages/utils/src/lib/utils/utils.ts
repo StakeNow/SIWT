@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { char2Bytes } from '@taquito/utils'
 import { always, filter, gt, ifElse, join, pathEq, pathOr, pipe, prop, propEq, replace } from 'ramda'
 

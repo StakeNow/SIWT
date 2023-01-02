@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { DAppClient, NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
 import { useSiwt } from '@siwt/react'
 import axios from 'axios'

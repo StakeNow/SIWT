@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import axios from 'axios'
 import { prop } from 'ramda'
 import { useEffect, useState } from 'react'
@@ -23,7 +22,7 @@ export const Connect = () => {
     if (!requestId) return
     const getUserInformation = async () => {
       try {
-        const data = await axios.get(`${process.env.NX_API_URL ||''}/verification/${requestId}/user`)
+        const data = await axios.get(`${process.env.NX_API_URL || ''}/verification/${requestId}/user`)
 
         setUser(prop('data')(data))
       } catch (error) {
@@ -77,13 +76,15 @@ export const Connect = () => {
             <Avatar />
             {notification ? <Notification status={notification} /> : null}
             <div className="mt-4">
-              { user && <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-orange py-2 px-4 text-sm font-bold tracking-wide text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                onClick={() => login(setNotification)}
-              >
-                Verify on {prop('guild')(user)}
-              </button> }
+              {user && (
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded-md bg-orange py-2 px-4 text-sm font-bold tracking-wide text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                  onClick={() => login(setNotification)}
+                >
+                  Verify on {prop('guild')(user)}
+                </button>
+              )}
             </div>
           </div>
 
