@@ -20,7 +20,7 @@ export const signInEmbed = (verificationId: string) => {
 
   const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
-      .setURL(`${process.env.APP_URL}/${verificationId}`)
+      .setURL(`${process.env.APP_URL}?id=${verificationId}`)
       .setLabel("Let's go")
       .setStyle(ButtonStyle.Link),
   )
