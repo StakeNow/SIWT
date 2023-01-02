@@ -60,7 +60,7 @@ app.get('/verification/:verificationId/user', async (req, res) => {
     const { verificationId } = req.params
 
     const { guildId, roleId, discordUserId } = await findVerificationById(verificationId)
-    if (!guildId || !roleId || !discordUserId) return res.status(401).send()
+    if (!guildId || !roleId || !discordUserId) return res.status(401).send('Not found')
 
     const { user, guild } = getMember({ guildId, discordUserId })(client)
     res.status(200).send({

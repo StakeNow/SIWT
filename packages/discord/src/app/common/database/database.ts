@@ -11,7 +11,7 @@ import { STATUS, Verification } from '../types'
 import { sql } from './sql'
 import { mapVerificationFromDb } from './utils'
 
-export const db = new sqlite3.Database('./packages/discord/siwt.db')
+export const db = new sqlite3.Database('./siwt.db')
 
 export const initDb = (db: Database) => {
   db.serialize(() => {

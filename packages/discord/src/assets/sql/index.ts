@@ -8,7 +8,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 
 const sqlFile = (filename: string) => {
-  const root = process.env.SQL_PATH || './dist/app/common/database/sql'
+  const root = process.env.SQL_PATH || './assets'
   console.log(__dirname)
   return readFileSync(path.join(root, filename)).toString()
 }
