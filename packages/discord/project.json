@@ -13,7 +13,8 @@
         "outputPath": "dist/packages/discord",
         "main": "packages/discord/src/main.ts",
         "tsConfig": "packages/discord/tsconfig.app.json",
-        "assets": ["packages/discord/src/assets"]
+        "assets": ["packages/discord/src/assets"],
+        "generatePackageJson": true
       },
       "configurations": {
         "production": {
