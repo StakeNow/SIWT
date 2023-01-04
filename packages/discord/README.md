@@ -25,6 +25,15 @@ To install the bot you'll need a developer account on Discord:
   - Turn on the privileged gateway events
 - Save your settings
 
+## Building and deploying
+Make sure you've run `npm install` in the root of the project
+
+The bot can now be built by using:
+```
+npx nx build discord
+```
+The built files can be found in `dist/packages/discord` and are ready to be deployed to your server.
+
 ## Running the bot
 Now that we have the bot configured on Discord and the UI running, we can start up the bot.
 
