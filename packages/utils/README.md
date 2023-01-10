@@ -1,6 +1,5 @@
-# utils
-
-This library contains utilities used to handle the messages.
+# Utils
+This utilities library (utils) is used to handle the different messages.
 
 ## Usage
 
@@ -20,23 +19,25 @@ const message = createMessagePayload({
 ```
 The resulting message will look something like this:
 
- ```
- 0501000000bc54657a6f73205369676e6564204d6573736167653a2055524c20323032322d30342d32385430383a34383a33332e3636345a2055524c20776f756c64206c696b6520796f7520746f207369676e20696e207769746820504b482e200a2020
- ```
+```
+0501000000bc54657a6f73205369676e6564204d6573736167653a2055524c20323032322d30342d32385430383a34383a33332e3636345a2055524c20776f756c64206c696b6520796f7520746f207369676e20696e207769746820504b482e200a2020
+```
 
 Deconstructing this message will reveal the following format:
 
-**05**: Indicates that this is a Micheline expression
+```
+**05**: Indicates that this is a Micheline expression.
 
-**01**: Indicates it is converted to bytes
+**01**: Indicates it is converted to bytes.
 
-**000000bc**: Indicates the length of the message in hex
+**000000bc**: Indicates the length of the message in hex.
 
-**54...**: Is the actual message in bytes
+**54...**: Is the actual message in bytes.
+```
+
 This message is now ready to be signed by the user.
 
 ### Signing in the user
-
 The user specific signature derived from the signed message is used to sign the user into the dApp.
 
 To successfully sign in you will need:
@@ -64,9 +65,7 @@ const verification = signin(API_URL)({
 Now that we have permissions it is time to let your dApp know. For communicating information about your user, JWT tokens are being used. SIWT provides an abstraction to make it more convenenient to work with them.
 
 ## Running unit tests
-
 Run `nx test utils` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Running lint
-
 Run `nx lint utils` to execute the lint via [ESLint](https://eslint.org/).
