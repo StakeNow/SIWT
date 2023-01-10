@@ -46,8 +46,7 @@ APP_URL="This is the url of you UI"
 ```
 
 ### Access control query
-Use the configuration in `/packages/discord/src/app/config` to set up the access control query.
-[More info on the access control query](https://github.com/StakeNow/SIWT/tree/develop/packages/acq)
+Use the configuration in `/packages/discord/src/app/config` to set up the access control query. Get [more information](https://github.com/StakeNow/SIWT/tree/develop/packages/acq) on the access control query (acq) package.
 
 After you have set the environment and query it is time to start the server.
 On your server in the project folder run:
