@@ -70,6 +70,7 @@
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
     "@headlessui/react": "^1.7.8",
+    "@tailwindcss/forms": "^0.5.3",
     "@taquito/utils": "^15.0.1",
     "axios": "^1.2.2",
     "body-parser": "^1.20.1",

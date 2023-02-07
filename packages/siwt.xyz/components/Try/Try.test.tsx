@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 
-import { NavLink } from './NavLink'
+import { Try } from './Try'
 
-describe('NavLink', () => {
+describe('Try', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<NavLink href="URL">NavLink</NavLink>)
+    const { baseElement } = render(<Try />)
     expect(baseElement).toBeTruthy()
   })
 })

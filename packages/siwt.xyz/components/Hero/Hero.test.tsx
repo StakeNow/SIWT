@@ -5,7 +5,7 @@ import { Hero } from './Hero'
 
 describe('Hero', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Hero/>)
+    const { baseElement } = render(<Hero />)
     expect(baseElement).toBeTruthy()
   })
 })

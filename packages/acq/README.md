@@ -1,6 +1,6 @@
 # Access Control Query
 
-The Access Control Query library allows you to easily set the requirements for your users. 
+The Access Control Query library allows you to easily set the requirements for your users.
 
 ## Installation
 
@@ -11,10 +11,11 @@ npm install @siwt/acq
 Once the package is install you can import it using:
 
 ```
-import { queryAccessControl } from '@siwt/acq' 
+import { queryAccessControl } from '@siwt/acq'
 ```
 
 ## Usage
+
 Setting your requirements is done by defining a query in the following format:
 
 ```
@@ -26,8 +27,8 @@ const result = await queryAccessControl({
   test: {
     contractAddress: '',                // The smart contract address to check. Required on certain condition types.
     tokenId: '0',                       // The token id inside the smart contract storage to check against.
-    type: ConditionType.nft,            // 
-    comparator: Comparator.gte,         // 
+    type: ConditionType.nft,            //
+    comparator: Comparator.gte,         //
     value: 1,                           // The value to compare against with the comparator.
   },
 })
@@ -49,30 +50,34 @@ The result will have the following format:
 ### The following scenarios are available:
 
 #### NFT
+
 Use this if you want to test if your user has a certain amount of a certain NFT.
 
 #### XTZ Amount
+
 Use this if you need your user to hold a certain amount of XTZ
 
 #### Fungible token Amount
+
 Use this if you need your user to hold a certain amount of a fungible token
 
 #### Whitelist
+
 Use this if you want to provide a specific list of wallet address to allow or deny access
 
 #### Tezos tickets (Coming soon)
+
 Use this to check if your user has an issued ticket
 
 ### The following comparators are available:
-  eq: Equals
-  gte: Greater than or equals
-  lte: Less than or equals
-  gt: Greater than
-  lt: Less than
-  in: In (Whitelist only)
-  notIn: Not in (Whitelist only)
 
-
+eq: Equals
+gte: Greater than or equals
+lte: Less than or equals
+gt: Greater than
+lt: Less than
+in: In (Whitelist only)
+notIn: Not in (Whitelist only)
 
 ## Running unit tests
 

@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react'
-import Link from 'next/link'
 import { Popover, Transition } from '@headlessui/react'
 import clsx from 'clsx'
+import Link from 'next/link'
+import React, { Fragment } from 'react'
 
 import { Button } from '../Button'
 import { Container } from '../Container'
@@ -25,20 +25,8 @@ function MobileNavIcon({ open }) {
       strokeWidth={2}
       strokeLinecap="round"
     >
-      <path
-        d="M0 1H14M0 7H14M0 13H14"
-        className={clsx(
-          'origin-center transition',
-          open && 'scale-90 opacity-0'
-        )}
-      />
-      <path
-        d="M2 2L12 12M12 2L2 12"
-        className={clsx(
-          'origin-center transition',
-          !open && 'scale-90 opacity-0'
-        )}
-      />
+      <path d="M0 1H14M0 7H14M0 13H14" className={clsx('origin-center transition', open && 'scale-90 opacity-0')} />
+      <path d="M2 2L12 12M12 2L2 12" className={clsx('origin-center transition', !open && 'scale-90 opacity-0')} />
     </svg>
   )
 }
@@ -88,7 +76,7 @@ function MobileNavigation() {
 export function Header() {
   return (
     <header className="py-10">
-      <Container >
+      <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
             <Logo />
@@ -98,9 +86,7 @@ export function Header() {
               <NavLink href="/try">Try it out</NavLink>
             </div>
             <Button href="https://docs.siwt.xyz" color="slate">
-              <span>
-                Get started!
-              </span>
+              <span>Get started!</span>
             </Button>
             <div className="-mr-1 md:hidden">
               <MobileNavigation />

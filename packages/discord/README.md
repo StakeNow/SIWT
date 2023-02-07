@@ -5,17 +5,21 @@ The SIWT Discord bot should be used to allow your Discord members to identitfy t
 ## Requirements
 
 ### Server
+
 A server running Node 16 or higher configured to accept requests on the port you have set to run express on. (default is 3000).
 For an example on how to set up a Node server using Ubuntu and Nginx check: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-18-04. Make sure you set the environment variables as explained further down.
 
 ### UI
-The UI is used to allow users to connect their wallet and validate their address by signing a message. The signature is required to verify that the user meets the requirements you've set on the server. It can be deployed on the same server as the bot, or you may choose to deploy it on a separate service like S3/CloudFront. 
+
+The UI is used to allow users to connect their wallet and validate their address by signing a message. The signature is required to verify that the user meets the requirements you've set on the server. It can be deployed on the same server as the bot, or you may choose to deploy it on a separate service like S3/CloudFront.
 
 ## Creating private channels
+
 Create a new text channel, give it a name and set it to Private.
 In the next prompt make sure you select the `Verified` role and click create channel.
 
 ## Installing the bot
+
 To install the bot you'll need a developer account on Discord:
 
 - Create one or sign in to your existing one at https://discord.com/developers
@@ -26,18 +30,23 @@ To install the bot you'll need a developer account on Discord:
 - Save your settings
 
 ## Building and deploying
+
 Make sure you've run `npm install` in the root of the project
 
 The bot can now be built by using:
+
 ```
 npx nx build discord
 ```
+
 The built files can be found in `dist/packages/discord` and are ready to be deployed to your server.
 
 ## Running the bot
+
 Now that we have the bot configured on Discord and the UI running, we can start up the bot.
 
 ### Environment variables
+
 On your server, in the root folder create an environment file called `.env` looking as follows:
 
 ```
@@ -47,21 +56,25 @@ APP_URL="This is the url of you UI"
 ```
 
 ### Access control query
+
 Use the configuration in `/packages/discord/src/app/config` to set up the access control query.
 [More info on the access control query](https://github.com/StakeNow/SIWT/tree/develop/packages/acq)
 
 After you have set the environment and query it is time to start the server.
 On your server in the project folder run:
+
 ```
 node ./main.js
 ```
 
 of if you use `pm2` as per the tutorial above start the server by running:
+
 ```
 pm2 start ./main.js
 ```
 
 If your bot started successfully you should get a message looking something like:
+
 ```
 SIWT discord bot api listening on port 3000
 Ready! Logged in as SIWT#9646
@@ -70,10 +83,12 @@ Ready! Logged in as SIWT#9646
 ## How it works
 
 ### On activation
+
 When activating the bot it will create a role called `Verified`, create a channel called verification and send a message to it.
-The message contains a button labeled `Verify`. 
+The message contains a button labeled `Verify`.
 
 ### The flow
+
 When a user clicks the button, a verification attempt will be created in the DB.
 A new message will be sent to the user with a button labeled `Let's go`.
 This button will direct the user to the ui you've deployed earlier together with the ID of the verification attempt.
@@ -86,4 +101,5 @@ If the signature is valid and the user meets the requirements, the `Verified` ro
 The user will now have access to your private channels with the `Verified` role permission requirements.
 
 ## Support
+
 For support please reach out on our [Discord](https://discord.com/invite/6J3bjhkpxm?utm_source=GH&utm_medium=GH&utm_campaign=GH)

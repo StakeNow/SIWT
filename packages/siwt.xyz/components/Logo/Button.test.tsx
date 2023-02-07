@@ -5,7 +5,7 @@ import { Logo } from './Logo'
 
 describe('Logo', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Logo/>)
+    const { baseElement } = render(<Logo />)
     expect(baseElement).toBeTruthy()
   })
 })

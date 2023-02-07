@@ -5,7 +5,7 @@ import { Button } from './Button'
 
 describe('Button', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Button href='URL'>Button</Button>)
+    const { baseElement } = render(<Button href="URL">Button</Button>)
     expect(baseElement).toBeTruthy()
   })
 })

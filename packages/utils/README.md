@@ -9,6 +9,7 @@ This library contains utilities used to handle the messages.
 The message is constructed from the URL to your dApp and the user's wallet address more specifically the private key hash (pkh).
 
 Creating the message:
+
 ```
 import { createMessage } from '@siwt/utils'
 
@@ -18,11 +19,12 @@ const message = createMessagePayload({
   pkh: 'tz1',
 })
 ```
+
 The resulting message will look something like this:
 
- ```
- 0501000000bc54657a6f73205369676e6564204d6573736167653a2055524c20323032322d30342d32385430383a34383a33332e3636345a2055524c20776f756c64206c696b6520796f7520746f207369676e20696e207769746820504b482e200a2020
- ```
+```
+0501000000bc54657a6f73205369676e6564204d6573736167653a2055524c20323032322d30342d32385430383a34383a33332e3636345a2055524c20776f756c64206c696b6520796f7520746f207369676e20696e207769746820504b482e200a2020
+```
 
 Deconstructing this message will reveal the following format:
 
@@ -61,6 +63,7 @@ const verification = signin(API_URL)({
 ```
 
 ### Tokens
+
 Now that we have permissions it is time to let your dApp know. For communicating information about your user, JWT tokens are being used. SIWT provides an abstraction to make it more convenenient to work with them.
 
 ## Running unit tests

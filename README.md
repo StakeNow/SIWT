@@ -10,10 +10,13 @@ Sign In With Tezos (SIWT) is a library that supports the development of your dec
 SIWT is split up in several packages:
 
 ### [Core](https://github.com/StakeNow/SIWT/tree/develop/packages/core)
+
 This package handles the JWT tokens. Use this on the servers side to create and verify tokens. This package should only be used server side [NPM](https://www.npmjs.com/package/@siwt/core)
 
 ### [Access Control Query (acq)](https://github.com/StakeNow/SIWT/tree/develop/packages/acq)
+
 Use this package to define the requirements your user needs to obtain access. Currently it supports:
+
 - checking if your user has a certain NFT
 - checking if a user is (or is not) on a provided whitelist
 - checking if a user has a min/max amount of XTZ
@@ -22,30 +25,38 @@ Use this package to define the requirements your user needs to obtain access. Cu
 [NPM](https://www.npmjs.com/package/@siwt/acq)
 
 ### [Utils](https://github.com/StakeNow/SIWT/tree/develop/packages/utils)
+
 This package contains utilities to facilitate the creation of messages and verification of signatures. It can be used on both FE and server.
 
 ### [Discord](https://github.com/StakeNow/SIWT/tree/develop/packages/discord)
+
 Modify and deploy this package on to your server to run your own discord bot. The bot allows you to manage access to your private channels using
 SIWT.
 
 ### [Discorb-bot-ui](https://github.com/StakeNow/SIWT/tree/develop/packages/discord-bot-ui)
+
 A react UI that is part of the Discord bot. It is required so your Discord members can use their Tezos wallets to sign in to your server.
 
 ### [React](https://github.com/StakeNow/SIWT/tree/develop/packages/react)
+
 This packages contains react hooks to make implementation of SIWT in your React application easier [NPM](https://www.npmjs.com/package/@siwt/react)
 
-
 ## Getting started with your project
+
 ### **Implementing the ui**
+
 Sign In With Tezos will require a ui to interact with the user and an authentication API to make the necessary verifications and hand out permissions. On the ui we will make use of [Beacon]('https://www.walletbeacon.io/') to interact with the user's wallet.
 
 #### **Connecting the wallet**
+
 ```
 const walletPermissions = await dAppClient.requestPermissions()
 ```
+
 This will give your dApp permissions to interact with your user's wallet. It provides access to the user's information regarding public key, address and wallet.
 
 #### **Creating the message**
+
 ```
 const messagePayload = createMessagePayload({
   dappUrl: 'siwt.xyz',
@@ -54,6 +65,7 @@ const messagePayload = createMessagePayload({
 ```
 
 This will create a message payload that looks like this:
+
 ```
 {
   signingType: 'micheline',
@@ -69,11 +81,13 @@ Tezos Signed Message: DAPP_URL DATE DAPP_URL would like you to sign in with USER
 ```
 
 #### **Requesting the signature**
+
 ```
 const signature = await dAppClient.requestSignPayload(messagePayload)
 ```
 
 #### **Signing the user into your dApp**
+
 ```
 const signedIn = await signIn('API_URL')({
   pk: walletPermissions.accountInfo.pk,
@@ -83,6 +97,7 @@ const signedIn = await signIn('API_URL')({
 ```
 
 #### **Token types**
+
 With a successful sign in the server will return the following set of tokens:
 
 _Access Token:_
@@ -98,7 +113,9 @@ _ID Token:_
 The ID token is used to obtain some information about the user that is signed in. Because it is a valid JWT token you can use any jwt decoding library to decode the token and use it's contents.
 
 ### **Implementing the server**
+
 #### **Verifying the signature**
+
 Just having the user sign this message is not enough. We also have to make sure the signature is valid before allowing the user to use our dApp. This happens on the server and requires only the following statement:
 
 ```
@@ -107,9 +124,10 @@ const isValidSignature = verifySignature(message, pk, signature)
 
 #### **Creating tokens**
 
-Now that you have verified the identity, you can let your application know all is good in the world. You do this using JSON Web Tokens or JWT for short. For more information about JWT check the [official website](https://jwt.io). 
+Now that you have verified the identity, you can let your application know all is good in the world. You do this using JSON Web Tokens or JWT for short. For more information about JWT check the [official website](https://jwt.io).
 
 Initiate siwt as follows:
+
 ```
 import { siwt } from '@siwt/core'
 
@@ -149,6 +167,7 @@ const accessToken = req.headers.authorization.split(' ')[1]
 const pkh = siwtClient.verifyAccessToken(accessToken)
 
 ```
+
 If the access token is valid, you will receive the pkh of the valid user. Validate this with the account data that is being requested. If everything checks out, supply the user with the requested API information. If the access token is invalid, the pkh will be false. Thus the user should not get an API response.
 
 _Refresh Token:_
@@ -156,11 +175,13 @@ _Refresh Token:_
 By default the access token is only valid for 15 minutes. After this time the user will no longer be able to request information from the API. To make sure you will not need to make the user sign another message to retrieve a valid access token, you can implement a refresh token flow.
 
 Creating a refresh token:
+
 ```
 const refreshToken = siwtClient.generateRefreshToken('PKH OF THE USER')
 ```
 
 Verifying the refresh token:
+
 ```
 try {
   siwtClient.verifyRefreshToken('REFRESH TOKEN')
@@ -194,7 +215,7 @@ const idToken = siwtClient.generateIdToken({
 
 ### **Putting it all together**
 
-*index.js*
+_index.js_
 
 ```
 import { DAppClient } from '@airgap/beacon-sdk'
@@ -287,7 +308,8 @@ const init = () => {
 window.onload = init
 ```
 
-*index.html*
+_index.html_
+
 ```
 <!DOCTYPE html>
 <html lang="en">
@@ -320,11 +342,13 @@ window.onload = init
   </body>
 </html>
 ```
+
 > For the full setup including the build process check out the demo folder.
 
 ### **Implementing your authorization API**
 
-The library relies in the backend on your signin endpoint to be called `/signin`, which is a `POST` request that takes the following body: 
+The library relies in the backend on your signin endpoint to be called `/signin`, which is a `POST` request that takes the following body:
+
 ```
 {
   pk: 'USER PUBLIC KEY',

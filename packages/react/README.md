@@ -5,6 +5,7 @@ This library allows you to use hooks if you're implementing siwt into a react ap
 ## Installation
 
 The package can be installed using npm:
+
 ```
 npm install @siwt/react
 ```

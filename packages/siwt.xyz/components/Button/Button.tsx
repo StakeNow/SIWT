@@ -1,21 +1,21 @@
-import React from 'react'
-import Link from 'next/link'
 import clsx from 'clsx'
+import Link from 'next/link'
+import React from 'react'
 import { FC } from 'react'
 
 interface ButtonProps {
-  variant?: 'solid' | 'outline',
-  color?: 'slate' | 'white',
-  href: string,
-  className?: string,
-  children: React.ReactNode,
+  variant?: 'solid' | 'outline'
+  color?: 'slate' | 'white'
+  href?: string
+  className?: string
+  children: React.ReactNode
+  onClick?: () => void
 }
 
 const baseStyles = {
   solid:
     'group inline-flex items-center justify-center rounded-full py-2 px-4 text-sm font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2',
-  outline:
-    'group inline-flex ring-1 items-center justify-center rounded-full py-2 px-4 text-sm focus:outline-none',
+  outline: 'group inline-flex ring-1 items-center justify-center rounded-full py-2 px-4 text-sm focus:outline-none',
 }
 
 const variantStyles = {
@@ -33,22 +33,8 @@ const variantStyles = {
   },
 }
 
-export const Button: FC<ButtonProps> = ({
-  variant = 'solid',
-  color = 'slate',
-  className,
-  href,
-  ...props
-}) => {
-  className = clsx(
-    baseStyles[variant],
-    variantStyles[variant][color],
-    className
-  )
+export const Button: FC<ButtonProps> = ({ variant = 'solid', color = 'slate', className, href, ...props }) => {
+  className = clsx(baseStyles[variant], variantStyles[variant][color], className)
 
-  return href ? (
-    <Link href={href} className={className} {...props} />
-  ) : (
-    <button className={className} {...props} />
-  )
+  return href ? <Link href={href} className={className} {...props} /> : <button className={className} {...props} />
 }
