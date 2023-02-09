@@ -1,7 +1,9 @@
-import clsx from 'clsx'
-import { assoc, ifElse, includes, map, propEq, without } from 'ramda'
-import React, { ChangeEvent, useState } from 'react'
+import { SignPayloadResponse } from '@airgap/beacon-sdk'
+import { useSiwt } from '@siwt/react'
+import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, uniq, without } from 'ramda'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 
+import { useBeacon } from '../../common/hooks/useBeacon'
 import { ACQ, Comparator, ConditionType, Network } from '../../types'
 import { Button } from '../Button'
 import { Container } from '../Container'
@@ -9,6 +11,9 @@ import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
 
 export const Try = () => {
+  const { createMessagePayload, signIn } = useSiwt()
+  const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
+
   const [acq, setAcq] = useState<ACQ>({
     network: Network.ghostnet,
     parameters: {
@@ -29,7 +34,24 @@ export const Try = () => {
   const [allowlist, setallowlist] = useState<string>('')
   const [selectedPolicies, setSelectedPolicies] = useState<string[]>([])
   const [customPolicies, setCustomPolicies] = useState<string>('')
-  const [isSticky, setIsSticky] = useState<boolean>(false)
+  const [activeAccount, setActiveAccount] = useState<string>('')
+  const [signedPayload, setSignedPayload] = useState<string>('')
+
+  useEffect(() => {
+    const getPkh = async () => {
+      try {
+        const address = await getActiveAccount()
+        setActiveAccount(address as string)
+      } catch {
+        console.log('Failed to get active account')
+      }
+    }
+    getPkh()
+  }, [])
+
+  useEffect(() => {
+    setAcq({ ...acq, parameters: { pkh: activeAccount } })
+  }, [activeAccount])
 
   const handleNetworkChange = (network: string) => {
     setAcq({ ...acq, network: network as Network })
@@ -97,9 +119,25 @@ export const Try = () => {
     setSelectedPolicies(policies)
   }
 
-  const onConnect = () => {
-    console.log('connecting...')
-  }
+  const connectAndSign = () =>
+    connect()
+      .then(({address}) => {
+        setActiveAccount(address)
+        return createMessagePayload({
+          dappUrl: 'SIWT.xyz',
+          pkh: address,
+          options: {
+            policies: pipe(split(','), concat(selectedPolicies), uniq, reject(isEmpty))(customPolicies),
+          }
+        })
+      })
+      .then(requestSignPayload)
+      .then(({ signature }: SignPayloadResponse) => setSignedPayload(signature))
+      .catch(disconnect)
+
+  const handleDisconnect = () => disconnect().then(() => setActiveAccount('')).catch(() => console.log('Failed to disconnect'))
+  
+  const requestResource = async () => {}
 
   return (
     <Container className="pt-20 pb-16 lg:pt-32">
@@ -223,10 +261,7 @@ export const Try = () => {
               <CheckboxSet
                 id="policies"
                 label="Policies"
-                options={[
-                  { id: 'terms-conditions', label: 'Terms and Conditions' },
-                  { id: 'privacy-policy', label: 'Privacy Policy' },
-                ]}
+                options={['Terms and Conditions', 'Privacy Policy']}
                 onChange={onChangeSelectedPolicies}
                 checked={selectedPolicies}
               />
@@ -252,11 +287,13 @@ export const Try = () => {
                   {`,
   parameters: {
     pkh: `}
-                  {
+                  {acq.parameters.pkh ? (
+                    <span className="text-pink-500 font-bold">{acq.parameters.pkh}</span>
+                  ) : (
                     <span className="italic text-gray-400 font-light text-sm">
                       This will be the connected wallet address
                     </span>
-                  }
+                  )}
                   {`,
   },
   test: {
@@ -286,12 +323,21 @@ export const Try = () => {
             </div>
           </div>
         </div>
-        <h2 className="text-3xl font-bold pl-8 mb-8 mt-16">Step 3: Connect and sign</h2>
+        <h2 className="text-3xl font-bold pl-8 mb-8 mt-16">Step 3: Connect and sign in</h2>
         <div className="ml-6">
-          <Button onClick={onConnect} className="text-2xl">
-            Connect
-          </Button>
+          {acq.parameters.pkh ? (
+            <>
+              <div className='ml-2 mb-1 font-bold text-gray-600'>Connected with: {acq.parameters.pkh}</div>
+              <Button onClick={() => handleDisconnect()}>Disconnect</Button>
+            </>
+          ) : (
+            <Button onClick={connectAndSign} className="text-2xl">
+              Connect
+            </Button>
+          )}
         </div>
+        <h2 className="text-3xl font-bold pl-8 mb-8 mt-16">Step 4: Request a gated resource</h2>
+        {acq.parameters.pkh && signedPayload ? <Button onClick={requestResource} className='ml-6'>Request resource</Button> : <span className='italic text-gray-500 text-sm ml-8'>Connect and sign the message before trying to request the resource</span>}
       </section>
     </Container>
   )

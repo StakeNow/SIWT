@@ -20,7 +20,7 @@
     "@nrwl/workspace": "15.3.3",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@svgr/webpack": "^6.5.1",
-    "@testing-library/react": "13.4.0",
+    "@testing-library/react": "^13.4.0",
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.15",
@@ -68,7 +68,7 @@
     "vitest": "^0.25.8"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^3.3.0",
+    "@airgap/beacon-sdk": "^3.3.2",
     "@headlessui/react": "^1.7.8",
     "@tailwindcss/forms": "^0.5.3",
     "@taquito/utils": "^15.0.1",

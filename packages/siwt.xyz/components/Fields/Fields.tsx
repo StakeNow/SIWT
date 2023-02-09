@@ -115,7 +115,7 @@ export const RadioButtonSet: FC<RadioButtonSetProps> = ({
 interface CheckboxSetProps {
   id: string
   label: string
-  options: { id: string; label: string }[]
+  options: string[]
   checked?: string[]
   className?: string
   onChange: (id: string) => void
@@ -126,18 +126,18 @@ export const CheckboxSet: FC<CheckboxSetProps> = ({ label, id, options, checked 
     <legend className="sr-only">{label}</legend>
     <div className="relative flex flex-col items-start">
       {options.map(option => (
-        <div key={option.id} className="flex flex-row space-y-1 h-5 items-center mb-2">
+        <div key={option} className="flex flex-row space-y-1 h-5 items-center mb-2">
           <input
-            id={option.id}
+            id={option}
             name={id}
             type="checkbox"
             className="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500"
-            checked={checked.includes(option.id)}
-            onChange={() => onChange(option.id)}
+            checked={checked.includes(option)}
+            onChange={() => onChange(option)}
           />
           <div className="ml-3 text-sm">
             <label htmlFor="terms-conditions" className="font-medium text-gray-700">
-              {option.label}
+              {option}
             </label>
           </div>
         </div>
