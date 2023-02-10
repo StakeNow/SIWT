@@ -12,7 +12,7 @@ import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
 
 export const Try = () => {
-  const { createMessagePayload, signIn } = useSiwt(process.env.API_URL || 'http://localhost:4200/api')
+  const { createMessagePayload, signIn } = useSiwt(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4200/api')
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
 
   const [acq, setAcq] = useState<ACQ>({
