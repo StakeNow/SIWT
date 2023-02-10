@@ -382,7 +382,7 @@ describe('acq', () => {
           pkh: validPkh,
         },
         test: {
-          type: ConditionType.whitelist,
+          type: ConditionType.allowlist,
           comparator: Comparator.in,
         },
       },
@@ -401,7 +401,7 @@ describe('acq', () => {
           pkh: validPkh,
         },
         test: {
-          type: ConditionType.whitelist,
+          type: ConditionType.allowlist,
           comparator: Comparator.in,
         },
       },
@@ -414,10 +414,10 @@ describe('acq', () => {
         },
       },
     ],
-  ])('should validate a pkh in the whitelist', async (query, whitelist, expected) => {
-    // when ... we want to validate if a pkh should be allowed based on whitelist validation
+  ])('should validate a pkh in the allowlist', async (query, allowlist, expected) => {
+    // when ... we want to validate if a pkh should be allowed based on allowlist validation
     // then ... then it should return the correct result as expected
-    const result = await SUT._queryAccessControl({ whitelist })(query)
+    const result = await SUT._queryAccessControl({ allowlist })(query)
 
     expect(result).toEqual(expected)
   })

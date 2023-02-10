@@ -61,7 +61,7 @@ Use this if you need your user to hold a certain amount of XTZ
 
 Use this if you need your user to hold a certain amount of a fungible token
 
-#### Whitelist
+#### Allowlist
 
 Use this if you want to provide a specific list of wallet address to allow or deny access
 
@@ -76,8 +76,8 @@ gte: Greater than or equals
 lte: Less than or equals
 gt: Greater than
 lt: Less than
-in: In (Whitelist only)
-notIn: Not in (Whitelist only)
+in: In (Allowlist only)
+notIn: Not in (Allowlist only)
 
 ## Running unit tests
 

@@ -18,7 +18,7 @@ This package handles the JWT tokens. Use this on the servers side to create and 
 Use this package to define the requirements your user needs to obtain access. Currently it supports:
 
 - checking if your user has a certain NFT
-- checking if a user is (or is not) on a provided whitelist
+- checking if a user is (or is not) on a provided allowlist
 - checking if a user has a min/max amount of XTZ
 - checking if a user has a min/max amount of a fungible token
 

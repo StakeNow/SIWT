@@ -1,5 +1,6 @@
-import { SignPayloadResponse } from '@airgap/beacon-sdk'
+import { AccountInfo, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { useSiwt } from '@siwt/react'
+import clsx from 'clsx'
 import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, uniq, without } from 'ramda'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 
@@ -11,7 +12,7 @@ import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
 
 export const Try = () => {
-  const { createMessagePayload, signIn } = useSiwt()
+  const { createMessagePayload, signIn } = useSiwt(process.env.API_URL || 'http://localhost:4200/api')
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
 
   const [acq, setAcq] = useState<ACQ>({
@@ -27,21 +28,23 @@ export const Try = () => {
       value: 1,
     },
   })
-  const [networkTabs, setNetworkTab] = useState<{ name: Network; current: boolean }[]>([
-    { name: Network.mainnet, current: false },
-    { name: Network.ghostnet, current: true },
+  const [networkTabs, setNetworkTab] = useState<{ name: Network; label: string; current: boolean }[]>([
+    { name: Network.mainnet, label: 'Mainnet', current: false },
+    { name: Network.ghostnet, label: 'Ghostnet', current: true },
   ])
-  const [allowlist, setallowlist] = useState<string>('')
+  const [allowlist, setAllowlist] = useState<string>('')
   const [selectedPolicies, setSelectedPolicies] = useState<string[]>([])
   const [customPolicies, setCustomPolicies] = useState<string>('')
-  const [activeAccount, setActiveAccount] = useState<string>('')
-  const [signedPayload, setSignedPayload] = useState<string>('')
+  const [activeAccount, setActiveAccount] = useState<AccountInfo>({} as AccountInfo)
+  const [message, setMessage] = useState<string>('')
+  const [signature, setSignature] = useState<string>('')
+  const [accessResponse, setAccessResponse] = useState<Record<string, any>>({})
 
   useEffect(() => {
     const getPkh = async () => {
       try {
-        const address = await getActiveAccount()
-        setActiveAccount(address as string)
+        const accountInfo = await getActiveAccount()
+        setActiveAccount(accountInfo as AccountInfo)
       } catch {
         console.log('Failed to get active account')
       }
@@ -50,7 +53,7 @@ export const Try = () => {
   }, [])
 
   useEffect(() => {
-    setAcq({ ...acq, parameters: { pkh: activeAccount } })
+    setAcq({ ...acq, parameters: { pkh: activeAccount?.address } })
   }, [activeAccount])
 
   const handleNetworkChange = (network: string) => {
@@ -60,11 +63,11 @@ export const Try = () => {
     )
   }
 
-  const [typeTabs, setTypeTab] = useState<{ name: ConditionType; current: boolean; icon: string }[]>([
-    { name: ConditionType.nft, current: true, icon: 'nft' },
-    { name: ConditionType.xtzBalance, current: false, icon: 'xtz' },
-    { name: ConditionType.tokenBalance, current: false, icon: 'token' },
-    { name: ConditionType.allowlist, current: false, icon: 'allowlist' },
+  const [typeTabs, setTypeTab] = useState<{ name: ConditionType; label: string; current: boolean; icon: string }[]>([
+    { name: ConditionType.nft, label: 'NFT', current: true, icon: 'nft' },
+    { name: ConditionType.xtzBalance, label: 'XTZ Balance', current: false, icon: 'xtz' },
+    { name: ConditionType.tokenBalance, label: 'Token Balance', current: false, icon: 'token' },
+    { name: ConditionType.allowlist, label: 'Allowlist', current: false, icon: 'allowlist' },
   ])
 
   const handleTypeChange = (type: string) => {
@@ -86,7 +89,7 @@ export const Try = () => {
   ]
 
   const allowlistComparators = [
-    { id: Comparator.in, label: 'Is in allolist' },
+    { id: Comparator.in, label: 'Is in allowlist' },
     { id: Comparator.notIn, label: 'Is not in allowlist' },
   ]
 
@@ -103,7 +106,7 @@ export const Try = () => {
   }
 
   const onChangeallowlist = (event: ChangeEvent<HTMLInputElement>) => {
-    setallowlist(event.currentTarget.value)
+    setAllowlist(event.currentTarget.value)
   }
 
   const onChangeComparator = (id: string) => {
@@ -119,25 +122,36 @@ export const Try = () => {
     setSelectedPolicies(policies)
   }
 
+  const signMessage = (address: string) => {
+    const payload = createMessagePayload({
+      dappUrl: 'SIWT.xyz',
+      pkh: address,
+      options: {
+        policies: pipe(split(','), concat(selectedPolicies), uniq, reject(isEmpty))(customPolicies),
+      },
+    })
+    setMessage(payload)
+
+    return requestSignPayload(payload)
+      .then(({ signature }: SignPayloadResponse) => setSignature(signature))
+  }
+
   const connectAndSign = () =>
     connect()
-      .then(({address}) => {
-        setActiveAccount(address)
-        return createMessagePayload({
-          dappUrl: 'SIWT.xyz',
-          pkh: address,
-          options: {
-            policies: pipe(split(','), concat(selectedPolicies), uniq, reject(isEmpty))(customPolicies),
-          }
-        })
-      })
-      .then(requestSignPayload)
-      .then(({ signature }: SignPayloadResponse) => setSignedPayload(signature))
-      .catch(disconnect)
+      .then(({ address }) => signMessage(address))
+      .then(getActiveAccount)
+      .then((accountInfo) => accountInfo && setActiveAccount(accountInfo as AccountInfo))
+      .catch(console.log)
 
-  const handleDisconnect = () => disconnect().then(() => setActiveAccount('')).catch(() => console.log('Failed to disconnect'))
-  
-  const requestResource = async () => {}
+  const handleDisconnect = () =>
+    disconnect()
+      .then(() => setActiveAccount({} as AccountInfo))
+      .catch(() => console.log('Failed to disconnect'))
+
+  const requestResource = () => 
+    signIn({ acq, signature, message, publicKey: activeAccount?.publicKey, allowlist: split(',')(allowlist) })
+      .then(({ data }) => setAccessResponse(data))
+      .catch(({ response: { data } }) => setAccessResponse(data))
 
   return (
     <Container className="pt-20 pb-16 lg:pt-32">
@@ -211,7 +225,7 @@ export const Try = () => {
                       {typeTabs.find(tab => tab.current)?.name === ConditionType.allowlist ? (
                         <div className="sm:col-span-3 mt-6">
                           <TextField
-                            label="Addresses to white- or blacklist"
+                            label="Addresses to allow/disallow (comma separated)"
                             id="allowlist"
                             value={allowlist}
                             onChange={onChangeallowlist}
@@ -327,7 +341,8 @@ export const Try = () => {
         <div className="ml-6">
           {acq.parameters.pkh ? (
             <>
-              <div className='ml-2 mb-1 font-bold text-gray-600'>Connected with: {acq.parameters.pkh}</div>
+              <div className="ml-2 mb-1 font-bold text-gray-600">Connected with: {acq.parameters.pkh}</div>
+              {signature ? (<div className="ml-2 mb-3 text-sm text-gray-600">Signature: {signature}</div>) : (<div className='mb-2'><Button onClick={() => signMessage(activeAccount?.address)}>Sign In</Button></div>)}
               <Button onClick={() => handleDisconnect()}>Disconnect</Button>
             </>
           ) : (
@@ -336,8 +351,30 @@ export const Try = () => {
             </Button>
           )}
         </div>
+
         <h2 className="text-3xl font-bold pl-8 mb-8 mt-16">Step 4: Request a gated resource</h2>
-        {acq.parameters.pkh && signedPayload ? <Button onClick={requestResource} className='ml-6'>Request resource</Button> : <span className='italic text-gray-500 text-sm ml-8'>Connect and sign the message before trying to request the resource</span>}
+        <div className="flex flex-row">
+          <div className="w-2/3">
+            {acq.parameters.pkh && signature ? (
+              <Button onClick={requestResource} className="ml-6">
+                Request resource
+              </Button>
+            ) : (
+              <span className="italic text-gray-500 text-sm ml-8">
+                Connect and sign the message before trying to request the resource
+              </span>
+            )}
+          </div>
+          <div className="w-1/3 rounded-md">
+            {isEmpty(accessResponse) ? <></> : (
+              <div>
+                {accessResponse?.testResults?.passed ? (
+                  <div className='text-xl font-bold '>Access granted</div>) : (<div className='text-xl font-bold'>Access denied</div>)}
+                  <pre className={clsx('overflow-hidden', accessResponse?.testResults?.passed ? 'border-2 border-green-500' : 'border-2 border-red-500')}><code>{JSON.stringify(accessResponse, null, 2)}</code></pre>
+              </div>
+            )}
+          </div>
+        </div>
       </section>
     </Container>
   )

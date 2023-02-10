@@ -1,13 +1,13 @@
 export enum Network {
-  mainnet = 'Mainnet',
-  ghostnet = 'Ghostnet',
+  mainnet = 'mainnet',
+  ghostnet = 'ghostnet',
 }
 
 export enum ConditionType {
-  nft = 'NFT',
-  xtzBalance = 'XTZ Balance',
-  tokenBalance = 'Fungible Token Balance',
-  allowlist = 'Allowlist',
+  nft = 'nft',
+  xtzBalance = 'xtzBalance',
+  tokenBalance = 'tokenBalance',
+  allowlist = 'allowlist',
 }
 
 export enum Comparator {

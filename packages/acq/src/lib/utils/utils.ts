@@ -78,7 +78,6 @@ export const validateNFTCondition =
       .then(storage => {
         const ownedAssets = filterOwnedAssets(pkh as string)(storage as LedgerStorage[])
         const ownedAssetIds = getOwnedAssetIds(ownedAssets)
-
         return {
           passed: (COMPARISONS[comparator] as any)(prop('length')(ownedAssets))(value),
           ownedTokenIds: ownedAssetIds,
@@ -91,14 +90,14 @@ export const validateNFTCondition =
 
 export const validateXTZBalanceCondition =
   (getBalance: AccessControlQueryDependencies['getBalance']) =>
-  ({ network = Network.ghostnet, test: { contractAddress, comparator, value } }: AccessControlQuery) =>
+  ({ network = Network.ghostnet, parameters: { pkh }, test: { comparator, value } }: AccessControlQuery) =>
     getBalance &&
-    getBalance({ network, contract: contractAddress as string })
+    getBalance({ network, contract: pkh as string })
       .then((balance: number) => ({
         balance,
-        passed: (COMPARISONS[comparator] as any)(balance)(value),
+        passed: (COMPARISONS[comparator] as any)(value)(balance),
       }))
-      .catch(() => ({
+      .catch((e) => ({
         passed: false,
         error: true,
       }))
@@ -114,15 +113,15 @@ export const validateTokenBalanceCondition =
     getTokenBalance({ network, contract: contractAddress as string, pkh: pkh as string, tokenId: tokenId as string })
       .then((balance: number) => ({
         balance,
-        passed: (COMPARISONS[comparator] as any)(balance)(value),
+        passed: (COMPARISONS[comparator] as any)(value)(balance),
       }))
       .catch(() => ({
         passed: false,
         error: true,
       }))
 
-export const validateWhitelistCondition =
-  (whitelist: AccessControlQueryDependencies['whitelist']) =>
+export const validateAllowlistCondition =
+  (allowlist: string[]) =>
   ({ parameters: { pkh }, test: { comparator } }: AccessControlQuery) => ({
-    passed: (COMPARISONS[comparator] as any)(pkh)(whitelist || []),
+    passed: (COMPARISONS[comparator] as any)(pkh)(allowlist || []),
   })

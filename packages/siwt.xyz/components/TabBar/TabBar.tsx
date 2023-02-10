@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 import { Network } from '../../types'
 
 interface TabBarProps {
-  tabs: { name: string; current: boolean }[]
+  tabs: { name: string; label: string; current: boolean }[]
   onChange: (tab: string) => void
   type: 'bar' | 'underline'
 }
@@ -27,7 +27,7 @@ export const TabBar: FC<TabBarProps> = ({ tabs, onChange, type }) => {
                 aria-current={tab.current ? 'page' : undefined}
                 onClick={() => onChange(tab.name)}
               >
-                <span>{tab.name}</span>
+                <span>{tab.label}</span>
                 <span
                   aria-hidden="true"
                   className={clsx(tab.current ? 'bg-gray-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5')}
@@ -54,7 +54,7 @@ export const TabBar: FC<TabBarProps> = ({ tabs, onChange, type }) => {
                   aria-current={tab.current ? 'page' : undefined}
                   onClick={() => onChange(tab.name)}
                 >
-                  <span>{tab.name}</span>
+                  <span>{tab.label}</span>
                 </button>
               ))}
             </nav>

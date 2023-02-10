@@ -8,6 +8,6 @@ export {
   denominate,
   validateNFTCondition,
   validateTokenBalanceCondition,
-  validateWhitelistCondition,
+  validateAllowlistCondition,
   validateXTZBalanceCondition,
 } from './utils'
