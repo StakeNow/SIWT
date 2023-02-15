@@ -81,7 +81,7 @@ export const Try = () => {
   }
 
   const comparators = [
-    { id: Comparator.eq, label: 'Is equal to' },
+    { id: Comparator.eq, label: 'Equal to' },
     { id: Comparator.gte, label: 'Greater than or equal to' },
     { id: Comparator.lte, label: 'Less than or equal to' },
     { id: Comparator.gt, label: 'Greater than' },
@@ -89,8 +89,8 @@ export const Try = () => {
   ]
 
   const allowlistComparators = [
-    { id: Comparator.in, label: 'Is in allowlist' },
-    { id: Comparator.notIn, label: 'Is not in allowlist' },
+    { id: Comparator.in, label: 'In allowlist' },
+    { id: Comparator.notIn, label: 'Not in allowlist' },
   ]
 
   const onChangeContractAddress = (event: ChangeEvent<HTMLInputElement>) => {
@@ -161,11 +161,11 @@ export const Try = () => {
         </h1>
       </div>
       <section className="mt-40 justify-center gap-x-6">
-        <div className="flex flex-row">
-          <div className="w-2/3">
-            <h2 className="text-3xl font-bold pl-8 mb-8">Step 1: Create your access control query</h2>
+        <div className="flex flex-col lg:flex-row">
+          <div className="w-full lg:w-2/3">
+            <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">Step 1: Create your access control query</h2>
             <div className="flex flex-row mb-8">
-              <div className="space-y-8 bg-gray-50 p-8 rounded-md mr-8">
+              <div className="lg:space-y-8 bg-gray-50 p-8 rounded-md lg:mr-8 w-full">
                 <div>
                   <div className="mb-6">
                     <h3 className="text-2xl font-medium leading-6 text-gray-900">Select Network</h3>
@@ -225,8 +225,9 @@ export const Try = () => {
                       {typeTabs.find(tab => tab.current)?.name === ConditionType.allowlist ? (
                         <div className="sm:col-span-3 mt-6">
                           <TextField
-                            label="Addresses to allow/disallow (comma separated)"
+                            label="Addresses"
                             id="allowlist"
+                            explainer="Comma separated list of Tezos addresses (pkh)"
                             value={allowlist}
                             onChange={onChangeallowlist}
                           />
@@ -235,7 +236,23 @@ export const Try = () => {
                         <></>
                       )}
                     </div>
-
+                    {acq.test.type !== ConditionType.allowlist ? (
+                      <RadioButtonSet
+                        label="Should be"
+                        id="comparator"
+                        options={comparators}
+                        value={acq.test.comparator}
+                        onChange={onChangeComparator}
+                      />
+                    ) : (
+                      <RadioButtonSet
+                        label="Should be"
+                        id="comparator"
+                        options={allowlistComparators}
+                        value={acq.test.comparator}
+                        onChange={onChangeComparator}
+                      />
+                    )}
                     {acq.test.type !== ConditionType.allowlist && (
                       <div className="my-6">
                         <div className="sm:col-span-3 mt-6">
@@ -250,27 +267,10 @@ export const Try = () => {
                       </div>
                     )}
                   </div>
-                  {acq.test.type !== ConditionType.allowlist ? (
-                    <RadioButtonSet
-                      label="Comparator"
-                      id="comparator"
-                      options={comparators}
-                      value={acq.test.comparator}
-                      onChange={onChangeComparator}
-                    />
-                  ) : (
-                    <RadioButtonSet
-                      label="Comparator"
-                      id="comparator"
-                      options={allowlistComparators}
-                      value={acq.test.comparator}
-                      onChange={onChangeComparator}
-                    />
-                  )}
                 </div>
               </div>
             </div>
-            <h2 className="text-3xl font-bold pl-8 my-8 mt-16">Step 2: Define policies</h2>
+            <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">Step 2: Define policies <span className="font-normal italic text-gray-700 text-sm">(optional)</span></h2>
             <div className=" bg-gray-50 space-y-4 p-8 rounded-md mr-8">
               <CheckboxSet
                 id="policies"
@@ -290,10 +290,10 @@ export const Try = () => {
               </div>
             </div>
           </div>
-          <div className="w-1/3">
+          <div className="w-full lg:w-1/3 mt-6 lg:mt-0">
             <div className="lg:sticky lg:top-10">
               <h3 className="font-bold mb-4 text-xl">Access control query:</h3>
-              <pre id="query-block" className="bg-gray-700 rounded-md overflow-hidden text-gray-300">
+              <pre id="query-block" className="bg-gray-700 rounded-md overflow-x-auto text-gray-300">
                 <code>
                   {`{
   network: `}
@@ -337,14 +337,21 @@ export const Try = () => {
             </div>
           </div>
         </div>
-        <h2 className="text-3xl font-bold pl-8 mb-8 mt-16">Step 3: Connect and sign in</h2>
-        <div className="ml-6">
+        <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">Step 3: Connect, sign and agree to policies</h2>
+        <div className="lg:ml-6">
           {acq.parameters.pkh ? (
             <>
-              <div className="ml-2 mb-1 font-bold text-gray-600">Connected with: {acq.parameters.pkh}</div>
-              {signature ? (<div className="ml-2 mb-3 text-sm text-gray-600">Signature: {signature}</div>) : (<div className='mb-2'><Button onClick={() => signMessage(activeAccount?.address)}>Sign In</Button></div>)}
+            <div>
+              <span className="lg:ml-2">Wallet address:</span>
+              <div className="lg:ml-2 mb-1 text-gray-600">Connected with: {acq.parameters.pkh}</div>
               <Button onClick={() => handleDisconnect()}>Disconnect</Button>
-            </>
+            </div>
+            <div className='mt-6'>
+              <span className="lg:ml-2">Signature:</span>
+              <div className="lg:ml-2 mb-1 text-gray-600 break-words">{signature ? signature : <span className="text-gray-500 italic">Message hasn't been signed yet</span>}</div>
+              <Button onClick={() => signMessage(activeAccount?.address)}>(Re-) Sign</Button>
+            </div>
+          </>
           ) : (
             <Button onClick={connectAndSign} className="text-2xl">
               Connect
@@ -352,15 +359,15 @@ export const Try = () => {
           )}
         </div>
 
-        <h2 className="text-3xl font-bold pl-8 mb-8 mt-16">Step 4: Request a gated resource</h2>
+        <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">Step 4: Test if you have access</h2>
         <div className="flex flex-row">
-          <div className="w-2/3">
+          <div className="w-full lg:w-2/3">
             {acq.parameters.pkh && signature ? (
-              <Button onClick={requestResource} className="ml-6">
-                Request resource
+              <Button onClick={requestResource} className="lg:ml-6">
+                Check access
               </Button>
             ) : (
-              <span className="italic text-gray-500 text-sm ml-8">
+              <span className="italic text-gray-500 text-sm lg:ml-8">
                 Connect and sign the message before trying to request the resource
               </span>
             )}

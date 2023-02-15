@@ -86,12 +86,12 @@ export const RadioButtonSet: FC<RadioButtonSetProps> = ({
   options,
   ...props
 }) => (
-  <fieldset className={`mt-6 ${className}`}>
-    <label htmlFor={id} className="block text-2xl font-medium leading-6 text-gray-900">
+  <fieldset className={`mt-1${className}`}>
+    <label htmlFor={id} className="block text-sm font-medium leading-6 text-gray-700">
       {label}
     </label>
     <legend className="sr-only">{label}</legend>
-    <div className="grid grid-cols-4 mt-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 mt-4">
       {options.map(option => (
         <div key={option.id} className="flex items-center p-1">
           <input

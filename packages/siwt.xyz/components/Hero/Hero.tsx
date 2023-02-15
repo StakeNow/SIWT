@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import React from 'react'
 
-import LogoPlaceholder from '../../images/placeholder-logo.svg'
+import StakeNowLogo from '../../images/stakenow.svg'
+import StackReportLogo from '../../images/the-stack-report-logo.svg'
 import { Button } from '../Button'
 import { Container } from '../Container'
 
@@ -24,9 +25,8 @@ export const Hero = () => (
       >
         {[
           [
-            { name: 'The Stack Report', logo: LogoPlaceholder },
-            { name: 'Plenty', logo: LogoPlaceholder },
-            { name: 'StakeNow', logo: LogoPlaceholder },
+            { name: 'The Stack Report', logo: StakeNowLogo },
+            { name: 'StakeNow', logo: StackReportLogo },
           ],
         ].map((group, groupIndex) => (
           <li key={groupIndex}>
