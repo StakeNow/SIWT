@@ -123,16 +123,16 @@ export const Try = () => {
   }
 
   const signMessage = (address: string) => {
-    const payload = createMessagePayload({
+    const messagePayload = createMessagePayload({
       dappUrl: 'SIWT.xyz',
       pkh: address,
       options: {
         policies: pipe(split(','), concat(selectedPolicies), uniq, reject(isEmpty))(customPolicies),
       },
     })
-    setMessage(payload)
+    setMessage(messagePayload.payload)
 
-    return requestSignPayload(payload)
+    return requestSignPayload(messagePayload)
       .then(({ signature }: SignPayloadResponse) => setSignature(signature))
   }
 
