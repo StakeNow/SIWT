@@ -132,15 +132,14 @@ export const Try = () => {
     })
     setMessage(messagePayload.payload)
 
-    return requestSignPayload(messagePayload)
-      .then(({ signature }: SignPayloadResponse) => setSignature(signature))
+    return requestSignPayload(messagePayload).then(({ signature }: SignPayloadResponse) => setSignature(signature))
   }
 
   const connectAndSign = () =>
     connect()
       .then(({ address }) => signMessage(address))
       .then(getActiveAccount)
-      .then((accountInfo) => accountInfo && setActiveAccount(accountInfo as AccountInfo))
+      .then(accountInfo => accountInfo && setActiveAccount(accountInfo as AccountInfo))
       .catch(console.log)
 
   const handleDisconnect = () =>
@@ -148,7 +147,7 @@ export const Try = () => {
       .then(() => setActiveAccount({} as AccountInfo))
       .catch(() => console.log('Failed to disconnect'))
 
-  const requestResource = () => 
+  const requestResource = () =>
     signIn({ acq, signature, message, publicKey: activeAccount?.publicKey, allowlist: split(',')(allowlist) })
       .then(({ data }) => setAccessResponse(data))
       .catch(({ response: { data } }) => setAccessResponse(data))
@@ -163,7 +162,9 @@ export const Try = () => {
       <section className="mt-40 justify-center gap-x-6">
         <div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-2/3">
-            <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">Step 1: Create your access control query</h2>
+            <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">
+              Step 1: Create your access control query
+            </h2>
             <div className="flex flex-row mb-8">
               <div className="lg:space-y-8 bg-gray-50 p-8 rounded-md lg:mr-8 w-full">
                 <div>
@@ -270,7 +271,9 @@ export const Try = () => {
                 </div>
               </div>
             </div>
-            <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">Step 2: Define policies <span className="font-normal italic text-gray-700 text-sm">(optional)</span></h2>
+            <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">
+              Step 2: Define policies <span className="font-normal italic text-gray-700 text-sm">(optional)</span>
+            </h2>
             <div className=" bg-gray-50 space-y-4 p-8 rounded-md mr-8">
               <CheckboxSet
                 id="policies"
@@ -337,21 +340,25 @@ export const Try = () => {
             </div>
           </div>
         </div>
-        <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">Step 3: Connect, sign and agree to policies</h2>
+        <h2 className="text-xl lg:text-3xl font-bold lg:pl-8 mb-2 lg:mb-8 mt-16">
+          Step 3: Connect, sign and agree to policies
+        </h2>
         <div className="lg:ml-6">
           {acq.parameters.pkh ? (
             <>
-            <div>
-              <span className="lg:ml-2">Wallet address:</span>
-              <div className="lg:ml-2 mb-1 text-gray-600">Connected with: {acq.parameters.pkh}</div>
-              <Button onClick={() => handleDisconnect()}>Disconnect</Button>
-            </div>
-            <div className='mt-6'>
-              <span className="lg:ml-2">Signature:</span>
-              <div className="lg:ml-2 mb-1 text-gray-600 break-words">{signature ? signature : <span className="text-gray-500 italic">Message hasn't been signed yet</span>}</div>
-              <Button onClick={() => signMessage(activeAccount?.address)}>(Re-) Sign</Button>
-            </div>
-          </>
+              <div>
+                <span className="lg:ml-2">Wallet address:</span>
+                <div className="lg:ml-2 mb-1 text-gray-600">Connected with: {acq.parameters.pkh}</div>
+                <Button onClick={() => handleDisconnect()}>Disconnect</Button>
+              </div>
+              <div className="mt-6">
+                <span className="lg:ml-2">Signature:</span>
+                <div className="lg:ml-2 mb-1 text-gray-600 break-words">
+                  {signature ? signature : <span className="text-gray-500 italic">Message hasn't been signed yet</span>}
+                </div>
+                <Button onClick={() => signMessage(activeAccount?.address)}>(Re-) Sign</Button>
+              </div>
+            </>
           ) : (
             <Button onClick={connectAndSign} className="text-2xl">
               Connect
@@ -373,11 +380,23 @@ export const Try = () => {
             )}
           </div>
           <div className="w-1/3 rounded-md">
-            {isEmpty(accessResponse) ? <></> : (
+            {isEmpty(accessResponse) ? (
+              <></>
+            ) : (
               <div>
                 {accessResponse?.testResults?.passed ? (
-                  <div className='text-xl font-bold '>Access granted</div>) : (<div className='text-xl font-bold'>Access denied</div>)}
-                  <pre className={clsx('overflow-hidden', accessResponse?.testResults?.passed ? 'border-2 border-green-500' : 'border-2 border-red-500')}><code>{JSON.stringify(accessResponse, null, 2)}</code></pre>
+                  <div className="text-xl font-bold ">Access granted</div>
+                ) : (
+                  <div className="text-xl font-bold">Access denied</div>
+                )}
+                <pre
+                  className={clsx(
+                    'overflow-hidden',
+                    accessResponse?.testResults?.passed ? 'border-2 border-green-500' : 'border-2 border-red-500',
+                  )}
+                >
+                  <code>{JSON.stringify(accessResponse, null, 2)}</code>
+                </pre>
               </div>
             )}
           </div>

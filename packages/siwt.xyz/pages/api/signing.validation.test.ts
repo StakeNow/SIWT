@@ -19,7 +19,7 @@ describe('./signin.validation', () => {
             pkh: 'tz1...',
           },
         },
-        signature: 'edsig...',
+        signature: 'spsig...',
         publicKey: 'edpk...',
         message: '...',
       }
@@ -45,7 +45,7 @@ describe('./signin.validation', () => {
             pkh: 'tz1...',
           },
         },
-        signature: 'edsig...',
+        signature: 'spsig...',
         publicKey: 'edpk...',
       },
       {
@@ -62,7 +62,7 @@ describe('./signin.validation', () => {
             pkh: 'tz1...',
           },
         },
-        signature: 'edsig...',
+        signature: 'spsig...',
         message: '...',
       },
       {
@@ -83,7 +83,7 @@ describe('./signin.validation', () => {
         message: '...',
       },
       {
-        signature: 'edsig...',
+        signature: 'spsig...',
         publicKey: 'edpk...',
         message: '...',
       },
@@ -101,7 +101,7 @@ describe('./signin.validation', () => {
             pkh: 'tz1...',
           },
         },
-        signature: 'edsig...',
+        signature: 'spsig...',
         publicKey: 'edpk...',
         message: '...',
       },
@@ -119,7 +119,7 @@ describe('./signin.validation', () => {
             pkh: 'tz1...',
           },
         },
-        signature: 'edsig...',
+        signature: 'spsig...',
         publicKey: 'edpk...',
         message: '...',
       },
@@ -137,7 +137,7 @@ describe('./signin.validation', () => {
             pkh: 'tz1...',
           },
         },
-        signature: 'edsig...',
+        signature: 'spsig...',
         publicKey: 'edpk...',
         message: '...',
       },
@@ -155,16 +155,16 @@ describe('./signin.validation', () => {
             pkh: 'tz1...',
           },
         },
-        signature: 'edsig...',
+        signature: 'spsig...',
         publicKey: 'edpk...',
         message: '...',
-      }
-    ])('should return false when the data is invalid', (data) => {
-            // given ... invalid data
-            // when ... we validate the data
-            const result = SUT.validateSignInData(data)
-            // then ... the result should be true
-            expect(result).toBe(false)
+      },
+    ])('should return false when the data is invalid', data => {
+      // given ... invalid data
+      // when ... we validate the data
+      const result = SUT.validateSignInData(data)
+      // then ... the result should be true
+      expect(result).toBe(false)
     })
   })
 })

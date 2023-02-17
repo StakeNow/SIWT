@@ -95,9 +95,9 @@ export const validateXTZBalanceCondition =
     getBalance({ network, contract: pkh as string })
       .then((balance: number) => ({
         balance,
-        passed: (COMPARISONS[comparator] as any)(value)(balance),
+        passed: (COMPARISONS[comparator] as any)(balance)(value),
       }))
-      .catch((e) => ({
+      .catch(e => ({
         passed: false,
         error: true,
       }))
@@ -113,7 +113,7 @@ export const validateTokenBalanceCondition =
     getTokenBalance({ network, contract: contractAddress as string, pkh: pkh as string, tokenId: tokenId as string })
       .then((balance: number) => ({
         balance,
-        passed: (COMPARISONS[comparator] as any)(value)(balance),
+        passed: (COMPARISONS[comparator] as any)(balance)(value),
       }))
       .catch(() => ({
         passed: false,

@@ -15,7 +15,12 @@ export const validateSignInData = (signInData: any) => {
             properties: {
               type: {
                 type: 'string',
-                enum: [ConditionType.nft, ConditionType.xtzBalance, ConditionType.tokenBalance, ConditionType.allowlist],
+                enum: [
+                  ConditionType.nft,
+                  ConditionType.xtzBalance,
+                  ConditionType.tokenBalance,
+                  ConditionType.allowlist,
+                ],
               },
               value: {
                 type: 'number',
@@ -28,8 +33,16 @@ export const validateSignInData = (signInData: any) => {
               },
               comparator: {
                 type: 'string',
-                enum: [Comparator.eq, Comparator.gte, Comparator.lte, Comparator.gt, Comparator.lt, Comparator.in, Comparator.notIn]
-              }
+                enum: [
+                  Comparator.eq,
+                  Comparator.gte,
+                  Comparator.lte,
+                  Comparator.gt,
+                  Comparator.lt,
+                  Comparator.in,
+                  Comparator.notIn,
+                ],
+              },
             },
             required: ['type', 'comparator', 'value'],
             additionalProperties: false,
