@@ -1,7 +1,8 @@
-import { AccountInfo, SignPayloadResponse } from '@airgap/beacon-sdk'
+import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { useSiwt } from '@siwt/react'
+import { validateContractAddress } from '@taquito/utils'
 import clsx from 'clsx'
-import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, uniq, without } from 'ramda'
+import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, test, uniq, without } from 'ramda'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 
 import { useBeacon } from '../../common/hooks/useBeacon'
@@ -16,7 +17,7 @@ export const Try = () => {
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
 
   const [acq, setAcq] = useState<ACQ>({
-    network: Network.ghostnet,
+    network: Network.GHOSTNET,
     parameters: {
       pkh: '',
     },
@@ -29,12 +30,15 @@ export const Try = () => {
     },
   })
   const [networkTabs, setNetworkTab] = useState<{ name: Network; label: string; current: boolean }[]>([
-    { name: Network.mainnet, label: 'Mainnet', current: false },
-    { name: Network.ghostnet, label: 'Ghostnet', current: true },
+    { name: Network.MAINNET, label: 'Mainnet', current: false },
+    { name: Network.GHOSTNET, label: 'Ghostnet', current: true },
   ])
   const [allowlist, setAllowlist] = useState<string>('')
+  const [isContractAddressValid, setIsContractAddressValid] = useState<boolean>(true)
+  const [isAllowlistInputValid, setIsAllowlistInputValid] = useState<boolean>(true)
   const [selectedPolicies, setSelectedPolicies] = useState<string[]>([])
   const [customPolicies, setCustomPolicies] = useState<string>('')
+  const [isCustomPoliciesValid, setIsCustomPoliciesValid] = useState<boolean>(true)
   const [activeAccount, setActiveAccount] = useState<AccountInfo>({} as AccountInfo)
   const [message, setMessage] = useState<string>('')
   const [signature, setSignature] = useState<string>('')
@@ -95,6 +99,9 @@ export const Try = () => {
 
   const onChangeContractAddress = (event: ChangeEvent<HTMLInputElement>) => {
     setAcq({ ...acq, test: { ...acq.test, contractAddress: event.currentTarget.value } })
+    validateContractAddress(event.currentTarget.value) || event.currentTarget.value === ''
+      ? setIsContractAddressValid(true)
+      : setIsContractAddressValid(false)
   }
 
   const onChangeTokenId = (event: ChangeEvent<HTMLInputElement>) => {
@@ -107,6 +114,9 @@ export const Try = () => {
 
   const onChangeallowlist = (event: ChangeEvent<HTMLInputElement>) => {
     setAllowlist(event.currentTarget.value)
+    test(/^[A-Za-z0-9]{36}(, [A-Za-z0-9]{36})*$/, event.currentTarget.value) || event.currentTarget.value === ''
+      ? setIsAllowlistInputValid(true)
+      : setIsAllowlistInputValid(false)
   }
 
   const onChangeComparator = (id: string) => {
@@ -115,6 +125,9 @@ export const Try = () => {
 
   const onChangeCustomPolicies = (event: ChangeEvent<HTMLInputElement>) => {
     setCustomPolicies(event.currentTarget.value)
+    test(/^([A-Za-z0-9]+, )*[A-Za-z0-9]+$/, event.currentTarget.value) || event.currentTarget.value === ''
+      ? setIsCustomPoliciesValid(true)
+      : setIsCustomPoliciesValid(false)
   }
 
   const onChangeSelectedPolicies = (id: string) => {
@@ -136,11 +149,14 @@ export const Try = () => {
   }
 
   const connectAndSign = () =>
-    connect()
+    connect(acq.network as unknown as NetworkType)
       .then(({ address }) => signMessage(address))
       .then(getActiveAccount)
       .then(accountInfo => accountInfo && setActiveAccount(accountInfo as AccountInfo))
-      .catch(console.log)
+      .catch(error => {
+        disconnect()
+        console.log(error)
+      })
 
   const handleDisconnect = () =>
     disconnect()
@@ -192,6 +208,8 @@ export const Try = () => {
                               id="nft-contract-address"
                               value={acq.test.contractAddress}
                               onChange={onChangeContractAddress}
+                              type="text"
+                              hasValidInput={isContractAddressValid}
                             />
                           </div>
                           <div className="sm:col-span-3 mt-6">
@@ -200,6 +218,9 @@ export const Try = () => {
                               id="token-id"
                               value={acq.test.tokenId}
                               onChange={onChangeTokenId}
+                              type="number"
+                              min={0}
+                              step={1}
                             />
                           </div>
                         </>
@@ -216,6 +237,7 @@ export const Try = () => {
                             id="token-contract-address"
                             value={acq.test.contractAddress}
                             onChange={onChangeContractAddress}
+                            hasValidInput={isContractAddressValid}
                           />
                         </div>
                       ) : (
@@ -228,9 +250,10 @@ export const Try = () => {
                           <TextField
                             label="Addresses"
                             id="allowlist"
-                            explainer="Comma separated list of Tezos addresses (pkh)"
+                            explainer="Comma (and space) separated list of Tezos addresses (pkh)"
                             value={allowlist}
                             onChange={onChangeallowlist}
+                            hasValidInput={isAllowlistInputValid}
                           />
                         </div>
                       ) : (
@@ -263,6 +286,8 @@ export const Try = () => {
                             type="number"
                             value={acq.test.value}
                             onChange={onChangeAmount}
+                            explainer={acq.test.type === ConditionType.xtzBalance ? ' in XTZ' : ''}
+                            min={0}
                           />
                         </div>
                       </div>
@@ -289,6 +314,7 @@ export const Try = () => {
                   value={customPolicies}
                   onChange={onChangeCustomPolicies}
                   explainer="Comma separated list of other policies your dApp may have. For example: 'Cookie policy, Refund policy'"
+                  hasValidInput={isCustomPoliciesValid}
                 />
               </div>
             </div>
@@ -315,14 +341,20 @@ export const Try = () => {
   },
   test: {
     contractAddress: `}
-                  {acq.test.contractAddress ? (
+                  {acq.test.contractAddress &&
+                  acq.test.type !== ConditionType.allowlist &&
+                  acq.test.type !== ConditionType.xtzBalance ? (
                     <span className="text-pink-500 font-bold">{acq.test.contractAddress}</span>
                   ) : (
                     <span className="italic text-gray-400 font-light text-sm">KT...</span>
                   )}
                   {`,
     tokenId: `}
-                  {<span className="text-pink-500 font-bold">{acq.test.tokenId}</span>}
+                  {acq.test.type !== ConditionType.allowlist && acq.test.type !== ConditionType.xtzBalance ? (
+                    <span className="text-pink-500 font-bold">{acq.test.tokenId}</span>
+                  ) : (
+                    <span className="italic text-gray-400 font-light text-sm">...</span>
+                  )}
                   {`,
     type: `}
                   {<span className="text-pink-500 font-bold">{acq.test.type}</span>}

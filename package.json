@@ -68,7 +68,7 @@
     "vitest": "^0.25.8"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^3.3.2",
+    "@airgap/beacon-sdk": "^2.3.12",
     "@headlessui/react": "^1.7.8",
     "@tailwindcss/forms": "^0.5.3",
     "@taquito/utils": "^15.0.1",

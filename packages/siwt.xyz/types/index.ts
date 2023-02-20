@@ -1,6 +1,6 @@
 export enum Network {
-  mainnet = 'mainnet',
-  ghostnet = 'ghostnet',
+  MAINNET = 'mainnet',
+  GHOSTNET = 'ghostnet',
 }
 
 export enum ConditionType {

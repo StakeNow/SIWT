@@ -19,6 +19,9 @@ interface TextFieldProps {
   explainer?: string
   className?: string
   value: string | number
+  hasValidInput?: boolean
+  min?: number
+  step?: number
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -30,6 +33,7 @@ export const TextField: FC<TextFieldProps> = ({
   className = '',
   value,
   onChange,
+  hasValidInput = true,
   ...props
 }) => {
   return (
@@ -40,10 +44,15 @@ export const TextField: FC<TextFieldProps> = ({
       {explainer && <span className="text-xs text-gray-500">{explainer}</span>}
       <div className="mt-1">
         <input
-          type="text"
+          type={type}
           name={id}
           id={id}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-border-black sm:text-sm"
+          className={clsx(
+            'block w-full rounded-md border-gray-300 shadow-sm sm:text-sm',
+            hasValidInput
+              ? 'focus:border-black focus:ring-border-black'
+              : 'border-red-500 focus:border-red-500 focus:ring-border-red-500 focus:ring-red-500 border-2',
+          )}
           value={value}
           onChange={onChange}
           {...props}

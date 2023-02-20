@@ -79,13 +79,15 @@ export function Header() {
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
-            <Logo />
+            <Link href={'/'}>
+              <Logo />
+            </Link>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:block">
-              <NavLink href="/try">Try it out</NavLink>
+              <NavLink href="/try" className='text-xl'>Try it out</NavLink>
             </div>
-            <Button href="https://docs.siwt.xyz" color="slate">
+            <Button href="https://docs.siwt.xyz" color="slate" className='text-xl'>
               <span>Get started!</span>
             </Button>
             <div className="-mr-1 md:hidden">

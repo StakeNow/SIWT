@@ -13,7 +13,9 @@ export const Footer = () => {
       <Container>
         <div className="py-16 flex flex-row w-full justify-between items-center">
           <div className="w-1/3">
-            <Logo />
+            <Link href="/">
+              <Logo />
+            </Link>
           </div>
           <div className="w-1/3">
             <nav className="-mt-6 text-sm" aria-label="quick links">

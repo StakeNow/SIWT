@@ -1,12 +1,11 @@
-import { DAppClient, RequestSignPayloadInput, TezosOperationType } from '@airgap/beacon-sdk'
-import { propOr } from 'ramda'
+import { DAppClient, NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
 
-import { dAppClient, network } from './beaconClient'
+import { dAppClient } from './beaconClient'
 
 export const beacon = (client: DAppClient) => () => {
-  const connect = () =>
+  const connect = (network: NetworkType) =>
     client.requestPermissions({
-      network,
+      network: { type: network },
     })
 
   const disconnect = () => client.clearActiveAccount()
