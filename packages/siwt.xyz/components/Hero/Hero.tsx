@@ -5,6 +5,7 @@ import StakeNowLogo from '../../images/stakenow.svg'
 import StackReportLogo from '../../images/the-stack-report-logo.svg'
 import { Button } from '../Button'
 import { Container } from '../Container'
+import { NavLink } from '../NavLink'
 
 export const Hero = () => (
   <Container className="pt-20 pb-16 text-center lg:pt-32">
@@ -14,8 +15,9 @@ export const Hero = () => (
     <p className="mx-auto mt-6 max-w-2xl text-lg tracking-tight text-slate-700">
       Sign in with Tezos allows developers to easily provide access control to users based on their Tezos wallet.
     </p>
-    <div className="mt-10 flex justify-center gap-x-6">
-      <Button href="https://docs.siwt.xyz">Get started</Button>
+    <div className="mt-10 flex justify-center items-center gap-x-6">
+      <NavLink href="/try" className='text-xl'>Try it out</NavLink>{' '}
+      <Button href="https://docs.siwt.xyz" className='text-xl'>Get started</Button>
     </div>
     <div className="mt-36 lg:mt-44">
       <p className="font-display text-base text-slate-900">Already using SIWT:</p>
