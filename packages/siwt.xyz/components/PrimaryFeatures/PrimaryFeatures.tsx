@@ -9,17 +9,22 @@ const features = [
   {
     title: 'Standardized message signing',
     description: 'Verify ownership by having your users sign a message.',
-    image: '/images/placeholder.png',
+    image: '/images/signing.png',
   },
   {
-    title: 'Agreement to terms and conditions',
-    description: 'Use the message signing to verify that your users have agreed to your terms and conditions.',
-    image: '/images/placeholder.png',
+    title: 'Agreement to usage policies',
+    description: 'Use the message signing to verify that your users have agreed to your policies.',
+    image: '/images/policies-image.png',
   },
   {
     title: 'Determine your access control requirements',
     description: 'Use the Tezos blockchain to determine what access your users have to your application.',
-    image: '/images/placeholder.png',
+    image: '/images/access-control-query.png',
+  },
+  {
+    title: 'Discord bot',
+    description: 'Use SIWT to provide exclusive access to channels in your Discord server.',
+    image: '/images/discord.png',
   },
 ]
 
