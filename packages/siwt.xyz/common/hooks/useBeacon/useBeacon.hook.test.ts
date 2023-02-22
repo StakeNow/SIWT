@@ -17,7 +17,7 @@ describe('common/beaconWallet/useBeaconWallet.hook', () => {
       } as any
 
       const { result } = renderHook(() => SUT.beacon(dAppClientStub)())
-      await act(async (): Promise<any> => result.current.connect())
+      await act(async (): Promise<any> => result.current.connect(network.type))
 
       expect(requestPermissionsStub).toHaveBeenCalledWith({
         network,

@@ -16,6 +16,7 @@ export const _getLedgerFromStorage =
   ({ network, contract }: { network: Network; contract: string }) =>
     http
       .get(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/keys?limit=10000`)
+      // @ts-ignore
       .then(pipe(prop('data'), map(pick(['key', 'value']))))
       .catch(error => error)
 
