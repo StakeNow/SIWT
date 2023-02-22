@@ -1,0 +1,31 @@
+{
+  "name": "docs.siwt.xyz",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/docs.siwt.xyz",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "command": "npm run build --prefix=packages/docs.siwt.xyz -- --out-dir=../../dist/packages/docs.siwt.xyz"
+    },
+    "start": {
+      "command": "npm run start --prefix=packages/docs.siwt.xyz -- --port=3200"
+    },
+    "serve": {
+      "command": "npm run serve --prefix=packages/docs.siwt.xyz -- --port=3500"
+    },
+    "clear": {
+      "command": "npm run clear --prefix=packages/docs.siwt.xyz"
+    },
+    "deploy": {
+      "command": "npm run deploy --prefix=packages/docs.siwt.xyz"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/docs.siwt.xyz/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  },
+  "tags": []
+}
