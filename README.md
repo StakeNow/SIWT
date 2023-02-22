@@ -24,7 +24,7 @@ Use this package to define the requirements your user needs to obtain access. Cu
 
 [NPM](https://www.npmjs.com/package/@siwt/acq)
 
-### [Utils](https://github.com/StakeNow/SIWT/tree/develop/packages/utils)
+### [SDK](https://github.com/StakeNow/SIWT/tree/develop/packages/sdk)
 
 This package contains utilities to facilitate the creation of messages and verification of signatures. It can be used on both FE and server.
 
@@ -221,7 +221,7 @@ _index.js_
 import { DAppClient } from '@airgap/beacon-sdk'
 import jwt_decode from 'jwt-decode'
 
-import { createMessagePayload, signIn } from '@siwt/utils'
+import { createMessagePayload, signIn } from '@siwt/sdk'
 
 const dAppClient = new DAppClient({ name: 'SIWT Demo' })
 const state = { accessToken: '' }

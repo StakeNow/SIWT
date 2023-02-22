@@ -1,5 +1,5 @@
 import { queryAccessControl } from '@siwt/acq'
-import { verifySignature } from '@siwt/utils'
+import { verifySignature } from '@siwt/sdk'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { assocPath, multiply, path } from 'ramda'
 

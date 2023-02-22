@@ -1,4 +1,4 @@
-# utils
+# sdk
 
 This library contains utilities used to handle the messages.
 
@@ -11,7 +11,7 @@ The message is constructed from the URL to your dApp and the user's wallet addre
 Creating the message:
 
 ```
-import { createMessage } from '@siwt/utils'
+import { createMessage } from '@siwt/sdk'
 
 // constructing a message
 const message = createMessagePayload({
@@ -52,7 +52,7 @@ To successfully sign in you will need:
 With this you can verify the user is the actual owner of the address he/she is trying to sign in with. It is very similar to a user proving the ownership of their username by providing the correct password. This verification happens server side. This means you will have to set up a server that provides the API access. At this point the library looks for a `signin` endpoint. This is (for now) a hard requirement.
 
 ```
-import { signin } from '@siwt/utils'
+import { signin } from '@siwt/sdk'
 
 const API_URL = 'https://url-to-your-api.xyz'
 const verification = signin(API_URL)({
@@ -68,8 +68,8 @@ Now that we have permissions it is time to let your dApp know. For communicating
 
 ## Running unit tests
 
-Run `nx test utils` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test sdk` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Running lint
 
-Run `nx lint utils` to execute the lint via [ESLint](https://eslint.org/).
+Run `nx lint sdk` to execute the lint via [ESLint](https://eslint.org/).
