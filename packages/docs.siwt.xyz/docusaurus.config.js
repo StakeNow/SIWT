@@ -73,14 +73,14 @@ const config = {
         ],
       },
       footer: {
-        style: 'dark',
+        style: 'light',
         links: [
           {
             title: 'Docs',
             items: [
               {
                 label: 'Getting started',
-                to: '/getting-started/ui',
+                to: 'getting-started/ui',
               },
               {
                 label: 'Access control query',
@@ -91,8 +91,12 @@ const config = {
                 to: '/core',
               },
               {
-                label: '',
-                to: '/getting-started/ui',
+                label: 'SDK',
+                to: '/sdk',
+              },
+              {
+                label: 'Discord bot',
+                to: '/discord-bot/intro',
               },
             ],
           },
@@ -100,17 +104,17 @@ const config = {
             title: 'Community',
             items: [
               {
-                label: 'Discord',
-                href: 'https://discord.com/invite/6J3bjhkpxm',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/stakenow',
-              },
+                      label: 'Discord',
+                      href: 'https://discord.com/invite/6J3bjhkpxm',
+                    },
+                    {
+                      label: 'Twitter',
+                      href: 'https://twitter.com/stakenow',
+                    },
             ],
           },
           {
-            title: 'More',
+              title: 'More',
             items: [
 
               {
