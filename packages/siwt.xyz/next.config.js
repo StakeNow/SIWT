@@ -13,7 +13,7 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    loader: 'akamai',
+    unoptimized: true,
   },
   output: 'standalone',
 }
