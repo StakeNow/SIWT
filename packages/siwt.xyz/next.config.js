@@ -12,6 +12,10 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  images: {
+    loader: 'akamai',
+  },
+  output: 'standalone',
 }
 
 module.exports = withNx(nextConfig)
