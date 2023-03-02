@@ -17,7 +17,7 @@ Make sure you run
 npm install
 ```
 
-in the root of the project
+in the root of the project.
 
 ## Usage
 

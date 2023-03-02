@@ -1,6 +1,5 @@
-# sdk
-
-This library contains utilities used to handle the messages.
+# SDK
+This SDK library (sdk) is used to handle the different messages.
 
 ## Usage
 
@@ -28,17 +27,19 @@ The resulting message will look something like this:
 
 Deconstructing this message will reveal the following format:
 
-**05**: Indicates that this is a Micheline expression
+```
+**05**: Indicates that this is a Micheline expression.
 
-**01**: Indicates it is converted to bytes
+**01**: Indicates it is converted to bytes.
 
-**000000bc**: Indicates the length of the message in hex
+**000000bc**: Indicates the length of the message in hex.
 
-**54...**: Is the actual message in bytes
+**54...**: Is the actual message in bytes.
+```
+
 This message is now ready to be signed by the user.
 
 ### Signing in the user
-
 The user specific signature derived from the signed message is used to sign the user into the dApp.
 
 To successfully sign in you will need:
@@ -67,9 +68,7 @@ const verification = signin(API_URL)({
 Now that we have permissions it is time to let your dApp know. For communicating information about your user, JWT tokens are being used. SIWT provides an abstraction to make it more convenenient to work with them.
 
 ## Running unit tests
-
-Run `nx test sdk` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test utils` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Running lint
-
-Run `nx lint sdk` to execute the lint via [ESLint](https://eslint.org/).
+Run `nx lint utils` to execute the lint via [ESLint](https://eslint.org/).

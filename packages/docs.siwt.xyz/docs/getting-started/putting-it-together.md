@@ -134,7 +134,7 @@ _index.html_
 
 > For the full setup including the build process check out the demo folder.
 
-## **Implementing your authorization API**
+### **Implementing your authorization API**
 
 The library relies in the backend on your signin endpoint to be called `/signin`, which is a `POST` request that takes the following body:
 
