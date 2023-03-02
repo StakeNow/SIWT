@@ -28,15 +28,19 @@ To install the bot you will need a developer account on Discord:
 Make sure you have run `npm install` in the root of the project.
 
 The bot can now be built by using:
+
 ```
 npx nx build discord
 ```
+
 The built files can be found in `dist/packages/discord` and are ready to be deployed to your server.
 
 ## Running the bot
+
 Now that we have the bot configured on Discord and the UI running, we can start up the bot.
 
 ### Environment variables
+
 On your server, in the root folder create an environment file called `.env` looking as follows:
 
 ```
@@ -50,6 +54,7 @@ Use the configuration in `/packages/discord/src/app/config` to set up the access
 
 After you have set the environment and query it is time to start the server.
 On your server in the project folder run:
+
 ```
 node ./main.js
 ```
@@ -60,6 +65,7 @@ pm2 start ./main.js
 ```
 
 If your bot started successfully you should get a message looking something like:
+
 ```
 SIWT discord bot api listening on port 3000
 Ready! Logged in as SIWT#9646
@@ -72,6 +78,7 @@ When activating the bot it will create a role called `Verified`, create a channe
 The message contains a button labeled `Verify`. 
 
 ### The flow
+
 When a user clicks the button, a verification attempt will be created in the DB.
 A new message will be sent to the user with a button labeled `Let's go`.
 This button will direct the user to the UI you have deployed earlier together with the ID of the verification attempt.
@@ -84,4 +91,5 @@ If the signature is valid and the user meets the requirements, the `Verified` ro
 The user will now have access to your private channels with the `Verified` role permission requirements.
 
 ## Support
+
 For support please reach out on our [Discord](https://discord.com/invite/6J3bjhkpxm?utm_source=GH&utm_medium=GH&utm_campaign=GH)

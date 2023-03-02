@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { queryAccessControl } from '@siwt/acq'
-import { verifySignature } from '@siwt/utils'
+import { verifySignature } from '@siwt/sdk'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'

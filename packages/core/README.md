@@ -21,6 +21,7 @@ const siwtClient = siwt({
 The secret can be a random string you generate. They are used to encode and decode the tokens and acts as a security layer. Treat them accordingly and refer to the [official documentation](https://jwt.io/) regarding their requirements.
 
 ### Generating tokens
+
 **Access Token:**
 
 Use the access token for authorization upon each protected API call. Add it as a bearer token in the authorization header of each API call. Since the access token is being sent with every api call, it is a good idea to keep it as small as possible. The minimum data required is the users pkh, however any extra claims are supported. 
@@ -72,10 +73,13 @@ The access and refresh token can be verified by using
 ```
 siwtClient.verifyAccessToken(accessToken)
 ```
+
 and
+
 ```
 siwtClient.verifyRefreshToken(refreshToken)
 ```
+
 respectively.
 
 ## Running unit tests

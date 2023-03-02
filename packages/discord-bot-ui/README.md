@@ -20,7 +20,9 @@ NX_APPLICATION_URL='Name and/or url of your discord server'
 ```
 
 ### Building
+
 Run
+
 ```
 npx nx build discord-bot-ui
 ```

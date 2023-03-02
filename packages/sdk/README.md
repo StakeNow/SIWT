@@ -1,5 +1,5 @@
-# Utils
-This utilities library (utils) is used to handle the different messages.
+# SDK
+This SDK library (sdk) is used to handle the different messages.
 
 ## Usage
 
@@ -8,8 +8,9 @@ This utilities library (utils) is used to handle the different messages.
 The message is constructed from the URL to your dApp and the user's wallet address more specifically the private key hash (pkh).
 
 Creating the message:
+
 ```
-import { createMessage } from '@siwt/utils'
+import { createMessage } from '@siwt/sdk'
 
 // constructing a message
 const message = createMessagePayload({
@@ -17,6 +18,7 @@ const message = createMessagePayload({
   pkh: 'tz1',
 })
 ```
+
 The resulting message will look something like this:
 
 ```
@@ -51,7 +53,7 @@ To successfully sign in you will need:
 With this you can verify the user is the actual owner of the address he/she is trying to sign in with. It is very similar to a user proving the ownership of their username by providing the correct password. This verification happens server side. This means you will have to set up a server that provides the API access. At this point the library looks for a `signin` endpoint. This is (for now) a hard requirement.
 
 ```
-import { signin } from '@siwt/utils'
+import { signin } from '@siwt/sdk'
 
 const API_URL = 'https://url-to-your-api.xyz'
 const verification = signin(API_URL)({
@@ -62,6 +64,7 @@ const verification = signin(API_URL)({
 ```
 
 ### Tokens
+
 Now that we have permissions it is time to let your dApp know. For communicating information about your user, JWT tokens are being used. SIWT provides an abstraction to make it more convenenient to work with them.
 
 ## Running unit tests

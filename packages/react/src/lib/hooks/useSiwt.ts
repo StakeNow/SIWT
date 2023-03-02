@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { signIn as _signIn, createMessagePayload } from '@siwt/utils'
+import { signIn as _signIn, createMessagePayload } from '@siwt/sdk'
 
 export const _useSiwt =
   ({ createMessagePayload, signIn }: { createMessagePayload: Function; signIn: Function }) =>

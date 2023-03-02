@@ -13,7 +13,7 @@ export enum ConditionType {
   nft = 'nft',
   xtzBalance = 'xtzBalance',
   tokenBalance = 'tokenBalance',
-  whitelist = 'whitelist',
+  allowlist = 'allowlist',
 }
 
 export enum Comparator {
@@ -53,7 +53,6 @@ export interface AccessControlQueryDependencies {
     pkh: string
     tokenId: string
   }) => Promise<number>
-  whitelist?: string[]
 }
 
 export interface AccessControlQuery {

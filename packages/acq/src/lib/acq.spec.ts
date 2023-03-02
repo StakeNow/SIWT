@@ -238,7 +238,7 @@ describe('acq', () => {
     expect(result).toEqual(expected)
     expect(getLedgerFromStorageStub).not.toHaveBeenCalled()
     expect(getBalanceStub).toHaveBeenCalledWith({
-      contract: 'CONTRACT',
+      contract: validPkh,
       network: Network.ghostnet,
     })
     expect(getTokenBalanceStub).not.toHaveBeenCalled()
@@ -382,7 +382,7 @@ describe('acq', () => {
           pkh: validPkh,
         },
         test: {
-          type: ConditionType.whitelist,
+          type: ConditionType.allowlist,
           comparator: Comparator.in,
         },
       },
@@ -401,7 +401,7 @@ describe('acq', () => {
           pkh: validPkh,
         },
         test: {
-          type: ConditionType.whitelist,
+          type: ConditionType.allowlist,
           comparator: Comparator.in,
         },
       },
@@ -414,10 +414,17 @@ describe('acq', () => {
         },
       },
     ],
-  ])('should validate a pkh in the whitelist', async (query, whitelist, expected) => {
-    // when ... we want to validate if a pkh should be allowed based on whitelist validation
+  ])('should validate a pkh in the allowlist', async (query, allowlist, expected) => {
+    // when ... we want to validate if a pkh should be allowed based on allowlist validation
     // then ... then it should return the correct result as expected
-    const result = await SUT._queryAccessControl({ whitelist })(query)
+    const getLedgerFromStorageStub = jest.fn()
+    const getBalanceStub = jest.fn()
+    const getTokenBalanceStub = jest.fn()
+    const result = await SUT._queryAccessControl({
+      getLedgerFromStorage: getLedgerFromStorageStub,
+      getBalance: getBalanceStub,
+      getTokenBalance: getTokenBalanceStub,
+    })(query, allowlist)
 
     expect(result).toEqual(expected)
   })
