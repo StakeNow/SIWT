@@ -6,6 +6,7 @@ import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, sp
 import React, { ChangeEvent, useEffect, useState } from 'react'
 
 import { useBeacon } from '../../common/hooks/useBeacon'
+import { checkAccess } from '../../common/siwt/siwt'
 import { ACQ, Comparator, ConditionType, Network } from '../../types'
 import { Button } from '../Button'
 import { Container } from '../Container'
@@ -13,7 +14,7 @@ import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
 
 export const Try = () => {
-  const { createMessagePayload, signIn } = useSiwt(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4200/api')
+  const { createMessagePayload } = useSiwt(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4200/api')
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
 
   const [acq, setAcq] = useState<ACQ>({
@@ -164,9 +165,9 @@ export const Try = () => {
       .catch(() => console.log('Failed to disconnect'))
 
   const requestResource = () =>
-    signIn({ acq, signature, message, publicKey: activeAccount?.publicKey, allowlist: split(',')(allowlist) })
+    checkAccess({ acq, signature, message, publicKey: activeAccount?.publicKey, allowlist: split(',')(allowlist) })
       .then(({ data }) => setAccessResponse(data))
-      .catch(({ response: { data } }) => setAccessResponse(data))
+      .catch(console.log)
 
   return (
     <Container className="pt-20 pb-16 lg:pt-32">

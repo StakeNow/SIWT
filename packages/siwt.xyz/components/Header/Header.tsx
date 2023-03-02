@@ -85,9 +85,11 @@ export function Header() {
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:block">
-              <NavLink href="/try" className='text-xl'>Try it out</NavLink>
+              <NavLink href="/try" className="text-xl">
+                Try it out
+              </NavLink>
             </div>
-            <Button href="https://docs.siwt.xyz" color="slate" className='text-xl'>
+            <Button href="https://docs.siwt.xyz" color="slate" className="text-xl">
               <span>Get started!</span>
             </Button>
             <div className="-mr-1 md:hidden">

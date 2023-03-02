@@ -2,7 +2,7 @@ import Ajv from 'ajv'
 
 import { Comparator, ConditionType } from '../../types'
 
-export const validateSignInData = (signInData: any) => {
+export const validateAccessData = (signInData: Record<string, any>) => {
   const ajv = new Ajv()
   const schema = {
     type: 'object',

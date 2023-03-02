@@ -1,8 +1,7 @@
-import { Comparator } from '../../types'
-import * as SUT from './signin.validation'
+import * as SUT from './siwt.validation'
 
-describe('./signin.validation', () => {
-  describe('validateSignInData', () => {
+describe('./siwt.validation', () => {
+  describe('validateAccessData', () => {
     it('should return true when the data is valid', () => {
       // given ... valid data
       const data = {
@@ -25,7 +24,7 @@ describe('./signin.validation', () => {
       }
 
       // when ... we validate the data
-      const result = SUT.validateSignInData(data)
+      const result = SUT.validateAccessData(data)
       // then ... the result should be true
       expect(result).toBe(true)
     })
@@ -162,7 +161,7 @@ describe('./signin.validation', () => {
     ])('should return false when the data is invalid', data => {
       // given ... invalid data
       // when ... we validate the data
-      const result = SUT.validateSignInData(data)
+      const result = SUT.validateAccessData(data)
       // then ... the result should be true
       expect(result).toBe(false)
     })
