@@ -16,14 +16,25 @@
     "clear": {
       "command": "npm run clear --prefix=packages/docs.siwt.xyz"
     },
-    "deploy": {
-      "command": "npm run deploy --prefix=packages/docs.siwt.xyz"
-    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/docs.siwt.xyz/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/docs.siwt.xyz",
+        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk deploy"]
+      }
+    },
+    "destroy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/docs.siwt.xyz",
+        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk destroy"]
       }
     }
   },

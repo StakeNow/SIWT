@@ -1,6 +1,6 @@
 {
   "app": "npx ts-node cdk/bin/cdk.ts",
-  "output": "../../dist/packages/siwt.xyz/cdk",
+  "output": "../../dist/packages/docs.siwt.xyz/cdk",
   "requireApproval": "never",
   "watch": {
     "include": ["**"],
