@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ### **Implementing the ui**
 
-Sign In With Tezos will require a ui to interact with the user and an authentication API to make the necessary verifications and hand out permissions. On the ui we will make use of [Beacon]('https://www.walletbeacon.io/') to interact with the user's wallet.
+Sign In With Tezos will require a ui to interact with the user and an authentication API to make the necessary verifications and hand out permissions. On the ui we will make use of [Beacon](https://www.walletbeacon.io/) to interact with the user's wallet.
 
 #### **Connecting the wallet**
 
