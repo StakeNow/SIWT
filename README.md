@@ -5,6 +5,8 @@ Sign In With Tezos (SIWT) is a library that supports the development of your dec
 - proving the users ownership of the private key to the address the user signs in with,
 - adding permissions to use your API or backend using on chain data.
 
+> **Note** Read the [online documentation](https://docs.siwt.xyz/).
+
 ## Packages
 
 SIWT is split up in several packages:
