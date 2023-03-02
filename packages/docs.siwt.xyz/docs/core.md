@@ -17,15 +17,15 @@ const siwtClient = siwt({
   accessTokenSecret: 'YOUR ACCESS TOKEN SECRET',
   refreshTokenSecret: 'YOUR REFRESH TOKEN SECRET',
   idTokenSecret: 'YOUR ID TOKEN SECRET',
-  accessTokenExpiration: 900, // Seconds. Optional, Default 15 mins
-  refreshTokenExpiration: 36000, // Seconds. Optional, Default 1 month
-  idTokenExpiration: 2592000 // Seconds. Optional, Default 10 hrs
+  accessTokenExpiration: 900,                      // Seconds. Optional, Default 15 mins.
+  refreshTokenExpiration: 36000,                   // Seconds. Optional, Default 1 month.
+  idTokenExpiration: 2592000                       // Seconds. Optional, Default 10 hrs.
 })
 ```
 
 ## Secrets
 
-The secret can be a random string you generate. They are used to encode and decode the tokens and acts as a security layer. Treat them accordingly.
+The secret can be a random string you generate. They are used to encode and decode the tokens and acts as a security layer. Treat them accordingly and refer to the [official documentation](https://jwt.io/) regarding their requirements.
 
 ## Generating tokens
 

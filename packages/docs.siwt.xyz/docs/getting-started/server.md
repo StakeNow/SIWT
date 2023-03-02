@@ -4,7 +4,7 @@ title: Server
 sidebar_position: 2
 ---
 
-### **Verifying the signature**
+#### **Verifying the signature**
 
 Just having the user sign this message is not enough. We also have to make sure the signature is valid before allowing the user to use our dApp. This happens on the server and requires only the following statement:
 
@@ -12,7 +12,7 @@ Just having the user sign this message is not enough. We also have to make sure 
 const isValidSignature = verifySignature(message, pk, signature)
 ```
 
-### **Creating tokens**
+#### **Creating tokens**
 
 Now that you have verified the identity, you can let your application know all is good in the world. You do this using JSON Web Tokens or JWT for short. For more information about JWT check the [official website](https://jwt.io).
 

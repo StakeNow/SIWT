@@ -8,15 +8,14 @@ The SIWT Discord bot can be used to allow your Discord members to identitfy them
 ## How it works
 
 ### On activation
-
-When activating the bot it will create a role called `Verified`, create a channel called verification and send a message to it.
-The message contains a button labeled `Verify`.
+When activating the bot it will create a role called `Verified`, create a channel called `#verification` and send a message to it.
+The message contains a button labeled `Verify`. 
 
 ### The flow
 
 When a user clicks the button, a verification attempt will be created in the DB.
 A new message will be sent to the user with a button labeled `Let's go`.
-This button will direct the user to the ui you've deployed earlier together with the ID of the verification attempt.
+This button will direct the user to the UI you have deployed earlier together with the ID of the verification attempt.
 
 Once the user arrives at the UI, the user will be requested to connect their wallet and sign a message.
 After signing the message, the UI will attempt to contact the bot to verify the signature and to check if this user meets

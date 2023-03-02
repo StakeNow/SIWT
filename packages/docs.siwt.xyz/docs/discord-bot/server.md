@@ -5,24 +5,25 @@ title: Server
 
 ## Requirements
 
-A server running Node 16 or higher configured to accept requests on the port you have set to run express on. (default is 3000).
-For an example on how to set up a Node server using Ubuntu and Nginx check: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-18-04. Make sure you set the environment variables as explained further down.
+A server running Node 16 or higher configured to accept requests on the port you have set to run express on. Default is 3000.
+For an example on how to set up a Node server using Ubuntu and Nginx check [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-18-04). Make sure you set the environment variables as explained further down.
 
 ### Setting up your Discord server
 #### Installing the bot
 
-To install the bot you'll need a developer account on Discord:
+To install the bot you will need a developer account on Discord:
 
-- Create one or sign in to your existing one at https://discord.com/developers
-- Create a new application and give it a shiny little avatar
-- Add a bot and give it an even shinier avatar
-  - Click the Reset Token button and keep it in a safe place, we'll need it later. Make sure you keep this token secret and reset it if you suspect it might have been compromised.
-  - Turn on the privileged gateway events
-- Save your settings
+- Create one or sign in to your existing one at [discord.com/developers](https://discord.com/developers).
+- Create a new application and give it a shiny little avatar.
+- Add a bot and give it an even shinier avatar.
+  - Click the Reset Token button and keep it in a safe place, we will need it later. Make sure you keep this token secret and reset it if you suspect it might have been compromised.
+  - Turn on the privileged gateway events.
+- Save your settings.
+
 
 ## Building and deploying
 
-Make sure you've run `npm install` in the root of the project
+Make sure you have run `npm install` in the root of the project.
 
 The bot can now be built by using:
 
