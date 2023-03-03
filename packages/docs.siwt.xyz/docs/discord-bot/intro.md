@@ -8,8 +8,9 @@ The SIWT Discord bot can be used to allow your Discord members to identitfy them
 ## How it works
 
 ### On activation
+
 When activating the bot it will create a role called `Verified`, create a channel called `#verification` and send a message to it.
-The message contains a button labeled `Verify`. 
+The message contains a button labeled `Verify`.
 
 ### The flow
 
@@ -27,4 +28,3 @@ The user will now have access to your private channels with the `Verified` role 
 ## Support
 
 For support please reach out on our [Discord](https://discord.com/invite/6J3bjhkpxm?utm_source=GH&utm_medium=GH&utm_campaign=GH)
-

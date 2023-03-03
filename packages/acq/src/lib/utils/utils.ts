@@ -6,6 +6,8 @@
 import { validateAddress } from '@taquito/utils'
 import {
   T,
+  add,
+  addIndex,
   always,
   cond,
   divide,
@@ -20,6 +22,7 @@ import {
   prop,
   propEq,
   propOr,
+  reduce,
   uniq,
 } from 'ramda'
 
@@ -75,8 +78,8 @@ export const validateNFTCondition =
   }: AccessControlQuery) =>
     getLedgerFromStorage &&
     getLedgerFromStorage({ network, contract: contractAddress as string })
-      .then(storage => {
-        const ownedAssets = filterOwnedAssets(pkh as string)(storage as LedgerStorage[])
+      .then(ledger => {
+        const ownedAssets = filterOwnedAssets(pkh as string)(ledger as LedgerStorage[])
         const ownedAssetIds = getOwnedAssetIds(ownedAssets)
         return {
           passed: (COMPARISONS[comparator] as any)(prop('length')(ownedAssets))(value),
@@ -125,3 +128,14 @@ export const validateAllowlistCondition =
   ({ parameters: { pkh }, test: { comparator } }: AccessControlQuery) => ({
     passed: (COMPARISONS[comparator] as any)(pkh)(allowlist || []),
   })
+
+export const validateTimeConstraint = (timestamp: number) => Date.now() < timestamp + 1
+
+export const hexToAscii = (hex: string) => {
+  // convert hex to ascii
+  let ascii = ''
+  for (var n = 0; n < hex.length; n += 2) {
+    ascii += String.fromCharCode(parseInt(hex.substring(n, n + 2), 16))
+  }
+  return ascii
+}

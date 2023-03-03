@@ -1,20 +1,25 @@
 # Discord
+
 The SIWT Discord bot should be used to allow your Discord members to identitfy themselves using their Tezos wallet. The bot automatically assigns the `Verified` role if your user successfully signs in and passes the requirements you set using the [Access Control Query](https://github.com/StakeNow/SIWT/tree/develop/packages/acq) package.
 
 ## Requirements
 
 ### Server
+
 A server running Node 16 or higher configured to accept requests on the port you have set to run express on. Default is 3000.
 For an example on how to set up a Node server using Ubuntu and Nginx check [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-18-04). Make sure you set the environment variables as explained further down.
 
 ### UI
-The UI is used to allow users to connect their wallet and validate their address by signing a message. The signature is required to verify that the user meets the requirements you have set on the server. It can be deployed on the same server as the bot, or you may choose to deploy it on a separate service like a S3/CloudFront. 
+
+The UI is used to allow users to connect their wallet and validate their address by signing a message. The signature is required to verify that the user meets the requirements you have set on the server. It can be deployed on the same server as the bot, or you may choose to deploy it on a separate service like a S3/CloudFront.
 
 ## Creating private channels
+
 Create a new text channel, give it a name and set it to `Private`.
 In the next prompt make sure you select the `Verified` role and click create channel.
 
 ## Installing the bot
+
 To install the bot you will need a developer account on Discord:
 
 - Create one or sign in to your existing one at [discord.com/developers](https://discord.com/developers).
@@ -25,6 +30,7 @@ To install the bot you will need a developer account on Discord:
 - Save your settings.
 
 ## Building and deploying
+
 Make sure you have run `npm install` in the root of the project.
 
 The bot can now be built by using:
@@ -50,6 +56,7 @@ APP_URL="This is the url of you UI"
 ```
 
 ### Access control query
+
 Use the configuration in `/packages/discord/src/app/config` to set up the access control query. Get [more information](https://github.com/StakeNow/SIWT/tree/develop/packages/acq) on the access control query (acq) package.
 
 After you have set the environment and query it is time to start the server.
@@ -60,6 +67,7 @@ node ./main.js
 ```
 
 If you use `pm2` as per the tutorial above start the server by running:
+
 ```
 pm2 start ./main.js
 ```
@@ -74,8 +82,9 @@ Ready! Logged in as SIWT#9646
 ## How it works
 
 ### On activation
+
 When activating the bot it will create a role called `Verified`, create a channel called `#verification` and send a message to it.
-The message contains a button labeled `Verify`. 
+The message contains a button labeled `Verify`.
 
 ### The flow
 

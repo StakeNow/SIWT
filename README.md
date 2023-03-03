@@ -10,10 +10,13 @@ Sign In With Tezos (SIWT) is a library that supports the development of your dec
 SIWT is split up in several packages:
 
 ### [Core](https://github.com/StakeNow/SIWT/tree/develop/packages/core)
+
 This [package](https://www.npmjs.com/package/@siwt/core) handles the JWT tokens. Use this on the servers side to create and verify tokens. This package should only be used server side.
 
 ### [Access Control Query (acq)](https://github.com/StakeNow/SIWT/tree/develop/packages/acq)
+
 Use this [package](https://www.npmjs.com/package/@siwt/acq) to define the requirements your user needs to fulfil to obtain access. Currently it supports:
+
 - checking if your user has a certain NFT
 - checking if a user is (or is not) on a provided allowlist
 - checking if a user has a min/max amount of XTZ
@@ -33,6 +36,7 @@ SIWT.
 A react UI that is part of the Discord bot. It is required so your Discord members can use their Tezos wallets to sign in to your server.
 
 ### [React](https://github.com/StakeNow/SIWT/tree/develop/packages/react)
+
 This [package](https://www.npmjs.com/package/@siwt/react) contains react hooks to make implementation of SIWT in your React application easier.
 
 ## Getting started with your project
