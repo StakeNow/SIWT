@@ -9,8 +9,7 @@ import { find, map, pathEq, pathOr, paths, pick, pipe, prop, propOr } from 'ramd
 import { API_URLS } from '../constants'
 import { http } from '../http'
 import { Network } from '../types'
-import { denominate } from '../utils'
-import { hexToAscii } from '../utils/utils'
+import { denominate, hexToAscii } from '../utils'
 
 export const _getLedgerFromStorage =
   (http: AxiosInstance) =>

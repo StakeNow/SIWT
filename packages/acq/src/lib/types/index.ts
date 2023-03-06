@@ -53,6 +53,15 @@ export interface AccessControlQueryDependencies {
     pkh: string
     tokenId: string
   }) => Promise<number>
+  getAttributesFromStorage?: ({
+    network,
+    contract,
+    tokenId,
+  }: {
+    network: Network,
+    contract: string,
+    tokenId: string,
+  }) => Promise<{ name: string, value: string }[] | void>
 }
 
 export interface AccessControlQuery {
@@ -66,6 +75,7 @@ export interface AccessControlQuery {
     type: ConditionType
     comparator: Comparator
     value?: number
+    checkTimeConstraint?: boolean
   }
 }
 

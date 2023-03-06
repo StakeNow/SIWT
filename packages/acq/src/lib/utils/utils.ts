@@ -6,8 +6,6 @@
 import { validateAddress } from '@taquito/utils'
 import {
   T,
-  add,
-  addIndex,
   always,
   cond,
   divide,
@@ -22,8 +20,9 @@ import {
   prop,
   propEq,
   propOr,
-  reduce,
   uniq,
+  find,
+  allPass,
 } from 'ramda'
 
 import { COMPARISONS } from '../constants'
@@ -31,7 +30,7 @@ import { AccessControlQuery, AccessControlQueryDependencies, AssetContractType, 
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
-export const filterOwnedAssetsFromMultiAssetContract = (pkh: string) => filter(pathEq(['key', 'address'], pkh))
+export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenId: string) => filter(allPass([pathEq(['key', 'address'], pkh), propEq('value', tokenId)]))
 
 export const determineContractAssetType = pipe(
   head,
@@ -43,7 +42,7 @@ export const determineContractAssetType = pipe(
   ]),
 )
 
-export const filterOwnedAssets = (pkh: string) =>
+export const filterOwnedAssets = (pkh: string, tokenId: string) =>
   cond([
     [
       pipe(determineContractAssetType, equals(AssetContractType.nft)),
@@ -51,7 +50,7 @@ export const filterOwnedAssets = (pkh: string) =>
     ],
     [
       pipe(determineContractAssetType, equals(AssetContractType.multi)),
-      filterOwnedAssetsFromMultiAssetContract(pkh) as any,
+      filterOwnedAssetsFromMultiAssetContract(pkh, tokenId) as any,
     ],
     [
       pipe(determineContractAssetType, equals(AssetContractType.single)),
@@ -70,19 +69,44 @@ export const getOwnedAssetIds = cond([
 export const denominate = ([x, y]: number[]) => divide(y, 10 ** x)
 
 export const validateNFTCondition =
-  (getLedgerFromStorage: AccessControlQueryDependencies['getLedgerFromStorage']) =>
+  (
+    getLedgerFromStorage: AccessControlQueryDependencies['getLedgerFromStorage'],
+    getAttributesFromStorage: AccessControlQueryDependencies['getAttributesFromStorage'],
+  ) =>
   ({
     network = Network.ghostnet,
     parameters: { pkh },
-    test: { contractAddress, comparator, value },
+    test: { contractAddress, comparator, value, checkTimeConstraint = false, tokenId = '0' },
   }: AccessControlQuery) =>
     getLedgerFromStorage &&
     getLedgerFromStorage({ network, contract: contractAddress as string })
-      .then(ledger => {
-        const ownedAssets = filterOwnedAssets(pkh as string)(ledger as LedgerStorage[])
+      .then(async (ledger) => {
+        const ownedAssets = filterOwnedAssets(pkh as string, tokenId)(ledger as LedgerStorage[])
         const ownedAssetIds = getOwnedAssetIds(ownedAssets)
+
+        if (determineContractAssetType(ledger as LedgerStorage[]) === AssetContractType.multi && !ownedAssetIds.includes(tokenId)) {
+          return {
+            passed: false, 
+            ownedTokenIds: ownedAssetIds,
+          }
+        } 
+
+        if (checkTimeConstraint) {
+          const attributes = await getAttributesFromStorage({ network, contract: contractAddress as string, tokenId: ownedAssetIds[0] })
+
+          if (attributes) {
+            const { value: validUntil } = find(({ name }: { name: string, value: string | number }) => name === 'Valid Until')(attributes)
+            if (!validateTimeConstraint(validUntil as number)) {
+              return {
+                passed: false,
+                ownedTokenIds: ownedAssetIds,
+              }
+            }
+          }
+        }
+
         return {
-          passed: (COMPARISONS[comparator] as any)(prop('length')(ownedAssets))(value),
+          passed: (COMPARISONS[comparator] as Function)(prop('length')(ownedAssets))(value),
           ownedTokenIds: ownedAssetIds,
         }
       })
@@ -129,7 +153,7 @@ export const validateAllowlistCondition =
     passed: (COMPARISONS[comparator] as any)(pkh)(allowlist || []),
   })
 
-export const validateTimeConstraint = (timestamp: number) => Date.now() < timestamp + 1
+export const validateTimeConstraint = (timestamp: number) => Date.now() <= timestamp
 
 export const hexToAscii = (hex: string) => {
   // convert hex to ascii

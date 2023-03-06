@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: MIT
  */
 
-export { getBalance, getLedgerFromStorage, getTokenBalance } from './api'
+export { getBalance, getLedgerFromStorage, getTokenBalance, getAttributesFromStorage } from './api'
