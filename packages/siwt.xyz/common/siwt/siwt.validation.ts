@@ -43,6 +43,7 @@ export const validateAccessData = (signInData: Record<string, any>) => {
                   Comparator.notIn,
                 ],
               },
+              checkTimeConstraint: { type: 'boolean' },
             },
             required: ['type', 'comparator', 'value'],
             additionalProperties: false,

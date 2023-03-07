@@ -1,6 +1,6 @@
 export enum Network {
-  MAINNET = 'mainnet',
-  GHOSTNET = 'ghostnet',
+  mainnet = 'mainnet',
+  ghostnet = 'ghostnet',
 }
 
 export enum ConditionType {
@@ -18,18 +18,4 @@ export enum Comparator {
   lt = '<',
   in = 'IN',
   notIn = 'NOT IN',
-}
-
-export interface ACQ {
-  network: Network
-  parameters: {
-    pkh: string
-  }
-  test: {
-    contractAddress: string
-    tokenId: string
-    type: ConditionType
-    comparator: Comparator
-    value: number
-  }
 }
