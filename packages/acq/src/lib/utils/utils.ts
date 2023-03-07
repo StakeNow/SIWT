@@ -30,7 +30,7 @@ import { AccessControlQuery, AccessControlQueryDependencies, AssetContractType, 
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
-export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenId: string) => filter(allPass([pathEq(['key', 'address'], pkh), propEq('value', tokenId)]))
+export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenId: string) => filter(allPass([pathEq(['key', 'address'], pkh), pathEq(['key', 'nat'], tokenId)]))
 
 export const determineContractAssetType = pipe(
   head,
@@ -92,15 +92,12 @@ export const validateNFTCondition =
         } 
 
         if (checkTimeConstraint) {
-          const attributes = await getAttributesFromStorage({ network, contract: contractAddress as string, tokenId: ownedAssetIds[0] })
-
-          if (attributes) {
-            const { value: validUntil } = find(({ name }: { name: string, value: string | number }) => name === 'Valid Until')(attributes)
-            if (!validateTimeConstraint(validUntil as number)) {
-              return {
-                passed: false,
-                ownedTokenIds: ownedAssetIds,
-              }
+          const attributes = await getAttributesFromStorage({ network, contract: contractAddress as string, tokenId: ownedAssetIds[0] }) as any[]
+          const validityAttribute = find(({ name }: { name: string, value: string | number }) => name === 'Valid Until')(attributes)
+          if (!attributes.length || !validityAttribute || !validateTimeConstraint(validityAttribute.value as number)) {
+            return {
+              passed: false,
+              ownedTokenIds: ownedAssetIds,
             }
           }
         }
@@ -124,7 +121,7 @@ export const validateXTZBalanceCondition =
         balance,
         passed: (COMPARISONS[comparator] as any)(balance)(value),
       }))
-      .catch(e => ({
+      .catch(() => ({
         passed: false,
         error: true,
       }))
@@ -153,7 +150,7 @@ export const validateAllowlistCondition =
     passed: (COMPARISONS[comparator] as any)(pkh)(allowlist || []),
   })
 
-export const validateTimeConstraint = (timestamp: number) => Date.now() <= timestamp
+export const validateTimeConstraint = (timestamp: number) => (Date.now() / 1000) <= timestamp 
 
 export const hexToAscii = (hex: string) => {
   // convert hex to ascii

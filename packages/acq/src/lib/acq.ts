@@ -24,6 +24,7 @@ export const _queryAccessControl =
       test: { type },
     } = query
     const { getLedgerFromStorage, getBalance, getTokenBalance } = deps
+
     try {
       const testResults = await match(type)
         .with(ConditionType.nft, () => validateNFTCondition(getLedgerFromStorage, getAttributesFromStorage)(query))
@@ -31,12 +32,14 @@ export const _queryAccessControl =
         .with(ConditionType.tokenBalance, () => validateTokenBalanceCondition(getTokenBalance)(query))
         .with(ConditionType.allowlist, () => validateAllowlistCondition(allowlist)(query))
         .otherwise(always(Promise.resolve({ passed: false })))
+      
       return {
         network,
         pkh,
         testResults,
       }
     } catch (error) {
+      console.log(error)
       throw new Error('Querying access failed. Check the logs for more details.')
     }
   }

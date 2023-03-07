@@ -20,7 +20,7 @@ describe('utils', () => {
       // when ... we want to validate a time constraint
       // then ... should return the expected result
       jest.useFakeTimers({advanceTimers: true})
-      jest.setSystemTime(1678096526)
+      jest.setSystemTime(1678096526000)
       expect(SUT.validateTimeConstraint(timestamp)).toEqual(expected)
       jest.useRealTimers()
     })
@@ -133,7 +133,7 @@ describe('utils', () => {
         },
         {
           passed: false,
-          ownedTokenIds: [],
+          ownedTokenIds: ['0'],
         }
       ],
       [ // Does not pass because user has not enough tokens
@@ -157,10 +157,55 @@ describe('utils', () => {
           passed: false,
           ownedTokenIds: ['0'],
         }
+      ],
+      [ // Does not pass with timeconstraint because there is no valid until attribute
+        [{ value: '0', key: { address: validPkh, nat: '0' } }],
+        [{ name: 'RANDOM ATTRIBUTE NAME', value: 1678096525 }],
+        {
+          network: Network.ghostnet,
+          parameters: {
+            pkh: validPkh,
+          },
+          test:{
+            contractAddress: 'CONTRACT_ADDRESS',
+            comparator: Comparator.gte,
+            value: 1,
+            tokenId: '0',
+            type: ConditionType.nft,
+            checkTimeConstraint: true,
+          }
+        },
+        {
+          passed: false,
+          ownedTokenIds: ['0'],
+        } 
+      ]
+      ,
+      [ // Does not pass with timeconstraint because there are no attributes
+        [{ value: '0', key: { address: validPkh, nat: '0' } }],
+        [],
+        {
+          network: Network.ghostnet,
+          parameters: {
+            pkh: validPkh,
+          },
+          test:{
+            contractAddress: 'CONTRACT_ADDRESS',
+            comparator: Comparator.gte,
+            value: 1,
+            tokenId: '0',
+            type: ConditionType.nft,
+            checkTimeConstraint: true,
+          }
+        },
+        {
+          passed: false,
+          ownedTokenIds: ['0'],
+        } 
       ]
     ])('should return the result of the NFT condition as expected', async (ledger, attributes, acq, expected) => {
       jest.useFakeTimers({advanceTimers: true})
-      jest.setSystemTime(1678096526)
+      jest.setSystemTime(1678096526000)
       
       // when ... we want to validate an NFT condition
       // then ... should return the expected result
