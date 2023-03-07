@@ -30,6 +30,7 @@ const result = await queryAccessControl({
     type: ConditionType.nft,            //
     comparator: Comparator.gte,         //
     value: 1,                           // The value to compare against with the comparator.
+    checkTimeConstraint: false          // Tell the ACQ to check for the time constraint. Only applicable to the condition type NFT and requires the 'Valid Until' attribute in the NFT metadata  
   },
 })
 ```
@@ -52,6 +53,7 @@ The result will have the following format:
 #### NFT
 
 Use this if you want to test if your user has a certain amount of a certain NFT.
+The `{ name: 'Valid Until', value: 'Unix Timestamp' }` attribute in the NFT metadata can be used to add a time constraint.
 
 #### XTZ Amount
 
