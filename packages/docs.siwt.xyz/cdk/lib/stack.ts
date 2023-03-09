@@ -1,14 +1,14 @@
 import {
-  App,
-  Stack,
-  StackProps,
-  aws_s3 as S3,
-  RemovalPolicy,
-  aws_s3_deployment as S3Deployment,
-  aws_cloudfront as Cloudfront,
   aws_certificatemanager as ACM,
+  App,
+  aws_cloudfront as Cloudfront,
   aws_cloudfront_origins as CloudfrontOrigins,
   Duration,
+  RemovalPolicy,
+  aws_s3 as S3,
+  aws_s3_deployment as S3Deployment,
+  Stack,
+  StackProps,
 } from 'aws-cdk-lib'
 
 const environment = process.env.ENV || 'staging'
@@ -30,7 +30,11 @@ export class AppStack extends Stack {
     const originAccessIdentity = new Cloudfront.OriginAccessIdentity(this, `docs-siwt-xyz-ui-oai-${environment}`)
     bucket.grantRead(originAccessIdentity)
 
-    const certificate = ACM.Certificate.fromCertificateArn(this, `siwt-xyz-certificate-${environment}`, process.env.SSL_CERTIFICATE_ARN || '')
+    const certificate = ACM.Certificate.fromCertificateArn(
+      this,
+      `siwt-xyz-certificate-${environment}`,
+      process.env.SSL_CERTIFICATE_ARN || '',
+    )
 
     let distributionConfig: Cloudfront.DistributionProps = {
       defaultRootObject: 'index.html',
@@ -42,7 +46,7 @@ export class AppStack extends Stack {
         allowedMethods: Cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: Cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: Cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        edgeLambdas: []
+        edgeLambdas: [],
       },
       errorResponses: [
         {

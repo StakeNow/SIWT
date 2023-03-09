@@ -140,4 +140,85 @@ describe('./data', () => {
       })
     })
   })
+
+  describe('getAttributesFromStorage', () => {
+    it('should get the attributes from the token_meta from the storage of a contract', async () => {
+      // when ... we want the attributes from the token_meta from the storage of a contract
+      // then ... it should fetch and format as expected
+      const httpStub = {
+        get: jest.fn().mockResolvedValueOnce({
+          data: [
+          {
+            value: {
+              token_id: '0',
+              token_info: {
+                '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
+              },
+            },
+          },
+        ]}).mockResolvedValueOnce({
+          data: {
+            attributes: [{
+              name: 'value',
+            }],
+          },
+        }),
+      }
+      const result = await SUT._getAttributesFromStorage(httpStub as any)({
+        network: Network.ghostnet,
+        contract: 'CONTRACT',
+        tokenId: '0',
+      })
+
+      expect(result).toEqual([
+        {
+          name: 'value',
+        },
+      ])
+    })
+
+    it('should return an empty array if the token_meta is not found', async () => {
+      // when ... we want the attributes from the token_meta from the storage of a contract
+      // then ... it should fetch and format as expected
+      const httpStub = {
+        get: jest.fn().mockResolvedValueOnce({
+          data: [
+          {
+            value: {
+              token_id: '0',
+              token_info: {
+                '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
+              },
+            },
+          },
+        ]}).mockResolvedValueOnce({
+          data: {
+            tags: [{
+              name: 'value',
+            }],
+          },
+        }),
+      }
+      const result = await SUT._getAttributesFromStorage(httpStub as any)({
+        network: Network.ghostnet,
+        contract: 'CONTRACT',
+        tokenId: '0',
+      })
+
+      expect(result).toEqual([])
+    })
+
+    it('should fail to get the attributes', async () => {
+      // when ... getting the attributes fails
+      // then ... it should fail as expected
+      const httpStub = { get: jest.fn().mockRejectedValue(new Error('Getting attributes failed')) }
+      const result = await SUT._getAttributesFromStorage(httpStub as any)({
+        network: Network.ghostnet,
+        contract: 'CONTRACT',
+        tokenId: '0',
+      })
+
+      expect(result).toEqual(new Error('Getting attributes failed')) 
+    })
+  })
 })

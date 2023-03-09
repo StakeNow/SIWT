@@ -28,8 +28,8 @@ const sidebars = {
       type: 'category',
       label: 'Discord bot',
       items: ['discord-bot/intro', 'discord-bot/ui', 'discord-bot/server'],
-    }, 
+    },
   ],
-};
+}
 
-module.exports = sidebars;
+module.exports = sidebars

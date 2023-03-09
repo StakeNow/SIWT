@@ -1,8 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require('prism-react-renderer/themes/github')
+const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -42,8 +42,7 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/StakeNow/SIWT',
+          editUrl: 'https://github.com/StakeNow/SIWT',
         },
         blog: false,
         theme: {
@@ -104,19 +103,18 @@ const config = {
             title: 'Community',
             items: [
               {
-                      label: 'Discord',
-                      href: 'https://discord.com/invite/6J3bjhkpxm',
-                    },
-                    {
-                      label: 'Twitter',
-                      href: 'https://twitter.com/stakenow',
-                    },
+                label: 'Discord',
+                href: 'https://discord.com/invite/6J3bjhkpxm',
+              },
+              {
+                label: 'Twitter',
+                href: 'https://twitter.com/stakenow',
+              },
             ],
           },
           {
-              title: 'More',
+            title: 'More',
             items: [
-
               {
                 label: 'GitHub',
                 href: 'https://github.com/StakeNow/SIWT',
@@ -131,6 +129,6 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
-};
+}
 
-module.exports = config;
+module.exports = config

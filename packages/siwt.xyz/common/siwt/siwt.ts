@@ -5,7 +5,19 @@ import { assocPath, multiply, path } from 'ramda'
 
 import { validateAccessData } from './siwt.validation'
 
-export const checkAccess = async ({ acq, signature, message, publicKey, allowlist }: { acq: AccessControlQuery, signature: string, message: string, publicKey: string, allowlist: string[] }) => {
+export const checkAccess = async ({
+  acq,
+  signature,
+  message,
+  publicKey,
+  allowlist,
+}: {
+  acq: AccessControlQuery
+  signature: string
+  message: string
+  publicKey: string
+  allowlist: string[]
+}) => {
   const isValid = validateAccessData({
     acq,
     signature,
@@ -22,7 +34,10 @@ export const checkAccess = async ({ acq, signature, message, publicKey, allowlis
 
   let query = acq
   if (acq.test.type === 'xtzBalance') {
-    query = assocPath(['test', 'value'], multiply(path(['test', 'value'])(acq) as number, 1000000))(acq) as AccessControlQuery
+    query = assocPath(
+      ['test', 'value'],
+      multiply(path(['test', 'value'])(acq) as number, 1000000),
+    )(acq) as AccessControlQuery
   }
 
   try {

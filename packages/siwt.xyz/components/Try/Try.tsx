@@ -1,13 +1,14 @@
 import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { useSiwt } from '@siwt/react'
+import { AccessControlQuery } from '@siwt/acq/lib/types'
 import { validateContractAddress } from '@taquito/utils'
 import clsx from 'clsx'
 import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, test, uniq, without } from 'ramda'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 
 import { useBeacon } from '../../common/hooks/useBeacon'
-import { checkAccess } from '../../common/siwt/siwt'
-import { ACQ, Comparator, ConditionType, Network } from '../../types'
+import { checkAccess } from '../../common/siwt'
+import { Comparator, ConditionType, Network } from '../../types'
 import { Button } from '../Button'
 import { Container } from '../Container'
 import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
@@ -17,8 +18,8 @@ export const Try = () => {
   const { createMessagePayload } = useSiwt(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4200/api')
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
 
-  const [acq, setAcq] = useState<ACQ>({
-    network: Network.GHOSTNET,
+  const [acq, setAcq] = useState<AccessControlQuery>({
+    network: Network.ghostnet,
     parameters: {
       pkh: '',
     },
@@ -28,11 +29,13 @@ export const Try = () => {
       type: ConditionType.nft,
       comparator: Comparator.gte,
       value: 1,
+      checkTimeConstraint: false,
     },
   })
+  
   const [networkTabs, setNetworkTab] = useState<{ name: Network; label: string; current: boolean }[]>([
-    { name: Network.MAINNET, label: 'Mainnet', current: false },
-    { name: Network.GHOSTNET, label: 'Ghostnet', current: true },
+    { name: Network.mainnet, label: 'Mainnet', current: false },
+    { name: Network.ghostnet, label: 'Ghostnet', current: true },
   ])
   const [allowlist, setAllowlist] = useState<string>('')
   const [isContractAddressValid, setIsContractAddressValid] = useState<boolean>(true)
@@ -107,6 +110,10 @@ export const Try = () => {
 
   const onChangeTokenId = (event: ChangeEvent<HTMLInputElement>) => {
     setAcq({ ...acq, test: { ...acq.test, tokenId: event.currentTarget.value } })
+  }
+
+  const onChangeCheckTimeConstraint = (event: ChangeEvent<HTMLInputElement>) => {
+    setAcq({ ...acq, test: { ...acq.test, checkTimeConstraint: event.currentTarget.checked } })
   }
 
   const onChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
@@ -222,7 +229,23 @@ export const Try = () => {
                               type="number"
                               min={0}
                               step={1}
+                              explainer="Optional"
                             />
+                          </div>
+                          <div className="sm:col-span-3 mt-6 flex flex-row">
+                            <input
+                              id='checkTimeConstraint'
+                              name='checkTimeConstraint'
+                              type="checkbox"
+                              className="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500"
+                              checked={acq.test.checkTimeConstraint}
+                              onChange={onChangeCheckTimeConstraint}
+                            /> 
+                            <div className="ml-3 text-sm">
+                              <label htmlFor="terms-conditions" className="font-medium text-gray-700">
+                                Check time constraint
+                              </label>
+                            </div>
                           </div>
                         </>
                       ) : (
@@ -353,6 +376,13 @@ export const Try = () => {
     tokenId: `}
                   {acq.test.type !== ConditionType.allowlist && acq.test.type !== ConditionType.xtzBalance ? (
                     <span className="text-pink-500 font-bold">{acq.test.tokenId}</span>
+                  ) : (
+                    <span className="italic text-gray-400 font-light text-sm">...</span>
+                  )}
+                  {`,
+    checkTimeConstraint: `}
+                  {acq.test.type === ConditionType.nft ? (
+                    <span className="text-pink-500 font-bold">{acq.test.checkTimeConstraint ? 'true' : 'false'}</span>
                   ) : (
                     <span className="italic text-gray-400 font-light text-sm">...</span>
                   )}

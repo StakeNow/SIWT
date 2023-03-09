@@ -158,6 +158,25 @@ describe('./siwt.validation', () => {
         publicKey: 'edpk...',
         message: '...',
       },
+      {
+        acq: {
+          test: {
+            type: 'nft',
+            value: 1,
+            contractAddress: 'KT1...',
+            tokenId: '1',
+            comparator: '=',
+            checkTimeConstraint: 'INCORRECT CHECK TIME CONSTRAINT',
+          },
+          network: 'INCORRECT NETWORK',
+          parameters: {
+            pkh: 'tz1...',
+          },
+        },
+        signature: 'spsig...',
+        publicKey: 'edpk...',
+        message: '...',
+      },
     ])('should return false when the data is invalid', data => {
       // given ... invalid data
       // when ... we validate the data

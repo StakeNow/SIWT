@@ -10,4 +10,5 @@ export {
   validateTokenBalanceCondition,
   validateAllowlistCondition,
   validateXTZBalanceCondition,
+  hexToAscii,
 } from './utils'

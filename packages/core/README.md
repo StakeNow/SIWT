@@ -1,7 +1,9 @@
 # Core
+
 This is the main library (core) to be used in your backend. Use it to create and verify access, refresh and id tokens.
 
 ## Usage
+
 Initiate SIWT as follows:
 
 ```
@@ -17,14 +19,15 @@ const siwtClient = siwt({
 })
 ```
 
-### Secrets 
+### Secrets
+
 The secret can be a random string you generate. They are used to encode and decode the tokens and acts as a security layer. Treat them accordingly and refer to the [official documentation](https://jwt.io/) regarding their requirements.
 
 ### Generating tokens
 
 **Access Token:**
 
-Use the access token for authorization upon each protected API call. Add it as a bearer token in the authorization header of each API call. Since the access token is being sent with every api call, it is a good idea to keep it as small as possible. The minimum data required is the users pkh, however any extra claims are supported. 
+Use the access token for authorization upon each protected API call. Add it as a bearer token in the authorization header of each API call. Since the access token is being sent with every api call, it is a good idea to keep it as small as possible. The minimum data required is the users pkh, however any extra claims are supported.
 
 ```
 const pkh = 'USER WALLET ADDRESS'
@@ -69,7 +72,9 @@ const accessToken = siwtClient.generateAccessToken({
 ```
 
 ### Verifying tokens
+
 The access and refresh token can be verified by using
+
 ```
 siwtClient.verifyAccessToken(accessToken)
 ```
@@ -83,7 +88,9 @@ siwtClient.verifyRefreshToken(refreshToken)
 respectively.
 
 ## Running unit tests
+
 Run `nx test core` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Running lint
+
 Run `nx lint core` to execute the lint via [ESLint](https://eslint.org/).

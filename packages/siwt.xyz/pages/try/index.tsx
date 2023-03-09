@@ -5,9 +5,7 @@ import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { Try as TryComponent } from '../../components/Try'
 
-interface TryProps {}
-
-export const Try = (props: TryProps) => (
+export const Try = () => (
   <>
     <Head>
       <title>Sign in with Tezos: Try it out</title>
