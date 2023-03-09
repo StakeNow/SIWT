@@ -65,7 +65,7 @@ const config = {
         },
         items: [
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://github.com/StakeNow/SIWT',
             label: 'GitHub',
             position: 'right',
           },
