@@ -12,6 +12,6 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v3
-    - uses: Persival-GmbH/spdx@master
+    - uses: StakeNow/spdx@master
       with:
         licenses: Apache-2.0 MIT MPL-2.0
