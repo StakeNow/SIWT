@@ -19,6 +19,26 @@
         "production": {}
       }
     },
+    "build-server": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "root": "packages/siwt.xyz",
+        "outputPath": "dist/packages/siwt.xyz/server",
+        "tsConfig": "./packages/siwt.xyz/tsconfig.json",
+        "main": "./packages/siwt.xyz/server/index.ts",
+        "outputFileName": "index.js",
+        "target": "node",
+        "webpackConfig": "./packages/siwt.xyz/webpack.server.config.js"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "packages/siwt.xyz"
+        },
+        "production": {}
+      }
+    },
     "serve": {
       "executor": "@nrwl/next:server",
       "defaultConfiguration": "development",
@@ -62,14 +82,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/siwt.xyz",
-        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk deploy"]
+        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk deploy -- --all"]
       }
     },
     "destroy": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/siwt.xyz",
-        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk destroy"]
+        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk destroy -- --all"]
       }
     }
   },

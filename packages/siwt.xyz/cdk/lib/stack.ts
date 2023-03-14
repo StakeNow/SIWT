@@ -9,6 +9,7 @@ import {
   aws_s3_deployment as S3Deployment,
   Stack,
   StackProps,
+  aws_lambda as Lambda,
 } from 'aws-cdk-lib'
 
 const environment = process.env.ENV || 'staging'
@@ -30,6 +31,12 @@ export class AppStack extends Stack {
     const originAccessIdentity = new Cloudfront.OriginAccessIdentity(this, `siwt-xyz-ui-oai-${environment}`)
     bucket.grantRead(originAccessIdentity)
 
+    const edgeRouter = new Cloudfront.experimental.EdgeFunction(this, `siwt-xyz-edge-router-${environment}`, {
+      runtime: Lambda.Runtime.NODEJS_16_X,
+      handler: 'index.routeHandler',
+      code: Lambda.Code.fromAsset('../../dist/packages/siwt.xyz/server'),
+    })
+
     let distributionConfig: Cloudfront.DistributionProps = {
       defaultRootObject: 'index.html',
       defaultBehavior: {
@@ -40,7 +47,12 @@ export class AppStack extends Stack {
         allowedMethods: Cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: Cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: Cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        edgeLambdas: [],
+        edgeLambdas: [
+          {
+            functionVersion: edgeRouter.currentVersion,
+            eventType: Cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
+          }
+        ],
       },
       errorResponses: [
         {
@@ -52,6 +64,7 @@ export class AppStack extends Stack {
     }
 
     const certificateArn = process.env.SSL_CERTIFICATE_ARN || ''
+
     if (environment === 'production') {
       const certificate = ACM.Certificate.fromCertificateArn(
         this,

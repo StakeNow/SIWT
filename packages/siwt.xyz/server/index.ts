@@ -1,0 +1,1 @@
+export { routeHandler } from './server'
