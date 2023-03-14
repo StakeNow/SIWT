@@ -1,15 +1,15 @@
-import { 
+import { App as AmplifyApp, AutoBranchCreation } from '@aws-cdk/aws-amplify-alpha'
+import { GitHubSourceCodeProvider } from '@aws-cdk/aws-amplify-alpha/lib/source-code-providers'
+import {
   App,
+  CfnOutput,
+  SecretValue,
   Stack,
   StackProps,
-  CfnOutput,
-  aws_iam as iam,
-  SecretValue,
   aws_codebuild as codebuild,
   custom_resources as cr,
+  aws_iam as iam,
 } from 'aws-cdk-lib'
-import { App as AmplifyApp, AutoBranchCreation } from '@aws-cdk/aws-amplify-alpha'
-import { GitHubSourceCodeProvider } from '@aws-cdk/aws-amplify-alpha/lib/source-code-providers';
 
 const environment = process.env.ENV || 'staging'
 
@@ -81,7 +81,7 @@ export class AppStack extends Stack {
       autoBranchDeletion: true,
       environmentVariables: {},
       // ⬆️ end of configuration ⬆️
-    });
+    })
 
     const mainBranch = SiwtAmplifyApp.addBranch('main', {
       autoBuild: true, // set to true to automatically build the app on new pushes
@@ -156,7 +156,7 @@ export class AppStack extends Stack {
     // if (environment === 'production') {
     //   const certificateArn = ''
     //   const certificate = ACM.Certificate.fromCertificateArn(this, `siwt-xyz-certificate-${environment}`, certificateArn)
-      
+
     //   ;(distributionConfig.domainNames as string[]) = ['siwt.xyz']
     //   ;(distributionConfig.certificate as any) = certificate
     // }

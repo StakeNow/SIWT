@@ -72,4 +72,3 @@ If you have implemented a refresh token strategy use this token to obtain a new 
 _ID Token:_
 
 The ID token is used to obtain some information about the user that is signed in. Because it is a valid JWT token you can use any jwt decoding library to decode the token and use it's contents.
-

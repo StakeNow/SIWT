@@ -28,4 +28,3 @@ The user will now have access to your private channels with the `Verified` role 
 ## Support
 
 For support please reach out on our [Discord](https://discord.com/invite/6J3bjhkpxm?utm_source=GH&utm_medium=GH&utm_campaign=GH)
-

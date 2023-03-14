@@ -19,7 +19,7 @@ const nextConfig = {
   output: 'standalone',
   experimental: {
     outputFileTracingRoot: path.join(__dirname, '../../'),
-  }
+  },
 }
 
 module.exports = withNx(nextConfig)

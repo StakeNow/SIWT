@@ -16,8 +16,12 @@ export const Hero = () => (
       Sign in with Tezos allows developers to easily provide access control to users based on their Tezos wallet.
     </p>
     <div className="mt-10 flex justify-center items-center gap-x-6">
-      <NavLink href="/try" className='text-xl'>Try it out</NavLink>{' '}
-      <Button href="https://docs.siwt.xyz" className='text-xl'>Get started</Button>
+      <NavLink href="/try" className="text-xl">
+        Try it out
+      </NavLink>{' '}
+      <Button href="https://docs.siwt.xyz" className="text-xl">
+        Get started
+      </Button>
     </div>
     <div className="mt-36 lg:mt-44">
       <p className="font-display text-base text-slate-900">Already using SIWT:</p>

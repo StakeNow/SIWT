@@ -9,6 +9,7 @@ A server running Node 16 or higher configured to accept requests on the port you
 For an example on how to set up a Node server using Ubuntu and Nginx check: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-18-04. Make sure you set the environment variables as explained further down.
 
 ### Setting up your Discord server
+
 #### Installing the bot
 
 To install the bot you'll need a developer account on Discord:
