@@ -1,0 +1,77 @@
+name: Docs deployment workflow
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  CERTIFICATE_ARN: ${{ secrets.DOCS_SSL_CERTIFICATE_ARN }}
+  ENV: production
+  CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.DOCS_SIWT_XYZ_DISTRIBUTION }}
+
+jobs:
+  format-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: nrwl/nx-set-shas@v3
+        with:
+          main-branch-name: 'develop'
+          workflow-id: 'deploy-docs.yml'
+      - run: npm ci
+      - name: Install docusaurus dependencies specifically
+        run: npm install --prefix ./packages/docs.siwt.xyz
+
+      - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
+      - run: npx nx affected --target=lint --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
+      - run: npx nx affected --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
+      - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: format-and-test
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: nrwl/nx-set-shas@v3
+        with:
+          main-branch-name: 'main'
+          workflow-id: 'deploy-docs.yml'
+      - run: npm ci
+      - name: Install docusaurus dependencies specifically
+        run: npm install --prefix ./packages/docs.siwt.xyz
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: 'eu-central-1'
+      - run: npx nx affected --target=build --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
+      - run: |
+          touch .env
+          echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
+          echo ENV=$ENV >> .env
+          cat .env
+      - name: Deploy
+        run: npx nx affected --target=deploy --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e --production
+      - name: Invalidate Distribution
+        run: aws cloudfront create-invalidation --distribution-id=$CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
