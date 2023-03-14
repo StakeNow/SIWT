@@ -29,6 +29,13 @@
         "main": "packages/sdk/src/index.ts",
         "assets": ["packages/sdk/*.md"]
       }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "dist/packages/sdk",
+        "commands": ["npm run publish"]
+      }
     }
   },
   "tags": []

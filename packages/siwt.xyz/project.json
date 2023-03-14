@@ -57,6 +57,20 @@
       "options": {
         "lintFilePatterns": ["packages/siwt.xyz/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/siwt.xyz",
+        "commands": ["dotenv -e .env cdk deploy"]
+      }
+    },
+    "destroy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/siwt.xyz",
+        "commands": ["dotenv -e .env cdk destroy"]
+      }
     }
   },
   "tags": []
