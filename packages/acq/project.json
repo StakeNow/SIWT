@@ -29,6 +29,13 @@
         "main": "packages/acq/src/index.ts",
         "assets": ["packages/acq/*.md"]
       }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "dist/packages/acq",
+        "commands": ["npm run publish"]
+      }
     }
   },
   "tags": []

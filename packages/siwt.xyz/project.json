@@ -82,14 +82,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/siwt.xyz",
-        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk deploy -- --all"]
+        "commands": ["dotenv -e .env cdk deploy"]
       }
     },
     "destroy": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/siwt.xyz",
-        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk destroy -- --all"]
+        "commands": ["dotenv -e .env cdk destroy"]
       }
     }
   },

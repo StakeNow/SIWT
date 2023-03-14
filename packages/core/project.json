@@ -29,6 +29,13 @@
         "main": "packages/core/src/index.ts",
         "assets": ["packages/core/*.md"]
       }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "dist/packages/core",
+        "commands": ["npm run publish"]
+      }
     }
   },
   "tags": []

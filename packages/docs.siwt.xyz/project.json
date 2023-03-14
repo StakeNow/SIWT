@@ -27,14 +27,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/docs.siwt.xyz",
-        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk deploy"]
+        "commands": ["dotenv -e .env cdk deploy"]
       }
     },
     "destroy": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/docs.siwt.xyz",
-        "commands": ["ENV={args.stage} dotenv -e .env.{args.stage} cdk destroy"]
+        "commands": ["dotenv -e .env cdk destroy"]
       }
     }
   },
