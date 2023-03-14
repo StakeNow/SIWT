@@ -19,7 +19,7 @@ describe('utils', () => {
     ])('should return the result of the time constraint as expected', (timestamp, expected) => {
       // when ... we want to validate a time constraint
       // then ... should return the expected result
-      jest.useFakeTimers({advanceTimers: true})
+      jest.useFakeTimers({ advanceTimers: true })
       jest.setSystemTime(1678096526000)
       expect(SUT.validateTimeConstraint(timestamp)).toEqual(expected)
       jest.useRealTimers()
@@ -28,7 +28,8 @@ describe('utils', () => {
 
   describe('utils/validateNFTCondition', () => {
     it.each([
-      [ // Passes with no time constraint
+      [
+        // Passes with no time constraint
         [{ value: '0', key: { address: validPkh, nat: '0' } }],
         [],
         {
@@ -36,20 +37,21 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
             tokenId: '0',
             type: ConditionType.nft,
-          }
+          },
         },
         {
           passed: true,
           ownedTokenIds: ['0'],
-        }
+        },
       ],
-      [ // Does not pass because user does not own the NFT
+      [
+        // Does not pass because user does not own the NFT
         [{ value: '0', key: { address: invalidPkh, nat: '0' } }],
         [],
         {
@@ -57,20 +59,21 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
             tokenId: '0',
             type: ConditionType.nft,
-          }
+          },
         },
         {
           passed: false,
           ownedTokenIds: [],
-        }
+        },
       ],
-      [ // Passes with time constraint
+      [
+        // Passes with time constraint
         [{ value: '0', key: { address: validPkh, nat: '0' } }],
         [{ name: 'Valid Until', value: 1678114064 }],
         {
@@ -78,21 +81,22 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
             tokenId: '0',
             type: ConditionType.nft,
             checkTimeConstraint: true,
-          }
+          },
         },
         {
           passed: true,
           ownedTokenIds: ['0'],
-        }
+        },
       ],
-      [ // Does not pass because expired
+      [
+        // Does not pass because expired
         [{ value: '0', key: { address: validPkh, nat: '0' } }],
         [{ name: 'Valid Until', value: 1678096525 }],
         {
@@ -100,21 +104,22 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
             tokenId: '0',
             type: ConditionType.nft,
             checkTimeConstraint: true,
-          }
+          },
         },
         {
           passed: false,
           ownedTokenIds: ['0'],
-        }
+        },
       ],
-      [ // Does not pass because user has incorrect token id in multi asset contract
+      [
+        // Does not pass because user has incorrect token id in multi asset contract
         [{ value: '1', key: { address: validPkh, nat: '0' } }],
         [{ name: 'Valid Until', value: 1678096525 }],
         {
@@ -122,21 +127,22 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
             tokenId: '0',
             type: ConditionType.nft,
             checkTimeConstraint: true,
-          }
+          },
         },
         {
           passed: false,
           ownedTokenIds: ['0'],
-        }
+        },
       ],
-      [ // Does not pass because user has not enough tokens
+      [
+        // Does not pass because user has not enough tokens
         [{ value: '0', key: { address: validPkh, nat: '0' } }],
         [{ name: 'Valid Until', value: 1678096525 }],
         {
@@ -144,21 +150,22 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 2,
             tokenId: '0',
             type: ConditionType.nft,
             checkTimeConstraint: true,
-          }
+          },
         },
         {
           passed: false,
           ownedTokenIds: ['0'],
-        }
+        },
       ],
-      [ // Does not pass with timeconstraint because there is no valid until attribute
+      [
+        // Does not pass with timeconstraint because there is no valid until attribute
         [{ value: '0', key: { address: validPkh, nat: '0' } }],
         [{ name: 'RANDOM ATTRIBUTE NAME', value: 1678096525 }],
         {
@@ -166,22 +173,22 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
             tokenId: '0',
             type: ConditionType.nft,
             checkTimeConstraint: true,
-          }
+          },
         },
         {
           passed: false,
           ownedTokenIds: ['0'],
-        } 
-      ]
-      ,
-      [ // Does not pass with timeconstraint because there are no attributes
+        },
+      ],
+      [
+        // Does not pass with timeconstraint because there are no attributes
         [{ value: '0', key: { address: validPkh, nat: '0' } }],
         [],
         {
@@ -189,33 +196,30 @@ describe('utils', () => {
           parameters: {
             pkh: validPkh,
           },
-          test:{
+          test: {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
             tokenId: '0',
             type: ConditionType.nft,
             checkTimeConstraint: true,
-          }
+          },
         },
         {
           passed: false,
           ownedTokenIds: ['0'],
-        } 
-      ]
+        },
+      ],
     ])('should return the result of the NFT condition as expected', async (ledger, attributes, acq, expected) => {
-      jest.useFakeTimers({advanceTimers: true})
+      jest.useFakeTimers({ advanceTimers: true })
       jest.setSystemTime(1678096526000)
-      
+
       // when ... we want to validate an NFT condition
       // then ... should return the expected result
       const getLedgerFromStorageStub = jest.fn().mockResolvedValue(ledger)
       const getAttributesFromStorageStub = jest.fn().mockResolvedValue(attributes)
-      const result = await SUT.validateNFTCondition(
-        getLedgerFromStorageStub,
-        getAttributesFromStorageStub,
-      )(acq)
-      
+      const result = await SUT.validateNFTCondition(getLedgerFromStorageStub, getAttributesFromStorageStub)(acq)
+
       expect(result).toEqual(expected)
       jest.useRealTimers()
     })

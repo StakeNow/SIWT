@@ -1,6 +1,6 @@
 import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
-import { useSiwt } from '@siwt/react'
 import { AccessControlQuery } from '@siwt/acq/lib/types'
+import { useSiwt } from '@siwt/react'
 import { validateContractAddress } from '@taquito/utils'
 import clsx from 'clsx'
 import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, test, uniq, without } from 'ramda'
@@ -32,7 +32,7 @@ export const Try = () => {
       checkTimeConstraint: false,
     },
   })
-  
+
   const [networkTabs, setNetworkTab] = useState<{ name: Network; label: string; current: boolean }[]>([
     { name: Network.mainnet, label: 'Mainnet', current: false },
     { name: Network.ghostnet, label: 'Ghostnet', current: true },
@@ -234,13 +234,13 @@ export const Try = () => {
                           </div>
                           <div className="sm:col-span-3 mt-6 flex flex-row">
                             <input
-                              id='checkTimeConstraint'
-                              name='checkTimeConstraint'
+                              id="checkTimeConstraint"
+                              name="checkTimeConstraint"
                               type="checkbox"
                               className="h-4 w-4 rounded border-gray-300 text-gray-600 focus:ring-gray-500"
                               checked={acq.test.checkTimeConstraint}
                               onChange={onChangeCheckTimeConstraint}
-                            /> 
+                            />
                             <div className="ml-3 text-sm">
                               <label htmlFor="terms-conditions" className="font-medium text-gray-700">
                                 Check time constraint

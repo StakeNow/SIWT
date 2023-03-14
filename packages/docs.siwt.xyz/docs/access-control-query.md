@@ -34,7 +34,7 @@ const result = await queryAccessControl({
     type: ConditionType.nft,            //
     comparator: Comparator.gte,         //
     value: 1,                           // The value to compare against with the comparator.
-    checkTimeConstraint: false          // Tell the ACQ to check for the time constraint. Only applicable to the condition type NFT and requires the 'Valid Until' attribute in the NFT metadata 
+    checkTimeConstraint: false          // Tell the ACQ to check for the time constraint. Only applicable to the condition type NFT and requires the 'Valid Until' attribute in the NFT metadata
   },
 })
 ```

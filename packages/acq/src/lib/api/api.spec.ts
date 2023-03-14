@@ -146,23 +146,29 @@ describe('./data', () => {
       // when ... we want the attributes from the token_meta from the storage of a contract
       // then ... it should fetch and format as expected
       const httpStub = {
-        get: jest.fn().mockResolvedValueOnce({
-          data: [
-          {
-            value: {
-              token_id: '0',
-              token_info: {
-                '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
+        get: jest
+          .fn()
+          .mockResolvedValueOnce({
+            data: [
+              {
+                value: {
+                  token_id: '0',
+                  token_info: {
+                    '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
+                  },
+                },
               },
+            ],
+          })
+          .mockResolvedValueOnce({
+            data: {
+              attributes: [
+                {
+                  name: 'value',
+                },
+              ],
             },
-          },
-        ]}).mockResolvedValueOnce({
-          data: {
-            attributes: [{
-              name: 'value',
-            }],
-          },
-        }),
+          }),
       }
       const result = await SUT._getAttributesFromStorage(httpStub as any)({
         network: Network.ghostnet,
@@ -181,23 +187,29 @@ describe('./data', () => {
       // when ... we want the attributes from the token_meta from the storage of a contract
       // then ... it should fetch and format as expected
       const httpStub = {
-        get: jest.fn().mockResolvedValueOnce({
-          data: [
-          {
-            value: {
-              token_id: '0',
-              token_info: {
-                '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
+        get: jest
+          .fn()
+          .mockResolvedValueOnce({
+            data: [
+              {
+                value: {
+                  token_id: '0',
+                  token_info: {
+                    '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
+                  },
+                },
               },
+            ],
+          })
+          .mockResolvedValueOnce({
+            data: {
+              tags: [
+                {
+                  name: 'value',
+                },
+              ],
             },
-          },
-        ]}).mockResolvedValueOnce({
-          data: {
-            tags: [{
-              name: 'value',
-            }],
-          },
-        }),
+          }),
       }
       const result = await SUT._getAttributesFromStorage(httpStub as any)({
         network: Network.ghostnet,
@@ -218,7 +230,7 @@ describe('./data', () => {
         tokenId: '0',
       })
 
-      expect(result).toEqual(new Error('Getting attributes failed')) 
+      expect(result).toEqual(new Error('Getting attributes failed'))
     })
   })
 })

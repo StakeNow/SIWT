@@ -6,7 +6,7 @@
 import { always } from 'ramda'
 import { match } from 'ts-pattern'
 
-import { getBalance, getLedgerFromStorage, getTokenBalance, getAttributesFromStorage } from './api'
+import { getAttributesFromStorage, getBalance, getLedgerFromStorage, getTokenBalance } from './api'
 import { AccessControlQuery, AccessControlQueryDependencies, ConditionType, Network } from './types'
 import {
   validateAllowlistCondition,
@@ -32,7 +32,7 @@ export const _queryAccessControl =
         .with(ConditionType.tokenBalance, () => validateTokenBalanceCondition(getTokenBalance)(query))
         .with(ConditionType.allowlist, () => validateAllowlistCondition(allowlist)(query))
         .otherwise(always(Promise.resolve({ passed: false })))
-      
+
       return {
         network,
         pkh,

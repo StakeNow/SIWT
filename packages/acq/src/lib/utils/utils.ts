@@ -6,11 +6,13 @@
 import { validateAddress } from '@taquito/utils'
 import {
   T,
+  allPass,
   always,
   cond,
   divide,
   equals,
   filter,
+  find,
   head,
   map,
   path,
@@ -21,8 +23,6 @@ import {
   propEq,
   propOr,
   uniq,
-  find,
-  allPass,
 } from 'ramda'
 
 import { COMPARISONS } from '../constants'
@@ -30,7 +30,8 @@ import { AccessControlQuery, AccessControlQueryDependencies, AssetContractType, 
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
-export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenId: string) => filter(allPass([pathEq(['key', 'address'], pkh), pathEq(['key', 'nat'], tokenId)]))
+export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenId: string) =>
+  filter(allPass([pathEq(['key', 'address'], pkh), pathEq(['key', 'nat'], tokenId)]))
 
 export const determineContractAssetType = pipe(
   head,
@@ -80,20 +81,29 @@ export const validateNFTCondition =
   }: AccessControlQuery) =>
     getLedgerFromStorage &&
     getLedgerFromStorage({ network, contract: contractAddress as string })
-      .then(async (ledger) => {
+      .then(async ledger => {
         const ownedAssets = filterOwnedAssets(pkh as string, tokenId)(ledger as LedgerStorage[])
         const ownedAssetIds = getOwnedAssetIds(ownedAssets)
 
-        if (determineContractAssetType(ledger as LedgerStorage[]) === AssetContractType.multi && !ownedAssetIds.includes(tokenId)) {
+        if (
+          determineContractAssetType(ledger as LedgerStorage[]) === AssetContractType.multi &&
+          !ownedAssetIds.includes(tokenId)
+        ) {
           return {
-            passed: false, 
+            passed: false,
             ownedTokenIds: ownedAssetIds,
           }
-        } 
+        }
 
         if (checkTimeConstraint) {
-          const attributes = await getAttributesFromStorage({ network, contract: contractAddress as string, tokenId: ownedAssetIds[0] }) as any[]
-          const validityAttribute = find(({ name }: { name: string, value: string | number }) => name === 'Valid Until')(attributes)
+          const attributes = (await getAttributesFromStorage({
+            network,
+            contract: contractAddress as string,
+            tokenId: ownedAssetIds[0],
+          })) as any[]
+          const validityAttribute = find(
+            ({ name }: { name: string; value: string | number }) => name === 'Valid Until',
+          )(attributes)
           if (!attributes.length || !validityAttribute || !validateTimeConstraint(validityAttribute.value as number)) {
             return {
               passed: false,
@@ -150,7 +160,7 @@ export const validateAllowlistCondition =
     passed: (COMPARISONS[comparator] as any)(pkh)(allowlist || []),
   })
 
-export const validateTimeConstraint = (timestamp: number) => (Date.now() / 1000) <= timestamp 
+export const validateTimeConstraint = (timestamp: number) => Date.now() / 1000 <= timestamp
 
 export const hexToAscii = (hex: string) => {
   // convert hex to ascii

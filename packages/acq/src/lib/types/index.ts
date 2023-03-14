@@ -58,10 +58,10 @@ export interface AccessControlQueryDependencies {
     contract,
     tokenId,
   }: {
-    network: Network,
-    contract: string,
-    tokenId: string,
-  }) => Promise<{ name: string, value: string }[] | void>
+    network: Network
+    contract: string
+    tokenId: string
+  }) => Promise<{ name: string; value: string }[] | void>
 }
 
 export interface AccessControlQuery {

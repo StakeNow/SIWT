@@ -4,12 +4,12 @@ import {
   aws_cloudfront as Cloudfront,
   aws_cloudfront_origins as CloudfrontOrigins,
   Duration,
+  aws_lambda as Lambda,
   RemovalPolicy,
   aws_s3 as S3,
   aws_s3_deployment as S3Deployment,
   Stack,
   StackProps,
-  aws_lambda as Lambda,
 } from 'aws-cdk-lib'
 
 const environment = process.env.ENV || 'staging'
@@ -51,7 +51,7 @@ export class AppStack extends Stack {
           {
             functionVersion: edgeRouter.currentVersion,
             eventType: Cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
-          }
+          },
         ],
       },
       errorResponses: [
