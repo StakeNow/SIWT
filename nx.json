@@ -40,7 +40,7 @@
     "appsDir": "packages",
     "libsDir": "packages"
   },
-  "defaultProject": "discord",
+  "defaultProject": "siwt.xyz",
   "generators": {
     "@nrwl/react": {
       "application": {
