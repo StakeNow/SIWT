@@ -1,4 +1,4 @@
-/*}
+/*
  * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
  *
  * SPDX-License-Identifier: MIT
@@ -23,6 +23,9 @@ import {
   propEq,
   propOr,
   uniq,
+  indexOf,
+  gt,
+  includes,
 } from 'ramda'
 
 import { COMPARISONS } from '../constants'
@@ -30,8 +33,8 @@ import { AccessControlQuery, AccessControlQueryDependencies, AssetContractType, 
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
-export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenId: string) =>
-  filter(allPass([pathEq(['key', 'address'], pkh), pathEq(['key', 'nat'], tokenId)]))
+export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenIds: string[]) =>
+  filter(allPass([pathEq(['key', 'address'], pkh), pipe(path(['key', 'nat']), (tokenId: string) => gt(indexOf(tokenId, tokenIds), -1))]))
 
 export const determineContractAssetType = pipe(
   head,
@@ -43,7 +46,7 @@ export const determineContractAssetType = pipe(
   ]),
 )
 
-export const filterOwnedAssets = (pkh: string, tokenId: string) =>
+export const filterOwnedAssets = (pkh: string, tokenIds: string[]) =>
   cond([
     [
       pipe(determineContractAssetType, equals(AssetContractType.nft)),
@@ -51,7 +54,7 @@ export const filterOwnedAssets = (pkh: string, tokenId: string) =>
     ],
     [
       pipe(determineContractAssetType, equals(AssetContractType.multi)),
-      filterOwnedAssetsFromMultiAssetContract(pkh, tokenId) as any,
+      filterOwnedAssetsFromMultiAssetContract(pkh, tokenIds) as any,
     ],
     [
       pipe(determineContractAssetType, equals(AssetContractType.single)),
@@ -77,21 +80,23 @@ export const validateNFTCondition =
   ({
     network = Network.ghostnet,
     parameters: { pkh },
-    test: { contractAddress, comparator, value, checkTimeConstraint = false, tokenId = '0' },
+    test: { contractAddress, comparator, value, checkTimeConstraint = false, tokenIds = ['0'] },
   }: AccessControlQuery) =>
     getLedgerFromStorage &&
     getLedgerFromStorage({ network, contract: contractAddress as string })
       .then(async ledger => {
-        const ownedAssets = filterOwnedAssets(pkh as string, tokenId)(ledger as LedgerStorage[])
+        const ownedAssets = filterOwnedAssets(pkh as string, tokenIds as string[])(ledger as LedgerStorage[])
         const ownedAssetIds = getOwnedAssetIds(ownedAssets)
-
+        
         if (
-          determineContractAssetType(ledger as LedgerStorage[]) === AssetContractType.multi &&
-          !ownedAssetIds.includes(tokenId)
+          determineContractAssetType(ledger as LedgerStorage[]) === AssetContractType.multi
         ) {
-          return {
-            passed: false,
-            ownedTokenIds: ownedAssetIds,
+          const matchingAssets = findMatchingElements(tokenIds as string[], ownedAssetIds)
+          if (matchingAssets.length === 0 || !(COMPARISONS[comparator] as Function)(prop('length')(matchingAssets))(value)) {
+            return {
+              passed: false,
+              ownedTokenIds: ownedAssetIds,
+            }
           }
         }
 
@@ -170,3 +175,5 @@ export const hexToAscii = (hex: string) => {
   }
   return ascii
 }
+
+export const findMatchingElements = (array1: unknown[], array2: any[]) => filter((item: any) => includes(item, array2))(array1)

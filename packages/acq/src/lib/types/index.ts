@@ -71,6 +71,7 @@ export interface AccessControlQuery {
   }
   test: {
     contractAddress?: string
+    tokenIds?: string[]
     tokenId?: string
     type: ConditionType
     comparator: Comparator

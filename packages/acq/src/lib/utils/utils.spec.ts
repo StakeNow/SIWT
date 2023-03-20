@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ *
+ * SPDX-License-Identifier: MIT
+ */
 import { invalidPkh, validPkh } from '../fixtures'
 import { Comparator, ConditionType, Network } from '../types'
 import * as SUT from './utils'
@@ -26,6 +31,17 @@ describe('utils', () => {
     })
   })
 
+  describe('utils/findMatchingElements', () => {
+    it.each([
+      [['0', '1'], ['0'], ['0']],
+      [['0', '1'], ['2'], []],
+    ])('should return the matching elements', (array1, array2, expected) => {
+      // when ... we want to find matching elements
+      // then ... should return the matching elements
+      expect(SUT.findMatchingElements(array1, array2)).toEqual(expected)
+    })
+  })
+
   describe('utils/validateNFTCondition', () => {
     it.each([
       [
@@ -41,7 +57,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
-            tokenId: '0',
+            tokenIds: ['0', '1'],
             type: ConditionType.nft,
           },
         },
@@ -63,7 +79,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
-            tokenId: '0',
+            tokenIds: ['0'],
             type: ConditionType.nft,
           },
         },
@@ -85,7 +101,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
-            tokenId: '0',
+            tokenIds: ['0'],
             type: ConditionType.nft,
             checkTimeConstraint: true,
           },
@@ -108,7 +124,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
-            tokenId: '0',
+            tokenIds: ['0'],
             type: ConditionType.nft,
             checkTimeConstraint: true,
           },
@@ -131,7 +147,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
-            tokenId: '0',
+            tokenIds: ['0', '1'],
             type: ConditionType.nft,
             checkTimeConstraint: true,
           },
@@ -154,7 +170,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 2,
-            tokenId: '0',
+            tokenIds: ['0'],
             type: ConditionType.nft,
             checkTimeConstraint: true,
           },
@@ -177,7 +193,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
-            tokenId: '0',
+            tokenIds: ['0'],
             type: ConditionType.nft,
             checkTimeConstraint: true,
           },
@@ -200,7 +216,7 @@ describe('utils', () => {
             contractAddress: 'CONTRACT_ADDRESS',
             comparator: Comparator.gte,
             value: 1,
-            tokenId: '0',
+            tokenIds: ['0'],
             type: ConditionType.nft,
             checkTimeConstraint: true,
           },
@@ -208,6 +224,52 @@ describe('utils', () => {
         {
           passed: false,
           ownedTokenIds: ['0'],
+        },
+      ],
+      [
+        // Does not pass because user has incorrect amount of matching tokens
+        [{ value: '1', key: { address: validPkh, nat: '0' } }],
+        [{ name: 'Valid Until', value: 1678096525 }],
+        {
+          network: Network.ghostnet,
+          parameters: {
+            pkh: validPkh,
+          },
+          test: {
+            contractAddress: 'CONTRACT_ADDRESS',
+            comparator: Comparator.gte,
+            value: 2,
+            tokenIds: ['0', '1'],
+            type: ConditionType.nft,
+            checkTimeConstraint: true,
+          },
+        },
+        {
+          passed: false,
+          ownedTokenIds: ['0'],
+        },
+      ],
+      [
+        // Passes when user has correct amount of matching tokens
+        [{ value: '1', key: { address: validPkh, nat: '0' } }, { value: '1', key: { address: validPkh, nat: '1' } }],
+        [],
+        {
+          network: Network.ghostnet,
+          parameters: {
+            pkh: validPkh,
+          },
+          test: {
+            contractAddress: 'CONTRACT_ADDRESS',
+            comparator: Comparator.gte,
+            value: 2,
+            tokenIds: ['0', '1'],
+            type: ConditionType.nft,
+            checkTimeConstraint: false,
+          },
+        },
+        {
+          passed: true,
+          ownedTokenIds: ['0', '1'],
         },
       ],
     ])('should return the result of the NFT condition as expected', async (ledger, attributes, acq, expected) => {
