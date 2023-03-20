@@ -162,7 +162,11 @@ export const Try = () => {
       .then(getActiveAccount)
       .then(accountInfo => accountInfo && setActiveAccount(accountInfo as AccountInfo))
       .catch(error => {
-        disconnect()
+        getActiveAccount().then((r) => {
+          if (r) {
+            disconnect()
+          }
+        })
         console.log(error)
       })
 
