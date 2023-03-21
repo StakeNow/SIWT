@@ -36,7 +36,7 @@ This [package](https://www.npmjs.com/package/@siwt/sdk) contains utilities to fa
 Modify and deploy this package on to your server to run your own discord bot. The bot allows you to manage access to your private channels using
 SIWT.
 
-### [Discorb-bot-ui](https://github.com/StakeNow/SIWT/tree/develop/packages/discord-bot-ui)
+### [Discord-bot-ui](https://github.com/StakeNow/SIWT/tree/develop/packages/discord-bot-ui)
 
 A react UI that is part of the Discord bot. It is required so your Discord members can use their Tezos wallets to sign in to your server.
 
