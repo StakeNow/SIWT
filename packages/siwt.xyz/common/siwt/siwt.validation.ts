@@ -31,6 +31,9 @@ export const validateAccessData = (signInData: Record<string, any>) => {
               tokenId: {
                 type: 'string',
               },
+              tokenIds: {
+                type: 'array',
+              },
               comparator: {
                 type: 'string',
                 enum: [

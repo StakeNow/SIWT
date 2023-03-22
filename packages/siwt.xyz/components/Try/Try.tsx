@@ -25,6 +25,7 @@ export const Try = () => {
     },
     test: {
       contractAddress: '',
+      tokenIds: ['0'],
       tokenId: '0',
       type: ConditionType.nft,
       comparator: Comparator.gte,
@@ -47,6 +48,7 @@ export const Try = () => {
   const [message, setMessage] = useState<string>('')
   const [signature, setSignature] = useState<string>('')
   const [accessResponse, setAccessResponse] = useState<Record<string, any>>({})
+  const [tokenIds, setTokenIds] = useState<string>('')
 
   useEffect(() => {
     const getPkh = async () => {
@@ -108,8 +110,9 @@ export const Try = () => {
       : setIsContractAddressValid(false)
   }
 
-  const onChangeTokenId = (event: ChangeEvent<HTMLInputElement>) => {
-    setAcq({ ...acq, test: { ...acq.test, tokenId: event.currentTarget.value } })
+  const onChangeTokenIds = (event: ChangeEvent<HTMLInputElement>) => {
+    setTokenIds(event.currentTarget.value)
+    setAcq({ ...acq, test: { ...acq.test, tokenIds: split(',')(event.currentTarget.value) } })
   }
 
   const onChangeCheckTimeConstraint = (event: ChangeEvent<HTMLInputElement>) => {
@@ -226,14 +229,12 @@ export const Try = () => {
                           </div>
                           <div className="sm:col-span-3 mt-6">
                             <TextField
-                              label="Token Id"
-                              id="token-id"
-                              value={acq.test.tokenId}
-                              onChange={onChangeTokenId}
-                              type="number"
-                              min={0}
-                              step={1}
-                              explainer="Optional"
+                              label="Token Ids"
+                              id="token-ids"
+                              value={tokenIds}
+                              onChange={onChangeTokenIds}
+                              type="text"
+                              explainer="A comma separated list of token ids when using a multi asset contract."
                             />
                           </div>
                           <div className="sm:col-span-3 mt-6 flex flex-row">
@@ -377,9 +378,9 @@ export const Try = () => {
                     <span className="italic text-gray-400 font-light text-sm">KT...</span>
                   )}
                   {`,
-    tokenId: `}
+    tokenIds: `}
                   {acq.test.type !== ConditionType.allowlist && acq.test.type !== ConditionType.xtzBalance ? (
-                    <span className="text-pink-500 font-bold">{acq.test.tokenId}</span>
+                    <span className="text-pink-500 font-bold">{`[${acq.test.tokenIds}]`}</span>
                   ) : (
                     <span className="italic text-gray-400 font-light text-sm">...</span>
                   )}
