@@ -26,7 +26,7 @@ const result = await queryAccessControl({
   },
   test: {
     contractAddress: '',                // The smart contract address to check. Required on certain condition types.
-    tokenId: '0',                       // The token id inside the smart contract storage to check against.
+    tokenIds: ['0'],                    // The token id inside the (multi asset) smart contract storage to check against.
     type: ConditionType.nft,            //
     comparator: Comparator.gte,         //
     value: 1,                           // The value to compare against with the comparator.
