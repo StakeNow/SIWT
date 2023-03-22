@@ -284,7 +284,11 @@ describe('utils', () => {
       const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue(ledger)
       const getAttributesFromStorageStub = jest.fn().mockResolvedValue(attributes)
       const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
-      const result = await SUT.validateNFTCondition(getOwnedAssetsForPKHStub, getAttributesFromStorageStub, getAssetContractTypeByContractStub)(acq)
+      const result = await SUT.validateNFTCondition(
+        getOwnedAssetsForPKHStub,
+        getAttributesFromStorageStub,
+        getAssetContractTypeByContractStub,
+      )(acq)
 
       expect(result).toEqual(expected)
       jest.useRealTimers()

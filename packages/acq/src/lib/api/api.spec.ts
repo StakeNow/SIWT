@@ -240,9 +240,9 @@ describe('./data', () => {
 
   describe('getAssetContractTypeByContract', () => {
     it.each([
-      [{ keyType: {'schema:nat': 'nat'} }, AssetContractType.nft],
-      [{ keyType: {'schema:object': {}} }, AssetContractType.multi],
-      [{ keyType: {'schema:address': 'address'} }, AssetContractType.single],
+      [{ keyType: { 'schema:nat': 'nat' } }, AssetContractType.nft],
+      [{ keyType: { 'schema:object': {} } }, AssetContractType.multi],
+      [{ keyType: { 'schema:address': 'address' } }, AssetContractType.single],
     ])('should get the asset contract type by contract', async (ledger, expected) => {
       // when ... we want the asset contract type by contract
       // then ... it should fetch as expected
@@ -250,9 +250,12 @@ describe('./data', () => {
       const getStub = jest.fn().mockResolvedValue({ data: ledger })
       const httpStub = { get: getStub }
 
-      const result = await SUT._getAssetContractTypeByContract(httpStub as any)({ network: Network.ghostnet, contract: 'CONTRACT' })
+      const result = await SUT._getAssetContractTypeByContract(httpStub as any)({
+        network: Network.ghostnet,
+        contract: 'CONTRACT',
+      })
 
       expect(result).toEqual(expected)
-    })  
+    })
   })
 })

@@ -94,7 +94,6 @@ export const validateNFTCondition =
     getAssetContractTypeByContract({ contract: contractAddress, network }).then(assetContractType =>
       getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh, contractType: assetContractType })
         .then(async (assets: LedgerStorage[]) => {
-
           if (assets.length === 0) {
             return {
               passed: false,

@@ -23,7 +23,7 @@ export const _getOwnedAssetsForPKH =
     if (contractType === AssetContractType.single) {
       query = `key=${pkh}`
     }
-    
+
     return (
       http
         .get(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/keys?${query}`)
@@ -47,15 +47,22 @@ export const _getAttributesFromStorage =
           hexToAscii,
         )(data) as string
 
-        return http.get(metaDataUrl).then(pathOr([], ['data', 'attributes'])).catch(error => error)
-      }).catch(error => error)
+        return http
+          .get(metaDataUrl)
+          .then(pathOr([], ['data', 'attributes']))
+          .catch(error => error)
+      })
+      .catch(error => error)
 
 export const getAttributesFromStorage = _getAttributesFromStorage(http)
 
 export const _getBalance =
   (http: AxiosInstance) =>
   ({ network, contract }: { network: Network; contract: string }) =>
-    http.get(`https://${API_URLS[network]}/v1/accounts/${contract}/balance`).then(prop('data')).catch(error => error)
+    http
+      .get(`https://${API_URLS[network]}/v1/accounts/${contract}/balance`)
+      .then(prop('data'))
+      .catch(error => error)
 
 export const getBalance = _getBalance(http)
 
@@ -90,18 +97,20 @@ export const getTokenBalance = _getTokenBalance(http)
 
 export const _getAssetContractTypeByContract =
   (http: AxiosInstance) =>
-  ({ contract, network }: { contract: string; network: Network.ghostnet }) => 
-    http.get(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/`).then(
-      pipe(
-        path(['data', 'keyType']),
-        cond([
-          [has('schema:nat'), always(AssetContractType.nft)],
-          [has('schema:object'), always(AssetContractType.multi)],
-          [has('schema:address'), always(AssetContractType.single)],
-          [T, always(AssetContractType.unknown)],
-        ]),
-      ),
-    )
-    .catch(error => error)
+  ({ contract, network }: { contract: string; network: Network.ghostnet }) =>
+    http
+      .get(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/`)
+      .then(
+        pipe(
+          path(['data', 'keyType']),
+          cond([
+            [has('schema:nat'), always(AssetContractType.nft)],
+            [has('schema:object'), always(AssetContractType.multi)],
+            [has('schema:address'), always(AssetContractType.single)],
+            [T, always(AssetContractType.unknown)],
+          ]),
+        ),
+      )
+      .catch(error => error)
 
 export const getAssetContractTypeByContract = _getAssetContractTypeByContract(http)

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 
+import DiyFrameLogo from '../../images/diyframe.svg'
 import StakeNowLogo from '../../images/stakenow.svg'
 import StackReportLogo from '../../images/the-stack-report-logo.svg'
 import { Button } from '../Button'
@@ -31,15 +32,40 @@ export const Hero = () => (
       >
         {[
           [
-            { name: 'The Stack Report', logo: StakeNowLogo },
-            { name: 'StakeNow', logo: StackReportLogo },
+            {
+              name: 'StakeNow',
+              logo: StakeNowLogo,
+              href: 'https://stakenow.fi',
+              dimensions: { width: 200, height: 50 },
+            },
+            {
+              name: 'Stack Report',
+              logo: StackReportLogo,
+              href: 'https://thestackreport.xyz',
+              dimensions: { width: 200, height: 50 },
+            },
+            {
+              name: 'DIY Frame',
+              logo: DiyFrameLogo,
+              href: 'https://diyframe.xyz',
+              dimensions: { width: 50, height: 50 },
+            },
           ],
         ].map((group, groupIndex) => (
           <li key={groupIndex}>
             <ul role="list" className="flex flex-col items-center gap-y-8 sm:flex-row sm:gap-x-12 sm:gap-y-0">
-              {group.map(company => (
-                <li key={company.name} className="flex">
-                  <Image src={company.logo} alt={company.name} unoptimized width={'200'} height={'100'} />
+              {group.map(partner => (
+                <li key={partner.name} className="flex">
+                  <a href={partner.href}>
+                    <Image
+                      src={partner.logo}
+                      alt={partner.name}
+                      unoptimized
+                      width={partner.dimensions.width}
+                      height={partner.dimensions.height}
+                      fill={false}
+                    />
+                  </a>
                 </li>
               ))}
             </ul>
