@@ -13,7 +13,10 @@ import {
   equals,
   filter,
   find,
+  gt,
   head,
+  includes,
+  indexOf,
   map,
   path,
   pathEq,
@@ -23,9 +26,6 @@ import {
   propEq,
   propOr,
   uniq,
-  indexOf,
-  gt,
-  includes,
 } from 'ramda'
 
 import { COMPARISONS } from '../constants'
@@ -34,9 +34,14 @@ import { AccessControlQuery, AccessControlQueryDependencies, AssetContractType, 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
 export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenIds: string[]) =>
-  filter(allPass([pathEq(['key', 'address'], pkh), pipe(path(['key', 'nat']), (tokenId: string) => gt(indexOf(tokenId, tokenIds), -1))]))
+  filter(
+    allPass([
+      pathEq(['key', 'address'], pkh),
+      pipe(path(['key', 'nat']), (tokenId: string) => gt(indexOf(tokenId, tokenIds), -1)),
+    ]),
+  )
 
-export const determineContractAssetType = pipe(
+export const determineContractAssetTypeFromLedger = pipe(
   head,
   cond([
     [pipe(prop('key'), validateAddress, equals(3)), always(AssetContractType.single)],
@@ -49,24 +54,27 @@ export const determineContractAssetType = pipe(
 export const filterOwnedAssets = (pkh: string, tokenIds: string[]) =>
   cond([
     [
-      pipe(determineContractAssetType, equals(AssetContractType.nft)),
+      pipe(determineContractAssetTypeFromLedger, equals(AssetContractType.nft)),
       filterOwnedAssetsFromNFTAssetContract(pkh) as any,
     ],
     [
-      pipe(determineContractAssetType, equals(AssetContractType.multi)),
+      pipe(determineContractAssetTypeFromLedger, equals(AssetContractType.multi)),
       filterOwnedAssetsFromMultiAssetContract(pkh, tokenIds) as any,
     ],
     [
-      pipe(determineContractAssetType, equals(AssetContractType.single)),
+      pipe(determineContractAssetTypeFromLedger, equals(AssetContractType.single)),
       filterOwnedAssetsFromSingleAssetContract(pkh) as any,
     ],
     [T, always([])],
   ])
 
 export const getOwnedAssetIds = cond([
-  [pipe(determineContractAssetType, equals(AssetContractType.nft)), pipe(map(propOr('', 'key')), uniq)],
-  [pipe(determineContractAssetType, equals(AssetContractType.multi)), pipe(map(pathOr('', ['key', 'nat'])), uniq)],
-  [pipe(determineContractAssetType, equals(AssetContractType.single)), pipe(map(propOr('', 'value')), uniq)],
+  [pipe(determineContractAssetTypeFromLedger, equals(AssetContractType.nft)), pipe(map(propOr('', 'key')), uniq)],
+  [
+    pipe(determineContractAssetTypeFromLedger, equals(AssetContractType.multi)),
+    pipe(map(pathOr('', ['key', 'nat'])), uniq),
+  ],
+  [pipe(determineContractAssetTypeFromLedger, equals(AssetContractType.single)), pipe(map(propOr('', 'value')), uniq)],
   [T, always([])],
 ])
 
@@ -74,58 +82,72 @@ export const denominate = ([x, y]: number[]) => divide(y, 10 ** x)
 
 export const validateNFTCondition =
   (
-    getLedgerFromStorage: AccessControlQueryDependencies['getLedgerFromStorage'],
+    getOwnedAssetsForPKH: AccessControlQueryDependencies['getOwnedAssetsForPKH'],
     getAttributesFromStorage: AccessControlQueryDependencies['getAttributesFromStorage'],
+    getAssetContractTypeByContract: AccessControlQueryDependencies['getAssetContractTypeByContract'],
   ) =>
   ({
     network = Network.ghostnet,
     parameters: { pkh },
     test: { contractAddress, comparator, value, checkTimeConstraint = false, tokenIds = ['0'] },
   }: AccessControlQuery) =>
-    getLedgerFromStorage &&
-    getLedgerFromStorage({ network, contract: contractAddress as string })
-      .then(async ledger => {
-        const ownedAssets = filterOwnedAssets(pkh as string, tokenIds as string[])(ledger as LedgerStorage[])
-        const ownedAssetIds = getOwnedAssetIds(ownedAssets)
-        
-        if (
-          determineContractAssetType(ledger as LedgerStorage[]) === AssetContractType.multi
-        ) {
-          const matchingAssets = findMatchingElements(tokenIds as string[], ownedAssetIds)
-          if (matchingAssets.length === 0 || !(COMPARISONS[comparator] as Function)(prop('length')(matchingAssets))(value)) {
+    getAssetContractTypeByContract({ contract: contractAddress, network }).then(assetContractType =>
+      getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh, contractType: assetContractType })
+        .then(async (assets: LedgerStorage[]) => {
+
+          if (assets.length === 0) {
             return {
               passed: false,
-              ownedTokenIds: ownedAssetIds,
+              ownedTokenIds: [],
             }
           }
-        }
 
-        if (checkTimeConstraint) {
-          const attributes = (await getAttributesFromStorage({
-            network,
-            contract: contractAddress as string,
-            tokenId: ownedAssetIds[0],
-          })) as any[]
-          const validityAttribute = find(
-            ({ name }: { name: string; value: string | number }) => name === 'Valid Until',
-          )(attributes)
-          if (!attributes.length || !validityAttribute || !validateTimeConstraint(validityAttribute.value as number)) {
-            return {
-              passed: false,
-              ownedTokenIds: ownedAssetIds,
+          const ownedAssetIds = getOwnedAssetIds(assets)
+
+          if (assetContractType === AssetContractType.multi) {
+            const matchingAssets = findMatchingElements(tokenIds as string[], ownedAssetIds)
+            if (
+              matchingAssets.length === 0 ||
+              !(COMPARISONS[comparator] as Function)(prop('length')(matchingAssets))(value)
+            ) {
+              return {
+                passed: false,
+                ownedTokenIds: ownedAssetIds,
+              }
             }
           }
-        }
 
-        return {
-          passed: (COMPARISONS[comparator] as Function)(prop('length')(ownedAssets))(value),
-          ownedTokenIds: ownedAssetIds,
-        }
-      })
-      .catch(() => ({
-        passed: false,
-        error: true,
-      }))
+          if (checkTimeConstraint) {
+            const attributes = (await getAttributesFromStorage({
+              network,
+              contract: contractAddress as string,
+              tokenId: ownedAssetIds[0],
+            })) as any[]
+            const validityAttribute = find(
+              ({ name }: { name: string; value: string | number }) => name === 'Valid Until',
+            )(attributes)
+            if (
+              !attributes.length ||
+              !validityAttribute ||
+              !validateTimeConstraint(validityAttribute.value as number)
+            ) {
+              return {
+                passed: false,
+                ownedTokenIds: ownedAssetIds,
+              }
+            }
+          }
+
+          return {
+            passed: (COMPARISONS[comparator] as Function)(prop('length')(assets))(value),
+            ownedTokenIds: ownedAssetIds,
+          }
+        })
+        .catch(() => ({
+          passed: false,
+          error: true,
+        })),
+    )
 
 export const validateXTZBalanceCondition =
   (getBalance: AccessControlQueryDependencies['getBalance']) =>
@@ -176,4 +198,5 @@ export const hexToAscii = (hex: string) => {
   return ascii
 }
 
-export const findMatchingElements = (array1: unknown[], array2: any[]) => filter((item: any) => includes(item, array2))(array1)
+export const findMatchingElements = (array1: unknown[], array2: any[]) =>
+  filter((item: any) => includes(item, array2))(array1)

@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 import { validPkh } from '../fixtures'
-import { Network } from '../types'
+import { AssetContractType, Network } from '../types'
 import * as SUT from './api'
 
 describe('./data', () => {
-  describe('getLedgerFromStorage', () => {
+  describe('getOwnedAssetsForPKH', () => {
     it.each([
       [
         {
@@ -54,9 +54,11 @@ describe('./data', () => {
       // when ... we want the ledger from the storage of a contract
       // then ... it should fetch and format as expected
       const httpStub = { get: jest.fn().mockResolvedValue(storage) }
-      const result = await SUT._getLedgerFromStorage(httpStub as any)({
+      const result = await SUT._getOwnedAssetsForPKH(httpStub as any)({
         network: Network.ghostnet,
         contract: 'CONTRACT',
+        contractType: AssetContractType.multi,
+        pkh: validPkh,
       })
 
       expect(result).toEqual(expected)
@@ -66,9 +68,11 @@ describe('./data', () => {
       // when ... getting the ledger data fails
       // then ... it should fail as expected
       const httpStub = { get: jest.fn().mockRejectedValue(new Error('Getting storage failed')) }
-      const result = await SUT._getLedgerFromStorage(httpStub as any)({
+      const result = await SUT._getOwnedAssetsForPKH(httpStub as any)({
         network: Network.ghostnet,
         contract: 'CONTRACT',
+        contractType: AssetContractType.multi,
+        pkh: validPkh,
       })
 
       expect(result).toEqual(new Error('Getting storage failed'))
@@ -99,45 +103,45 @@ describe('./data', () => {
 
       expect(result).toEqual(new Error('Getting balance failed'))
     })
+  })
 
-    describe('getTokenBalance', () => {
-      it('should get a users balance for a specific token', async () => {
-        // when ... we want a users balance for a specific token
-        // then ... it should fetch and format as expected
-        const httpStub = {
-          get: jest.fn().mockResolvedValue({
-            data: [
-              {
-                metadata: {
-                  decimals: '6',
-                },
-                balance: '1000000',
+  describe('getTokenBalance', () => {
+    it('should get a users balance for a specific token', async () => {
+      // when ... we want a users balance for a specific token
+      // then ... it should fetch and format as expected
+      const httpStub = {
+        get: jest.fn().mockResolvedValue({
+          data: [
+            {
+              metadata: {
+                decimals: '6',
               },
-            ],
-          }),
-        }
-        const result = await SUT._getTokenBalance(httpStub as any)({
-          network: Network.ghostnet,
-          contract: 'CONTRACT',
-          pkh: validPkh,
-          tokenId: '0',
-        })
-
-        expect(result).toEqual(1)
+              balance: '1000000',
+            },
+          ],
+        }),
+      }
+      const result = await SUT._getTokenBalance(httpStub as any)({
+        network: Network.ghostnet,
+        contract: 'CONTRACT',
+        pkh: validPkh,
+        tokenId: '0',
       })
 
-      it('should fail to get the token balance', async () => {
-        // when ... getting the token balance fails
-        // then ... it should fail as expected
-        const httpStub = { get: jest.fn().mockRejectedValue(new Error('Getting token balance failed')) }
-        const result = await SUT._getTokenBalance(httpStub as any)({
-          network: Network.ghostnet,
-          contract: 'CONTRACT',
-          pkh: validPkh,
-          tokenId: '0',
-        })
-        expect(result).toEqual(new Error('Getting token balance failed'))
+      expect(result).toEqual(1)
+    })
+
+    it('should fail to get the token balance', async () => {
+      // when ... getting the token balance fails
+      // then ... it should fail as expected
+      const httpStub = { get: jest.fn().mockRejectedValue(new Error('Getting token balance failed')) }
+      const result = await SUT._getTokenBalance(httpStub as any)({
+        network: Network.ghostnet,
+        contract: 'CONTRACT',
+        pkh: validPkh,
+        tokenId: '0',
       })
+      expect(result).toEqual(new Error('Getting token balance failed'))
     })
   })
 
@@ -232,5 +236,23 @@ describe('./data', () => {
 
       expect(result).toEqual(new Error('Getting attributes failed'))
     })
+  })
+
+  describe('getAssetContractTypeByContract', () => {
+    it.each([
+      [{ keyType: {'schema:nat': 'nat'} }, AssetContractType.nft],
+      [{ keyType: {'schema:object': {}} }, AssetContractType.multi],
+      [{ keyType: {'schema:address': 'address'} }, AssetContractType.single],
+    ])('should get the asset contract type by contract', async (ledger, expected) => {
+      // when ... we want the asset contract type by contract
+      // then ... it should fetch as expected
+
+      const getStub = jest.fn().mockResolvedValue({ data: ledger })
+      const httpStub = { get: getStub }
+
+      const result = await SUT._getAssetContractTypeByContract(httpStub as any)({ network: Network.ghostnet, contract: 'CONTRACT' })
+
+      expect(result).toEqual(expected)
+    })  
   })
 })

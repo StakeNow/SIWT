@@ -5,18 +5,20 @@
  */
 import * as SUT from './acq'
 import { validPkh } from './fixtures'
-import { Comparator, ConditionType, Network } from './types'
+import { AssetContractType, Comparator, ConditionType, Network } from './types'
 
 describe('acq', () => {
   it('should pass test when user has token', async () => {
-    const getLedgerFromStorageStub = jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }])
+    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }])
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })({
       parameters: {
         pkh: validPkh,
@@ -36,26 +38,30 @@ describe('acq', () => {
         passed: true,
       },
     })
-    expect(getLedgerFromStorageStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
+      contractType: AssetContractType.nft,
+      pkh: validPkh,
     })
     expect(getBalanceStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).not.toHaveBeenCalled()
   })
 
   it('should pass test and return all tokens of the user', async () => {
-    const getLedgerFromStorageStub = jest.fn().mockResolvedValue([
+    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([
       { value: validPkh, key: 1 },
       { value: validPkh, key: 2 },
     ])
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })({
       network: Network.mainnet,
       parameters: {
@@ -77,23 +83,27 @@ describe('acq', () => {
         passed: true,
       },
     })
-    expect(getLedgerFromStorageStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.mainnet,
+      contractType: AssetContractType.nft,
+      pkh: validPkh,
     })
     expect(getBalanceStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).not.toHaveBeenCalled()
   })
 
   it('should pass test when user has token', async () => {
-    const getLedgerFromStorageStub = jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }])
+    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }])
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })({
       parameters: {
         pkh: validPkh,
@@ -114,23 +124,27 @@ describe('acq', () => {
         passed: true,
       },
     })
-    expect(getLedgerFromStorageStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
+      contractType: AssetContractType.nft,
+      pkh: validPkh,
     })
     expect(getBalanceStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).not.toHaveBeenCalled()
   })
 
   it('should fail when there is no storage', async () => {
-    const getLedgerFromStorageStub = jest.fn().mockResolvedValue([])
+    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([])
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })({
       parameters: {
         pkh: validPkh,
@@ -151,9 +165,11 @@ describe('acq', () => {
         passed: false,
       },
     })
-    expect(getLedgerFromStorageStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
+      contractType: AssetContractType.nft,
+      pkh: validPkh,
     })
     expect(getBalanceStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).not.toHaveBeenCalled()
@@ -173,14 +189,16 @@ describe('acq', () => {
       },
     }
 
-    const getLedgerFromStorageStub = jest.fn().mockRejectedValue({})
+    const getOwnedAssetsForPKHStub = jest.fn().mockRejectedValue({})
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })(query as any)
 
     // then ... it should fail as expected
@@ -193,9 +211,11 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getLedgerFromStorageStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
+      contractType: AssetContractType.nft,
+      pkh: validPkh,
     })
     expect(getBalanceStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).not.toHaveBeenCalled()
@@ -216,14 +236,16 @@ describe('acq', () => {
       },
     }
 
-    const getLedgerFromStorageStub = jest.fn()
+    const getOwnedAssetsForPKHStub = jest.fn()
     const getBalanceStub = jest.fn().mockResolvedValue(balance)
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })(query as any)
 
     // then ... it should return a passed test as expected
@@ -236,7 +258,7 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getLedgerFromStorageStub).not.toHaveBeenCalled()
+    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
     expect(getBalanceStub).toHaveBeenCalledWith({
       contract: validPkh,
       network: Network.ghostnet,
@@ -259,14 +281,16 @@ describe('acq', () => {
       },
     }
 
-    const getLedgerFromStorageStub = jest.fn()
+    const getOwnedAssetsForPKHStub = jest.fn()
     const getBalanceStub = jest.fn().mockRejectedValue(balance)
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })(query as any)
 
     // then ... it should fail as expected
@@ -279,7 +303,7 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getLedgerFromStorageStub).not.toHaveBeenCalled()
+    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).not.toHaveBeenCalled()
   })
 
@@ -299,14 +323,16 @@ describe('acq', () => {
       },
     }
 
-    const getLedgerFromStorageStub = jest.fn()
+    const getOwnedAssetsForPKHStub = jest.fn()
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn().mockResolvedValue(balance)
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })(query as any)
 
     // then ... it should return a passed test as expected
@@ -319,7 +345,7 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getLedgerFromStorageStub).not.toHaveBeenCalled()
+    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
     expect(getBalanceStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).toHaveBeenCalledWith({
       contract: 'CONTRACT',
@@ -345,14 +371,16 @@ describe('acq', () => {
       },
     }
 
-    const getLedgerFromStorageStub = jest.fn()
+    const getOwnedAssetsForPKHStub = jest.fn()
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn().mockRejectedValue(balance)
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
 
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })(query as any)
 
     // then ... it should fail as expected
@@ -365,7 +393,7 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getLedgerFromStorageStub).not.toHaveBeenCalled()
+    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
     expect(getTokenBalanceStub).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
@@ -417,13 +445,16 @@ describe('acq', () => {
   ])('should validate a pkh in the allowlist', async (query, allowlist, expected) => {
     // when ... we want to validate if a pkh should be allowed based on allowlist validation
     // then ... then it should return the correct result as expected
-    const getLedgerFromStorageStub = jest.fn()
+    const getOwnedAssetsForPKHStub = jest.fn()
     const getBalanceStub = jest.fn()
     const getTokenBalanceStub = jest.fn()
+    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
+
     const result = await SUT._queryAccessControl({
-      getLedgerFromStorage: getLedgerFromStorageStub,
+      getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
+      getAssetContractTypeByContract: getAssetContractTypeByContractStub,
     })(query, allowlist)
 
     expect(result).toEqual(expected)

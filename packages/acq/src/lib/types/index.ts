@@ -34,12 +34,16 @@ export enum AssetContractType {
 }
 
 export interface AccessControlQueryDependencies {
-  getLedgerFromStorage?: ({
+  getOwnedAssetsForPKH?: ({
     network,
     contract,
+    pkh,
+    contractType,
   }: {
     network: Network
     contract: string
+    pkh: string
+    contractType: AssetContractType
   }) => Promise<Pick<unknown, never>[] | void>
   getBalance?: ({ network, contract }: { network: Network; contract: string }) => Promise<number>
   getTokenBalance?: ({
@@ -62,6 +66,13 @@ export interface AccessControlQueryDependencies {
     contract: string
     tokenId: string
   }) => Promise<{ name: string; value: string }[] | void>
+  getAssetContractTypeByContract?: ({
+    contract,
+    network,
+  }: {
+    contract: string
+    network: Network
+  }) => Promise<AssetContractType>
 }
 
 export interface AccessControlQuery {

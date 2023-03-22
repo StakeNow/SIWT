@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { invalidPkh, validPkh } from '../fixtures'
-import { Comparator, ConditionType, Network } from '../types'
+import { AssetContractType, Comparator, ConditionType, Network } from '../types'
 import * as SUT from './utils'
 
 describe('utils', () => {
@@ -251,7 +251,10 @@ describe('utils', () => {
       ],
       [
         // Passes when user has correct amount of matching tokens
-        [{ value: '1', key: { address: validPkh, nat: '0' } }, { value: '1', key: { address: validPkh, nat: '1' } }],
+        [
+          { value: '1', key: { address: validPkh, nat: '0' } },
+          { value: '1', key: { address: validPkh, nat: '1' } },
+        ],
         [],
         {
           network: Network.ghostnet,
@@ -278,9 +281,10 @@ describe('utils', () => {
 
       // when ... we want to validate an NFT condition
       // then ... should return the expected result
-      const getLedgerFromStorageStub = jest.fn().mockResolvedValue(ledger)
+      const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue(ledger)
       const getAttributesFromStorageStub = jest.fn().mockResolvedValue(attributes)
-      const result = await SUT.validateNFTCondition(getLedgerFromStorageStub, getAttributesFromStorageStub)(acq)
+      const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
+      const result = await SUT.validateNFTCondition(getOwnedAssetsForPKHStub, getAttributesFromStorageStub, getAssetContractTypeByContractStub)(acq)
 
       expect(result).toEqual(expected)
       jest.useRealTimers()

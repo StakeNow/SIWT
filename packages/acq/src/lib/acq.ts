@@ -6,7 +6,8 @@
 import { always } from 'ramda'
 import { match } from 'ts-pattern'
 
-import { getAttributesFromStorage, getBalance, getLedgerFromStorage, getTokenBalance } from './api'
+import { getAttributesFromStorage, getBalance, getOwnedAssetsForPKH, getTokenBalance } from './api'
+import { getAssetContractTypeByContract } from './api/api'
 import { AccessControlQuery, AccessControlQueryDependencies, ConditionType, Network } from './types'
 import {
   validateAllowlistCondition,
@@ -23,11 +24,13 @@ export const _queryAccessControl =
       parameters: { pkh },
       test: { type },
     } = query
-    const { getLedgerFromStorage, getBalance, getTokenBalance } = deps
+    const { getOwnedAssetsForPKH, getBalance, getTokenBalance, getAssetContractTypeByContract } = deps
 
     try {
       const testResults = await match(type)
-        .with(ConditionType.nft, () => validateNFTCondition(getLedgerFromStorage, getAttributesFromStorage)(query))
+        .with(ConditionType.nft, () =>
+          validateNFTCondition(getOwnedAssetsForPKH, getAttributesFromStorage, getAssetContractTypeByContract)(query),
+        )
         .with(ConditionType.xtzBalance, () => validateXTZBalanceCondition(getBalance)(query))
         .with(ConditionType.tokenBalance, () => validateTokenBalanceCondition(getTokenBalance)(query))
         .with(ConditionType.allowlist, () => validateAllowlistCondition(allowlist)(query))
@@ -45,8 +48,9 @@ export const _queryAccessControl =
   }
 
 export const queryAccessControl = _queryAccessControl({
-  getLedgerFromStorage,
+  getOwnedAssetsForPKH,
   getBalance,
   getTokenBalance,
   getAttributesFromStorage,
+  getAssetContractTypeByContract,
 })
