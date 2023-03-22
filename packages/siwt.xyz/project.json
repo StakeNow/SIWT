@@ -82,7 +82,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/siwt.xyz",
-        "commands": ["dotenv -e .env cdk deploy --all"]
+        "commands": ["dotenv -e .env cdk deploy -- --all"]
       }
     },
     "destroy": {
