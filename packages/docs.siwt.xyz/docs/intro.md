@@ -12,9 +12,9 @@ Sign In With Tezos (SIWT) is a library that supports the development of your dec
 
 ## Packages
 
-~~~
+```
 All packages have the same version corresponding to the GitHub release tag.
-~~~
+```
 
 SIWT is split up in several packages:
 
