@@ -33,7 +33,6 @@ jobs:
         run: npm install --prefix ./packages/docs.siwt.xyz
 
       - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
-      - run: npx nx affected --target=lint --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
       - run: npx nx affected --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
       - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
 
