@@ -18,10 +18,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build affected packages
-        run: npx nx affected --target=build --exclude=discord,discord-bot-ui,discord-bot-ui-e2e,docs.siwt.xyz,siwt.xyz,siwt.xyz-e2e
+      - name: Build packages
+        run: npx nx run-many --target=build --projects=acq,core,react,sdk
 
-      - name: Publish affected packages
-        run: npx nx affected --target=publish --exclude=discord,discord-bot-ui,discord-bot-ui-e2e,docs.siwt.xyz,siwt.xyz,siwt.xyz-e2e
+      - name: Publish packages
+        run: npx nx run-many --target=publish --projects=acq,core,react,sdk
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
