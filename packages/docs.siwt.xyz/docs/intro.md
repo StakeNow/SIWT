@@ -12,6 +12,10 @@ Sign In With Tezos (SIWT) is a library that supports the development of your dec
 
 ## Packages
 
+```
+All packages have the same version corresponding to the GitHub release tag.
+```
+
 SIWT is split up in several packages:
 
 ### [Core](https://github.com/StakeNow/SIWT/tree/develop/packages/core)
@@ -22,7 +26,7 @@ This [package](https://www.npmjs.com/package/@siwt/core) handles the JWT tokens.
 
 Use this [package](https://www.npmjs.com/package/@siwt/acq) to define the requirements your user needs to fulfil to obtain access. Currently it supports:
 
-- checking if your user has a certain NFT
+- checking if your user has a certain NFT optionally with a time constraint
 - checking if a user is (or is not) on a provided allowlist
 - checking if a user has a min/max amount of XTZ
 - checking if a user has a min/max amount of a fungible token
@@ -31,15 +35,15 @@ Use this [package](https://www.npmjs.com/package/@siwt/acq) to define the requir
 
 This [package](https://www.npmjs.com/package/@siwt/sdk) contains utilities to facilitate the creation of messages and verification of signatures. It can be used on both FE and server.
 
+### [React](https://github.com/StakeNow/SIWT/tree/develop/packages/react)
+
+This [package](https://www.npmjs.com/package/@siwt/react) contains react hooks to make implementation of SIWT in your React application easier.
+
 ### [Discord](https://github.com/StakeNow/SIWT/tree/develop/packages/discord)
 
-Modify and deploy this package on to your server to run your own discord bot. The bot allows you to manage access to your private channels using
+Modify and deploy this example on to your server to run your own discord bot. The bot allows you to manage access to your private channels using
 SIWT.
 
 ### [Discord-bot-ui](https://github.com/StakeNow/SIWT/tree/develop/packages/discord-bot-ui)
 
 A react UI that is part of the Discord bot. It is required so your Discord members can use their Tezos wallets to sign in to your server.
-
-### [React](https://github.com/StakeNow/SIWT/tree/develop/packages/react)
-
-This [package](https://www.npmjs.com/package/@siwt/react) contains react hooks to make implementation of SIWT in your React application easier.
