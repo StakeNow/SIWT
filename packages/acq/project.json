@@ -34,7 +34,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "dist/packages/acq",
-        "commands": ["npm run publish"]
+        "commands": ["npm publish"]
       }
     }
   },

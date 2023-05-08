@@ -40,7 +40,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "dist/packages/react",
-        "commands": ["npm run publish"]
+        "commands": ["npm publish"]
       }
     }
   }
