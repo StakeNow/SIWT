@@ -1,0 +1,119 @@
+#include "./temp.jsligo"
+#include "./test_utils/test_utils.jsligo"
+
+#import "./storage.jsligo" "Storage"
+
+const bob = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address;
+const alice = "tz1cQ1mkH1PiCxLUkbWH7SkGj8PrYpffzWxo" as address;
+const ursula = "tz1eGd1Gzh9cpZjW1hpzre2fLSnMAsXqRdJy" as address;
+const token_contract_1 = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton" as address;
+const token_contract_2 = "KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW" as address;
+const public_key = "edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6" as key;
+const public_key_2 = "edpkusHqa6fxkGPPL9YpgbcakvSTvcTBcwnLAmCdcevmws4Mh2MdHB" as key;
+
+const store_mock = {
+  admin: {
+    address: bob,
+    verifier: public_key,
+    paused: false,
+  },
+  allowed_token_contracts: Set.empty as set<address>,
+  ledger_counter: 0 as nat,
+  ledger: (Big_map.empty as big_map<Storage.Types.ledger_key, nat>),
+  pricing: Map.empty as map<nat, tez>,
+  token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
+  temporary: Map.empty as map<address, Storage.Types.temporary_policy>,
+};
+
+// const _test = () : bool => {
+//   const initial_storage = 42 as int;
+//   const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+//   return (Test.get_storage(taddr) == initial_storage);
+// };
+
+// const test = _test();
+
+// const _test2 = () : bool => {
+//   const initial_storage = 42 as int;
+//   const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+//   const contr = Test.to_contract(taddr);
+//   const gas_cons = Test.transfer_to_contract_exn(contr, (Increment (1)), 1 as mutez);
+//   const _ = Test.log(["gas consumption", gas_cons]);
+//   return (Test.get_storage(taddr) == initial_storage + 1);
+// }
+
+// const test2 = _test2();
+
+const _payout_success = () : unit => {
+  const [address, public_key, _secret] = Test.get_bootstrap_account(0 as nat);
+  const [address2, _public_key2, _secret2] = Test.get_bootstrap_account(1 as nat);
+  
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      address: address2,
+      verifier: public_key,
+      paused: false
+    }
+  };
+
+  Test.set_source(address);
+  const [taddr, _, _] = Test.originate(main, initial_storage, 1000000 as tez);
+  const contr = Test.to_contract(taddr);
+  Test.set_source(address2);
+  const _tx = Test.transfer_to_contract_exn(contr, (Payout(1000000 as tez)), 0 as tez);
+  const new_contract_balance = Test.get_balance(Tezos.address(contr));
+  const new_user_balance = Test.get_balance(address2);
+
+  assert(new_contract_balance == (0 as tez));
+  assert(new_user_balance == (4799999 as tez));
+};
+// const test_payout_success = _payout_success();
+
+const _payout_failwith_not_admin = () : unit => {
+  const [address, public_key, _secret] = Test.get_bootstrap_account(0 as nat);
+  const [address2, _public_key2, _secret2] = Test.get_bootstrap_account(1 as nat);
+  
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      address: address2,
+      verifier: public_key,
+      paused: false
+    }
+  };
+
+  Test.set_source(address);
+  const [taddr, _, _] = Test.originate(main, initial_storage, 1000000 as tez);
+  const contr = Test.to_contract(taddr);
+  const tx = Test.transfer_to_contract(contr, (Payout(1000000 as tez)), 0 as tez);
+  const new_contract_balance = Test.get_balance(Tezos.address(contr));
+
+  assert_error(tx, Errors.incorrect_sender);
+  assert(new_contract_balance == (1000000 as tez));
+}
+const test_payout_failwith_not_admin = _payout_failwith_not_admin();
+
+const _payout_failwith_not_enough_balance = () : unit => {
+  const [address, public_key, _secret] = Test.get_bootstrap_account(0 as nat);
+  const [address2, _public_key2, _secret2] = Test.get_bootstrap_account(1 as nat);
+  
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      address: address2,
+      verifier: public_key,
+      paused: false
+    }
+  };
+
+  Test.set_source(address);
+  const [taddr, _, _] = Test.originate(main, initial_storage, 1000000 as tez);
+  const contr = Test.to_contract(taddr);
+  Test.set_source(address2);
+  const tx = Test.transfer_to_contract(contr, (Payout(1000000000 as tez)), 0 as tez);
+  const new_contract_balance = Test.get_balance(Tezos.address(contr));
+  assert_error(tx, Errors.low_balance);
+  assert(new_contract_balance == (1000000 as tez));
+}
+const test_payout_failwith_not_enough_balance = _payout_failwith_not_enough_balance();

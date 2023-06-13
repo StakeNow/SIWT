@@ -1,0 +1,595 @@
+#include "./policy_manager.jsligo"
+#include "./test_utils/test_utils.jsligo"
+#import "./storage.jsligo" "Storage"
+#import "./common/errors.jsligo" "Errors"
+#import "./old/test/balance_of.jsligo" "BalanceOf"
+
+const bob = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address;
+const alice = "tz1cQ1mkH1PiCxLUkbWH7SkGj8PrYpffzWxo" as address;
+const ursula = "tz1eGd1Gzh9cpZjW1hpzre2fLSnMAsXqRdJy" as address;
+const token_contract_1 = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton" as address;
+const token_contract_2 = "KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW" as address;
+const public_key = "edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6" as key;
+const public_key_2 = "edpkusHqa6fxkGPPL9YpgbcakvSTvcTBcwnLAmCdcevmws4Mh2MdHB" as key;
+
+const store_mock = {
+  admin: {
+    address: bob,
+    verifier: public_key,
+    paused: false,
+  },
+  allowed_token_contracts: Set.empty as set<address>,
+  ledger_counter: 0 as nat,
+  // ledger: (Big_map.empty as big_map<Storage.Types.ledger_key, nat>),
+  ledger: (Big_map.empty as big_map<nat, address>),
+  pricing: Map.empty as map<nat, tez>,
+  token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
+  requested: Map.empty as map<address, Storage.Types.requested_policy>,
+  operators: Big_map.empty as big_map<[address, address], set<nat>>,
+};
+
+const init_test = () : unit => {
+  Test.reset_state(2 as nat, list([4000000 as tez]));
+};
+
+const _originate_contract = () : unit => {
+  const initial_storage = store_mock;
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  assert(Test.to_json(Test.get_storage(taddr)) == Test.to_json(initial_storage));
+};
+const test_originate_contract = _originate_contract();
+
+const _register_policy_success = () => {
+  const [address, _public_key, _secretkey] = Test.get_bootstrap_account(1 as nat);
+  const fa2_initial_storage = {
+    ledger: Big_map.literal(
+      list([
+        [([bob, 0 as nat]), 1 as nat],
+        [([alice, 1 as nat]), 1 as nat],
+        [([address, 10 as nat]), 1 as nat]
+      ])
+    );
+  };
+  const requested_policy: Storage.Types.requested_policy = {
+    policy: bytes `MY_POLICY`,
+    policy_uri: bytes `POLICY_URI`
+  };
+  const initial_storage = {
+    ...store_mock,
+    requested: Map.literal(list([[address, requested_policy]]))
+  };
+  const [policy_taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+
+  const balance_of_requests = {
+    requests: list([
+      {
+        owner: address,
+        token_id: 10 as nat
+      }
+    ]),
+    callback: Test.to_entrypoint("registerPolicy", policy_taddr)
+  };
+
+  const [fa2_t_addr, _, _] = Test.originate(BalanceOf.main, fa2_initial_storage, 0 as tez);
+  let fa2_contr = Test.to_contract(fa2_t_addr);
+  let _ = Test.transfer_to_contract_exn(fa2_contr, (Balance_of(balance_of_requests)), 0 as tez);
+  const new_storage = Test.get_storage(policy_taddr);
+  Test.assert_with_error(Map.size(new_storage.requested) == (0 as nat), "Requested policy not deleted");
+  Test.assert_with_error(new_storage.ledger_counter == (1 as nat), "Policy not registered");
+};
+const test_register_policy_success = _register_policy_success();
+
+const _register_policy_failed = () => {
+  const [address, _public_key, _secretkey] = Test.get_bootstrap_account(1 as nat);
+  const fa2_initial_storage = {
+    ledger: Big_map.literal(
+      list([
+        [([bob, 0 as nat]), 1 as nat],
+        [([alice, 1 as nat]), 1 as nat],
+        [([address, 10 as nat]), 1 as nat]
+      ])
+    );
+  };
+  const requested_policy: Storage.Types.requested_policy = {
+    policy: bytes `MY_POLICY`,
+    policy_uri: bytes `POLICY_URI`
+  };
+  const initial_storage = {
+    ...store_mock,
+    requested: Map.literal(list([[bob, requested_policy]]))
+  };
+  const [policy_taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+
+  const balance_of_requests = {
+    requests: list([
+      {
+        owner: bob,
+        token_id: 10 as nat
+      }
+    ]),
+    callback: Test.to_entrypoint("registerPolicy", policy_taddr)
+  };
+
+  const [fa2_t_addr, _, _] = Test.originate(BalanceOf.main, fa2_initial_storage, 0 as tez);
+  let fa2_contr = Test.to_contract(fa2_t_addr);
+  let _ = Test.transfer_to_contract_exn(fa2_contr, (Balance_of(balance_of_requests)), 0 as tez);
+  const new_storage = Test.get_storage(policy_taddr);
+  Test.assert_with_error(Map.size(new_storage.requested) == (0 as nat), "Requested policy not deleted");
+  Test.assert_with_error(new_storage.ledger_counter == (0 as nat), "Policy is registered");
+};
+const test_register_policy_failed = _register_policy_failed();
+
+const _originate_fa2 = (address: address) => {
+  // FA2
+  const fa2_initial_storage = {
+    ledger: Big_map.literal(
+      list([
+        [([bob, 0 as nat]), 1 as nat],
+        [([alice, 1 as nat]), 1 as nat],
+        [([address, 10 as nat]), 1 as nat]
+      ])
+    );
+  };
+  const [fa2_t_addr, _, _] = Test.originate(BalanceOf.main, fa2_initial_storage, 10 as tez);
+  const fa2_contr = Test.to_contract(fa2_t_addr);
+  const token_contract_addr = Tezos.address(fa2_contr);
+
+  return token_contract_addr;
+};
+
+type mint_function_request = {
+    contract: address,
+    owner: address,
+    token_id: nat,
+    amount: tez
+};
+
+const _mint = (allowed_token_contract: address, secret_key, request: mint_function_request, result: nat) : unit => {
+  // Policy
+  const initial_storage = {
+    ...store_mock,
+    allowed_token_contracts: Set.literal(list([allowed_token_contract])),
+    pricing: Map.literal(list([[
+      1 as nat, 1000000 as mutez
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contr = Test.to_contract(taddr);
+
+  const pricing = bytes(1 as nat);
+  const policy = bytes `MY_POLICY` as bytes;
+  const message = Bytes.concat(pricing, policy);
+  const signature = Test.sign(secret_key, message);
+
+  const mint_params = {
+    contract: request.contract,
+    token_id: request.token_id,
+    policy: message,
+    signature,
+    policy_uri: bytes `POLICY_URI`,
+  };
+
+  const _status: test_exec_result = Test.transfer_to_contract(contr, (Mint(mint_params)), request.amount);
+  const new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(Map.size(new_storage.requested) == (0 as nat), "Requested policy not deleted");
+  Test.assert_with_error(new_storage.ledger_counter == result, "Ledger counter is incorrect");
+};
+
+const _mint_success = () : unit => {
+  const [address, _public_key, secretkey] = Test.get_bootstrap_account(1 as nat);
+  const allowed_token_contract = _originate_fa2(address);
+  const request = {
+    contract: allowed_token_contract,
+    owner: address,
+    token_id: 10 as nat,
+    amount: 1000000 as mutez
+  };
+  const ledger_size_result = 1 as nat;
+
+  _mint(allowed_token_contract, secretkey, request, ledger_size_result);
+};
+const test_mint_success = _mint_success();
+
+const _mint_failwith_incorrect_subscription_value = () : unit => {
+  const [address, _public_key, secretkey] = Test.get_bootstrap_account(1 as nat);
+  const allowed_token_contract = _originate_fa2(address);
+  const request = {
+    contract: allowed_token_contract,
+    owner: address,
+    token_id: 10 as nat,
+    amount: 10000 as mutez
+  };
+  const ledger_size_result = 0 as nat;
+
+  _mint(allowed_token_contract, secretkey, request, ledger_size_result);
+};
+const test_mint_failwith_incorrect_subscription_value = _mint_failwith_incorrect_subscription_value();
+
+const _mint_failwith_incorrect_signature = () : unit => {
+  const [address, _public_key, _secretkey] = Test.get_bootstrap_account(1 as nat);
+  const [_address, _public_key, secretkey] = Test.get_bootstrap_account(0 as nat);
+  const allowed_token_contract = _originate_fa2(address);
+  const request = {
+    contract: allowed_token_contract,
+    owner: address,
+    token_id: 10 as nat,
+    amount: 1000000 as mutez
+  };
+  const ledger_size_result = 0 as nat;
+
+  _mint(allowed_token_contract, secretkey, request, ledger_size_result);
+};
+const test_mint_failwith_incorrect_signature = _mint_failwith_incorrect_signature();
+
+const _mint_failwith_token_contract_not_allowed = () : unit => {
+  const [address, _public_key, secretkey] = Test.get_bootstrap_account(1 as nat);
+  const allowed_token_contract = _originate_fa2(address);
+  const request = {
+    contract: allowed_token_contract,
+    owner: address,
+    token_id: 10 as nat,
+    amount: 1000000 as mutez
+  };
+  const ledger_size_result = 0 as nat;
+
+  _mint(token_contract_1, secretkey, request, ledger_size_result);
+};
+const test_mint_failwith_token_contract_not_allowed = _mint_failwith_token_contract_not_allowed();
+
+/*
+const _update_policy = () : unit => {
+  init_test();
+  const [address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Map.literal(list([
+      [1 as nat, 1000000 as mutez]
+    ]))
+  };
+
+  const pricing = bytes(1 as nat);
+  const policy_id_bytes = bytes(1 as nat);
+  const policy_id = bytes(1 as nat);
+  const policy = bytes `MY_UPDATED_POLICY` as bytes;
+  const message = Bytes.concats(list([pricing, policy_id_bytes, policy_id, policy]));
+  const signature = Test.sign(secret_key, message);
+ 
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let _tx = Test.transfer_to_contract(contr, (Update ({
+
+  })), 0 as mutez);
+  let new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(new_storage.admin.address == ursula, "Update policy failed");
+}
+*/
+
+const _set_administrator_success = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address, 
+    }
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let _tx = Test.transfer_to_contract(contr, (SetAdministrator (ursula)), 0 as mutez);
+  let new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(new_storage.admin.address == ursula, "Administrator not set");
+};
+const test_set_administrator_success = _set_administrator_success();
+
+const _set_administrator_failwith_not_admin = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address: bob,
+    }
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let tx = Test.transfer_to_contract(contr, (SetAdministrator (ursula)), 0 as mutez);
+  assert_error(tx, Errors.incorrect_sender);
+  const new_storage = Test.get_storage(taddr);
+  assert(Test.to_json(new_storage) == Test.to_json(initial_storage));
+};
+const test_set_administrator_failwith_not_admin = _set_administrator_failwith_not_admin();
+
+const _set_paused_success = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address,
+    }
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let _tx = Test.transfer_to_contract(contr, (SetPaused (true)), 1 as mutez);
+  let new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(new_storage.admin.paused == true, "Paused not set to true");
+};
+const test_set_paused_success = _set_paused_success();
+
+const _set_paused_failwith_not_admin = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address: alice,
+    },
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let tx = Test.transfer_to_contract(contr, (SetPaused (true)), 1 as mutez);
+  assert_error(tx, Errors.incorrect_sender);
+  const new_storage = Test.get_storage(taddr);
+  assert(Test.to_json(new_storage) == Test.to_json(initial_storage));
+};
+const test_set_paused_failwith_not_admin = _set_paused_failwith_not_admin();
+
+const _update_allowed_token_contracts_add_contract_success = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+        address,
+    },
+    allowed_token_contracts: Set.literal(list([
+      token_contract_1
+    ]))
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let tx = Test.transfer_to_contract(contr, (UpdateTokenContracts (token_contract_2)), 1 as mutez);
+  Test.log(tx);
+  let new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(Set.mem(token_contract_2, new_storage.allowed_token_contracts), "Token contract not added");
+};
+const test_update_allowed_token_contracts_add_contract_success = _update_allowed_token_contracts_add_contract_success();
+
+const _update_allowed_token_contracts_remove_contract_success = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address,
+    },
+    allowed_token_contracts: Set.literal(list([
+      token_contract_1,
+      token_contract_2
+    ]))
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let _tx = Test.transfer_to_contract(contr, (UpdateTokenContracts (token_contract_2)), 1 as mutez);
+  let new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(!Set.mem(token_contract_2, new_storage.allowed_token_contracts), "Token contract not removed");
+};
+
+const test_update_allowed_token_contracts_remove_contract_success = _update_allowed_token_contracts_remove_contract_success()
+
+const _update_allowed_token_contracts_failwith_not_admin = () : unit => {
+  init_test();
+  const initial_storage = {
+    ...store_mock,
+    allowed_token_contracts: Set.literal(list([token_contract_1]))
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  let tx = Test.transfer_to_contract(contr, (UpdateTokenContracts (token_contract_2)), 1 as mutez);
+  assert_error(tx, Errors.incorrect_sender);
+  const new_storage = Test.get_storage(taddr);
+  assert(Test.to_json(new_storage) == Test.to_json(initial_storage));
+};
+const test_update_allowed_token_contracts_failwith_not_admin = _update_allowed_token_contracts_failwith_not_admin();
+
+const _update_pricing_add_success = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address,
+    },
+    pricing: Map.literal(list([
+      [1 as nat, 1000000 as mutez]
+    ]))
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as mutez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let _tx = Test.transfer_to_contract(contr, (UpdatePricingModel ([2 as nat, 2000000 as mutez])), 1 as mutez);
+  let new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(Map.find_opt(2 as nat, new_storage.pricing) == Some(2000000 as mutez), "Pricing model not updated");
+};
+
+const test_update_pricing_add_success = _update_pricing_add_success();
+
+const _update_pricing_replace_success = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address,
+    },
+    pricing: Map.literal(list([
+      [1 as nat, 1000000 as mutez]
+    ]))
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let _tx = Test.transfer_to_contract(contr, (UpdatePricingModel ([1 as nat, 2000000 as mutez])), 1 as mutez);
+  let new_storage = Test.get_storage(taddr);
+  Test.assert_with_error(Map.find_opt(1 as nat, new_storage.pricing) == Some(2000000 as mutez), "Pricing model not or incorrectly updated");
+};
+
+const test_update_pricing_replace_success = _update_pricing_replace_success();
+
+const _update_pricing_failwith_not_admin = () : unit => {
+  init_test();
+  const initial_storage = {
+    ...store_mock,
+    pricing: Map.literal(list([
+      [1 as nat, 1000000 as mutez]
+    ]))
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  let tx = Test.transfer_to_contract(contr, (UpdatePricingModel ([1 as nat, 20 as mutez])), 1 as mutez);
+  assert_error(tx, Errors.incorrect_sender);
+  const new_storage = Test.get_storage(taddr);
+  assert(Test.to_json(new_storage) == Test.to_json(initial_storage));
+};
+
+const test_update_pricing_failwith_not_admin = _update_pricing_failwith_not_admin();
+
+const _delete_pricing_success = () : unit => {
+  init_test();
+  const [address, _public_key, _secret] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      address,
+    },
+    pricing: Map.literal(list([
+      [1 as nat, 1000000 as mutez]
+    ]))
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  Test.set_source(address);
+  let _tx = Test.transfer_to_contract(contr, (DeletePricingModel (1 as nat)), 1 as mutez);
+  let new_storage = Test.get_storage(taddr);
+  Test.log(new_storage.pricing);
+  Test.assert_with_error(Map.size(new_storage.pricing) == (0 as nat), "Pricing model not deleted");
+}
+
+const test_delete_pricing_success = _delete_pricing_success();
+
+const _delete_pricing_failwith_not_admin = () : unit => {
+  init_test();
+  const initial_storage = {
+    ...store_mock,
+    pricing: Map.literal(list([
+      [1 as nat, 1000000 as mutez]
+    ]))
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contr = Test.to_contract(taddr);
+  let tx = Test.transfer_to_contract(contr, (DeletePricingModel (1 as nat)), 1 as mutez);
+  assert_error(tx, Errors.incorrect_sender);
+  const new_storage = Test.get_storage(taddr);
+  assert(Test.to_json(new_storage) == Test.to_json(initial_storage));
+}
+
+const test_delete_pricing_failwith_not_admin = _delete_pricing_failwith_not_admin();
+
+const _payout_success = () : unit => {
+  const [address, public_key, _secret] = Test.get_bootstrap_account(0 as nat);
+  const [address2, _public_key2, _secret2] = Test.get_bootstrap_account(1 as nat);
+  
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      address: address2,
+      verifier: public_key,
+      paused: false
+    }
+  };
+
+  Test.set_source(address);
+  const [taddr, _, _] = Test.originate(main, initial_storage, 1000000 as tez);
+  const contr = Test.to_contract(taddr);
+  Test.set_source(address2);
+  const _tx = Test.transfer_to_contract_exn(contr, (Payout(1000000 as tez)), 0 as tez);
+  const new_contract_balance = Test.get_balance(Tezos.address(contr));
+  const new_user_balance = Test.get_balance(address2);
+
+  assert(new_contract_balance == (0 as tez));
+  assert(new_user_balance == (4799999 as tez));
+};
+const test_payout_success = _payout_success();
+
+const _payout_failwith_not_admin = () : unit => {
+  const [address, public_key, _secret] = Test.get_bootstrap_account(0 as nat);
+  const [address2, _public_key2, _secret2] = Test.get_bootstrap_account(1 as nat);
+  
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      address: address2,
+      verifier: public_key,
+      paused: false
+    }
+  };
+
+  Test.set_source(address);
+  const [taddr, _, _] = Test.originate(main, initial_storage, 1000000 as tez);
+  const contr = Test.to_contract(taddr);
+  const tx = Test.transfer_to_contract(contr, (Payout(1000000 as tez)), 0 as tez);
+  const new_contract_balance = Test.get_balance(Tezos.address(contr));
+
+  assert_error(tx, Errors.incorrect_sender);
+  assert(new_contract_balance == (1000000 as tez));
+}
+const test_payout_failwith_not_admin = _payout_failwith_not_admin();
+
+const _payout_failwith_not_enough_balance = () : unit => {
+  const [address, public_key, _secret] = Test.get_bootstrap_account(0 as nat);
+  const [address2, _public_key2, _secret2] = Test.get_bootstrap_account(1 as nat);
+  
+  const initial_storage = {
+    ...store_mock,
+    admin: {
+      address: address2,
+      verifier: public_key,
+      paused: false
+    }
+  };
+
+  Test.set_source(address);
+  const [taddr, _, _] = Test.originate(main, initial_storage, 1000000 as tez);
+  const contr = Test.to_contract(taddr);
+  Test.set_source(address2);
+  const tx = Test.transfer_to_contract(contr, (Payout(1000000000 as tez)), 0 as tez);
+  const new_contract_balance = Test.get_balance(Tezos.address(contr));
+  assert_error(tx, Errors.low_balance);
+  assert(new_contract_balance == (1000000 as tez));
+}
+const test_payout_failwith_not_enough_balance = _payout_failwith_not_enough_balance();

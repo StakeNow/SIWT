@@ -1,0 +1,184 @@
+#import "conditions.jsligo" "Conditions"
+#import "storage.jsligo" "Storage"
+#import "utils/utils.jsligo" "Utils"
+#import "common/errors.jsligo" "Errors"
+#import "core/balance_of.jsligo" "FA2_BalanceOf"
+#import "core/update_operators.jsligo" "FA2_UpdateOperators"
+#import "core/transfer.jsligo" "FA2_Transfer"
+
+type policy_params = {
+  contract: address,
+  token_id: nat,
+  policy: bytes,
+  signature: signature,
+  policy_uri: bytes,
+};
+
+type update_policy_params = {
+  policy_id: nat,
+  policy: bytes,
+  policy_uri: bytes,
+  signature: signature,
+};
+
+type pricing = map<nat, tez>;
+type token_metadata = map<string, bytes>;
+
+type action = 
+ | ["Mint", policy_params]
+ | ["RegisterPolicy", Utils.Types.register_policy_response]
+ | ["Update", update_policy_params]
+ | ["SetAdministrator", address]
+ | ["SetPaused", bool]
+ | ["UpdateTokenContracts", address]
+ | ["UpdatePricingModel", nat, tez]
+ | ["DeletePricingModel", nat]
+ | ["Payout", tez]
+ | ["Update_operators", FA2_UpdateOperators.Types.update_operators]
+ | ["Balance_of", FA2_BalanceOf.Types.balance_of]
+ | ["Transfer", FA2_Transfer.Types.transfer];
+
+type @return = [list<operation>, Storage.Types.store];
+
+const register_policy = (store: Storage.Types.store, responses: Utils.Types.register_policy_response): @return => {
+  const response: Utils.Types.callback = match(List.head_opt(responses), {
+    Some: (x) => x,
+    None: () => failwith("Incorrect response")
+  });
+
+  const newStorage = (response.balance > (0 as nat))
+    ? Storage.Utils.register_policy(response.request.owner, store)
+    : Storage.Utils.remove_requested_policy(store);
+
+  return [list([]), newStorage];
+};
+
+const payout = (store: Storage.Types.store, amount: tez): @return => {
+  const admin_address = Utils.get_admin(store);
+  Conditions.must_be_admin(admin_address);
+  Conditions.must_have_enough_balance(amount);
+
+  const receiver : contract<unit> = match (((Tezos.get_contract_opt (admin_address)) as option<contract<unit>>), {
+    Some: (contract : contract<unit>) => contract,
+    None: () => failwith (Errors.invalid_contract) as contract<unit>
+  });
+
+  const op : operation = Tezos.transaction (unit, amount, receiver);
+  const operations : list<operation> = list([op]);
+
+  return [operations, store];
+};
+
+const mint = (store: Storage.Types.store, params: policy_params): @return => {
+  Conditions.signature_must_be_valid(store.admin.verifier, params.signature, params.policy);
+  const price = Utils.get_policy_price(store, params.policy);
+
+  Conditions.amount_must_be_subscription_value(Tezos.get_amount(), price);
+  Conditions.requested_token_contract_must_be_allowed(params.contract, store.allowed_token_contracts);
+
+  return [
+    list([Utils.get_balance_of(params.contract, params.token_id)]),
+    Storage.Utils.add_requested_policy(
+      Tezos.get_sender(),
+      {
+        policy: params.policy,
+        policy_uri: params.policy_uri,
+      } as Storage.Types.requested_policy,
+      store
+    )
+  ];
+};
+
+// const update = (store: Storage.Types.store, params: update_policy_params): @return => {
+//   Conditions.signature_must_be_valid(store.admin.verifier, params.signature, params.policy);
+//   const price = Utils.get_policy_price(store, params.policy);
+
+//   const policy_id = Utils.get_policy_token_id(store, params.policy);
+//   Conditions.policy_id_must_exist(store.ledger, policy_id);
+  
+//   Conditions.amount_must_be_subscription_value(Tezos.get_amount(), price);
+
+//   return [
+//     list([]),
+//     Storage.Utils.update_policy([], store),
+//   ];
+// };
+
+const set_administrator = (store: Storage.Types.store, address: address): @return => {
+  Conditions.must_be_admin(Utils.get_admin(store));
+
+  const new_admin : contract<unit> = match (((Tezos.get_contract_opt (address)) as option<contract<unit>>), {
+    Some: (contract : contract<unit>) => contract,
+    None: () => failwith (Errors.invalid_contract) as contract<unit>
+  });
+
+  return [list([]), {
+    ...store,
+    admin: {
+      ...store.admin,
+      address: Tezos.address(new_admin) as address,
+    }
+  }];
+};
+
+const set_paused = (store: Storage.Types.store, paused: bool): @return => {
+  Conditions.must_be_admin(Utils.get_admin(store));
+  return [list([]), {
+    ...store,
+    admin: {
+      ...store.admin,
+      paused
+    }
+  }];
+};
+
+const update_allowed_token_contracts = (store: Storage.Types.store, contract: address): @return => {
+  Conditions.must_be_admin(Utils.get_admin(store));
+  return [list([]), {
+    ...store,
+    allowed_token_contracts: Set.update(contract, !Set.mem(contract, store.allowed_token_contracts), store.allowed_token_contracts),
+  }];
+};
+
+const update_pricing = (store: Storage.Types.store, [price_id, value]: [nat, tez]): @return => {
+  Conditions.must_be_admin(Utils.get_admin(store));
+  
+  const new_pricing = Map.mem(price_id, store.pricing)
+    ? Map.update(price_id, Some(value), store.pricing)
+    : Map.add(price_id, value, store.pricing);
+  
+  return [list([]), {
+    ...store,
+    pricing: new_pricing,
+  }];
+};
+
+const delete_pricing = (store: Storage.Types.store, price_id: nat): @return => {
+  Conditions.must_be_admin(Utils.get_admin(store));
+  return [list([]), {
+    ...store,
+    pricing: Map.remove(price_id, store.pricing),
+  }];
+};
+
+const main = (action: action, store: Storage.Types.store) : @return => 
+  match(action, {
+    RegisterPolicy: (responses: Utils.Types.register_policy_response) => register_policy(store, responses),
+    Mint: (p: policy_params) => mint(store, p),
+    Update: (params: update_policy_params) => update(store, params),
+    SetAdministrator: (admin) => set_administrator(store, admin),
+    SetPaused: (paused: bool) => set_paused(store, paused),
+    UpdateTokenContracts: (contract: address) => update_allowed_token_contracts(store, contract),
+    UpdatePricingModel: ([price_id, value]: [nat, tez]) => update_pricing(store, [price_id, value]),
+    DeletePricingModel: (price_id: nat) => delete_pricing(store, price_id),
+    Payout: (amount: tez) => payout(store, amount),
+    Update_operators: (params: FA2_UpdateOperators.Types.update_operators) => FA2_UpdateOperators.update_ops(params, store),
+    Balance_of: (params: FA2_BalanceOf.Types.balance_of) => FA2_BalanceOf.balance_of(params, store),
+    Transfer: (params: FA2_Transfer.Types.transfer) => FA2_Transfer.transfer(params, store),
+  });
+
+// @view
+const get_balance = ([p, store]: [[address , nat], Storage.Types.store]): nat => {
+   const [owner, token_id] = p;
+   return FA2_Storage.get_balance(store, owner, token_id);
+};

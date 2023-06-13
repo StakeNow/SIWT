@@ -1,0 +1,32 @@
+{ parameter
+    (or (list %callback
+           (pair (nat %balance) (pair %request (address %owner) (nat %token_id))))
+        (pair %mint (address %owner) (nat %token_id))) ;
+  storage (pair (list %ledger nat) (address %token_contract)) ;
+  code { UNPAIR ;
+         IF_LEFT
+           { MAP { CAR } ; UPDATE 1 ; NIL operation }
+           { SELF_ADDRESS ;
+             CONTRACT %callback
+               (list (pair (nat %balance) (pair %request (address %owner) (nat %token_id)))) ;
+             IF_NONE { PUSH string "Callback not found" ; FAILWITH } {} ;
+             DUP 3 ;
+             CDR ;
+             CONTRACT %balance_of
+               (pair (contract %callback
+                        (list (pair (nat %balance) (pair %request (address %owner) (nat %token_id)))))
+                     (list %requests (pair (address %owner) (nat %token_id)))) ;
+             IF_NONE { PUSH string "Error contract entrypoint" ; FAILWITH } {} ;
+             PUSH mutez 0 ;
+             NIL (pair address nat) ;
+             DIG 4 ;
+             CONS ;
+             DIG 3 ;
+             PAIR ;
+             TRANSFER_TOKENS ;
+             SWAP ;
+             NIL operation ;
+             DIG 2 ;
+             CONS } ;
+         PAIR } }
+

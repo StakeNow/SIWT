@@ -1,0 +1,9 @@
+{
+  "name": "@siwt/smart-contracts",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "scripts": {
+    "tzgen": "tzgen",
+    "build:contract": "tzgen michelson subscriptions subscriptions --main subscriptions_main"
+  }
+}

@@ -1,0 +1,87 @@
+export namespace Types {
+  // export type ledger_key = [address, nat];
+  // export type ledger = big_map<ledger_key, nat>;
+  export type ledger_key = nat;
+  export type ledger = big_map<nat, address>;
+  export type admin = [address, key];
+
+  export type operators = big_map<[address, address], set<nat>>;
+
+  export type token_metadata = {
+    token_id: nat,
+    token_info: map<string, bytes>
+  };
+
+  export type requested_policy = {
+    policy: bytes,
+    policy_uri: bytes
+  };
+
+  export type store = {
+    admin: {
+      address: address,
+      verifier: key,
+      paused: bool,
+    },
+    allowed_token_contracts: set<address>,
+    ledger_counter: nat,
+    ledger: ledger,
+    pricing: map<nat, tez>,
+    token_metadata: big_map<nat, token_metadata>,
+    requested: map<address, requested_policy>,
+    operators: operators
+  };
+};
+
+export namespace Utils {
+  const add_requested_policy = (owner: address, params: Types.requested_policy, store: Types.store) => {
+    return {
+      ...store,
+      requested: Map.add(owner, params, store.requested)
+    };
+  };
+  
+  const remove_requested_policy = (store: Types.store) => {
+    return {
+      ...store,
+      requested: Map.literal(list([]))
+    };
+  };
+
+  const register_policy = (owner: address, store: Types.store) => {
+    const token_metadata = match(Map.find_opt(owner, store.requested), {
+      Some: (policy) => policy,
+      None: () => failwith("temp_register_policy_not_found")
+    });
+
+    const ledger_counter = store.ledger_counter + (1 as nat);
+    // const ledger_map = Big_map.add([store.admin.address, ledger_counter], 1 as nat, store.ledger);
+    const ledger_map = Big_map.add(ledger_counter, store.admin.address, store.ledger);
+    const metadata = { 
+      token_id: ledger_counter,
+      token_info: Map.literal(
+        list([
+          ["" as string, token_metadata.policy_uri],
+          ["policy" as string, token_metadata.policy]
+          // ["signature" as string, token_metadata.signature], 
+        ])
+      );
+    };
+    const token_metadata_map = Big_map.add(ledger_counter, metadata, store.token_metadata);
+
+    return {
+      ...store,
+      ledger: ledger_map,
+      ledger_counter,
+      token_metadata: token_metadata_map,
+      requested: Map.remove(owner, store.requested)
+    };
+  };
+
+  // const update_policy = ([policy_id, policy, policy_uri, signature]: [nat bytes, bytes, bytes], store: Types.store) => {
+  //   return {
+  //     ...store,
+  //     token_metadata: Big_map.update(policy_id, Some(policy, policy_uri, signature), store.token_metadata),
+  //   }
+  // };
+};

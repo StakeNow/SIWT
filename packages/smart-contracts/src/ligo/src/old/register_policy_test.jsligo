@@ -1,0 +1,204 @@
+#import "./register_policy.jsligo" "Policy"
+#import "./storage.jsligo" "Storage"
+#import "./common/errors.jsligo" "Errors"
+#import "./test/balance_of.jsligo" "BalanceOf"
+
+const bob = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address;
+const alice = "tz1cQ1mkH1PiCxLUkbWH7SkGj8PrYpffzWxo" as address;
+const ursula = "tz1eGd1Gzh9cpZjW1hpzre2fLSnMAsXqRdJy" as address;
+const token_contract_1 = "KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton" as address;
+const token_contract_2 = "KT1AFA2mwNUMNd4SsujE1YYp29vd8BZejyKW" as address;
+const public_key = "edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6" as key;
+const public_key_2 = "edpkusHqa6fxkGPPL9YpgbcakvSTvcTBcwnLAmCdcevmws4Mh2MdHB" as key;
+
+const store_mock = {
+  admin: {
+    address: bob,
+    verifier: public_key,
+    paused: false,
+  },
+  allowed_token_contracts: Set.empty as set<address>,
+  ledger_counter: 0 as nat,
+  ledger: (Big_map.empty as big_map<Storage.Types.ledger_key, nat>),
+  pricing: Map.empty as map<nat, tez>,
+  token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
+  temporary: Map.empty as map<address, Storage.Types.temporary_policy>,
+};
+
+type balance_of_request_type = {
+  owner: address,
+  token_id: nat,
+};
+
+type balance_of_response_type =
+  // @layout:comb
+  {
+    request: balance_of_request_type,
+    balance: nat,
+  };
+
+type balance_of_params_type =
+  // @layout:comb
+  {
+    requests: list<balance_of_request_type>,
+    callback: contract<list<balance_of_response_type>>
+  };
+
+const init_test = () : unit => {
+  Test.reset_state(2 as nat, list([4000000 as tez]));
+};
+
+type action_type =
+| ["Balance_of", balance_of_params_type]
+| ["SendValue"];
+
+const _originate_contract = () : unit => {
+  const initial_storage = store_mock;
+  const [taddr, _, _] = Test.originate(Policy.main, initial_storage, 0 as tez);
+  assert(Test.to_json(Test.get_storage(taddr)) == Test.to_json(initial_storage));
+};
+const test_originate_contract = _originate_contract();
+
+const _register_policy_success = () => {
+  const [address, _public_key, _secretkey] = Test.get_bootstrap_account(1 as nat);
+  const fa2_initial_storage = {
+    ledger: Big_map.literal(
+      list([
+        [([bob, 0 as nat]), 1 as nat],
+        [([alice, 1 as nat]), 1 as nat],
+        [([address, 10 as nat]), 1 as nat]
+      ])
+    );
+  };
+  const temporary_policy: Storage.Types.temporary_policy = {
+    policy: bytes `MY_POLICY`,
+    policy_uri: bytes `POLICY_URI`
+  };
+  const initial_storage = {
+    ...store_mock,
+    temporary: Map.literal(list([[address, temporary_policy]]))
+  };
+  const [policy_taddr, _, _] = Test.originate(Policy.main, initial_storage, 0 as tez);
+
+  const balance_of_requests = {
+    requests: list([
+      {
+        owner: address,
+        token_id: 10 as nat
+      }
+    ]),
+    callback: Test.to_entrypoint("registerPolicy", policy_taddr)
+  };
+
+  const [fa2_t_addr, _, _] = Test.originate(BalanceOf.main, fa2_initial_storage, 0 as tez);
+  let fa2_contr = Test.to_contract(fa2_t_addr);
+  let _ = Test.transfer_to_contract_exn(fa2_contr, (Balance_of(balance_of_requests)), 0 as tez);
+  const new_storage = Test.get_storage(policy_taddr);
+  Test.assert_with_error(Map.size(new_storage.temporary) == (0 as nat), "Requested policy not deleted");
+  Test.assert_with_error(new_storage.ledger_counter == (1 as nat), "Policy not registered");
+  // return (new_storage.ledger_counter == (1 as nat));
+};
+const test_register_policy_success = _register_policy_success();
+
+const _register_policy_failed = () => {
+  const [address, _public_key, _secretkey] = Test.get_bootstrap_account(1 as nat);
+  const fa2_initial_storage = {
+    ledger: Big_map.literal(
+      list([
+        [([bob, 0 as nat]), 1 as nat],
+        [([alice, 1 as nat]), 1 as nat],
+        [([address, 10 as nat]), 1 as nat]
+      ])
+    );
+  };
+  const temporary_policy: Storage.Types.temporary_policy = {
+    policy: bytes `MY_POLICY`,
+    policy_uri: bytes `POLICY_URI`
+  };
+  const initial_storage = {
+    ...store_mock,
+    temporary: Map.literal(list([[bob, temporary_policy]]))
+  };
+  const [policy_taddr, _, _] = Test.originate(Policy.main, initial_storage, 0 as tez);
+
+  const balance_of_requests = {
+    requests: list([
+      {
+        owner: bob,
+        token_id: 10 as nat
+      }
+    ]),
+    callback: Test.to_entrypoint("registerPolicy", policy_taddr)
+  };
+
+  const [fa2_t_addr, _, _] = Test.originate(BalanceOf.main, fa2_initial_storage, 0 as tez);
+  let fa2_contr = Test.to_contract(fa2_t_addr);
+  let _ = Test.transfer_to_contract_exn(fa2_contr, (Balance_of(balance_of_requests)), 0 as tez);
+  const new_storage = Test.get_storage(policy_taddr);
+  Test.assert_with_error(Map.size(new_storage.temporary) == (0 as nat), "Requested policy not deleted");
+  Test.assert_with_error(new_storage.ledger_counter == (0 as nat), "Policy is registered");
+};
+const test_register_policy_failed = _register_policy_failed();
+
+const _mint = () => {
+
+  init_test();
+  // General
+  const [address, _public_key, _secretkey] = Test.get_bootstrap_account(1 as nat);
+
+  // FA2
+  const fa2_initial_storage = {
+    ledger: Big_map.literal(
+      list([
+        [([bob, 0 as nat]), 1 as nat],
+        [([alice, 1 as nat]), 1 as nat],
+        [([address, 10 as nat]), 1 as nat]
+      ])
+    );
+  };
+  const [fa2_t_addr, _, _] = Test.originate(BalanceOf.main, fa2_initial_storage, 10 as tez);
+  const fa2_contr = Test.to_contract(fa2_t_addr);
+  const token_contract_addr = Tezos.address(fa2_contr);
+  Test.log(["token_contract", fa2_contr, token_contract_addr]);
+
+  // Policy
+  const initial_storage = {
+    ...store_mock,
+    allowed_token_contracts: Set.literal(list([token_contract_addr])),
+    pricing: Map.literal(list([[
+      1 as nat, 1000000 as mutez
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(Policy.main, initial_storage, 0 as tez);
+  const contr = Test.to_contract(taddr);
+  Test.log(["Policy", contr, Test.get_storage(taddr)]);
+
+  const pricing = bytes(1 as nat);
+  const policy = bytes `MY_POLICY` as bytes;
+  const message = Bytes.concat(pricing, policy);
+  const signature = Test.sign(_secretkey, message);
+
+  const mint_params = {
+    contract: token_contract_addr,
+    token_id: 10 as nat,
+    policy: message,
+    signature,
+    policy_uri: bytes `POLICY_URI`,
+  };
+
+  Test.log(["ST", Test.get_storage(fa2_t_addr)]);
+
+  const token_contract: contract<action_type> = Option.unopt(Tezos.get_contract_opt(token_contract_addr));
+  
+  Test.log(["Token Contract", token_contract]);
+
+  const token_contract_op: contract<balance_of_params_type> = Option.unopt(Tezos.get_entrypoint_opt("%balance_of", token_contract_addr));
+  Test.log(["Token Contract OP", token_contract_op]);
+
+  const status: test_exec_result = Test.transfer_to_contract(contr, (Mint(mint_params)), 10 as tez);
+  Test.log(status);
+  const new_storage = Test.get_storage(taddr);
+  Test.log(["Policy", new_storage]);
+  Test.assert_with_error(Map.size(new_storage.temporary) == (0 as nat), "Policy not added to temporary");
+};
+const test_mint = _mint();

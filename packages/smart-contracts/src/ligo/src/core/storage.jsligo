@@ -1,0 +1,25 @@
+#import "./ledger.jsligo" "FA2_Ledger"
+#import "./operators.jsligo" "FA2_Operators"
+#import "./errors.jsligo" "FA2_Errors"
+#import "../storage.jsligo" "Storage"
+
+export const is_owner_of = ([store, owner, token_id]: [Storage.Types.store, address, nat]): bool =>
+  FA2_Ledger.is_owner_of([store.ledger, token_id, owner]);
+
+export const assert_token_exist = ([store, token_id]: [Storage.Types.store, nat]): unit => {
+  const _ = Option.unopt_with_error(Big_map.find_opt(token_id, store.token_metadata), FA2_Errors.undefined_token);
+};
+
+export const set_ledger = ([store, ledger]: [Storage.Types.store, Storage.Types.ledger]): Storage.Types.store => ({...store, ledger: ledger});
+
+export const get_operators = (store: Storage.Types.store): FA2_Operators.Types.t => store.operators;
+export const set_operators = ([store, operators]: [Storage.Types.store, FA2_Operators.Types.t]): Storage.Types.store => ({...store, operators: operators});
+
+export const get_balance = ([store, owner, token_id]: [Storage.Types.store, address, nat]): nat => {
+  assert_token_exist([store, token_id]);
+  if (is_owner_of([store, owner, token_id])) {
+    return (1 as nat)
+  } else {
+    return (0 as nat);
+  }
+};

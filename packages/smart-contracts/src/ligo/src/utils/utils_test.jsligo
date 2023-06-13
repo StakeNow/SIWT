@@ -1,0 +1,87 @@
+#include "./utils.jsligo"
+#include "../test_utils/test_utils.jsligo"
+
+#import "../common/errors.jsligo" "Errors"
+
+const bob = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address;
+const public_key = "edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6" as key;
+
+const store_mock = {
+  admin: {
+    address: bob,
+    verifier: public_key,
+    paused: false,
+  },
+  allowed_token_contracts: Set.empty as set<address>,
+  ledger_counter: 0 as nat,
+  ledger: (Big_map.empty as big_map<Storage.Types.ledger_key, nat>),
+  pricing: Map.empty as map<nat, tez>,
+  token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
+};
+
+const _get_policy_price_success = () : unit => {
+  const store = {
+    ...store_mock,
+    pricing: Map.literal(list([
+      [0 as nat, 1 as tez],
+      [1 as nat, 2 as tez],
+      [2 as nat, 3 as tez]
+    ])),
+  };
+
+  const pricing = bytes(1 as nat);
+  const policy = bytes `MY_POLICY` as bytes;
+  const message = Bytes.concat(pricing, policy);
+
+  const price = get_policy_price(store, message);
+
+  assert(price == (2 as tez));
+}
+
+const test_get_policy_price_success = _get_policy_price_success();
+
+const _get_policy_price_failwith_not_found = () : unit => {
+  const store = {
+    ...store_mock,
+    pricing: Map.literal(list([
+      [0 as nat, 1 as tez],
+      [1 as nat, 2 as tez],
+      [2 as nat, 3 as tez]
+    ])),
+  };
+
+  const pricing = bytes(5 as nat);
+  const policy = bytes `MY_POLICY` as bytes;
+  const message = Bytes.concat(pricing, policy);
+
+  const _price = get_policy_price(store, message);
+}
+const test_get_policy_price_failwith_not_found = _get_policy_price_failwith_not_found();
+
+
+const _get_policy_token_id_from_policy_bytes_with_one_byte_token_id_success = () : unit => {
+  const pricing = bytes(1 as nat);
+  const policy_id_bytes = bytes(1 as nat);
+  const policy_id = bytes(10 as nat);
+  const policy = bytes `MY_UPDATED_POLICY` as bytes;
+  const message = Bytes.concats(list([pricing, policy_id_bytes, policy_id, policy]));
+
+  const token_id = get_policy_token_id_from_policy_bytes(message);
+
+  assert_with_error(token_id == (10 as nat), "Invalid token id");
+}
+
+const test_get_policy_token_id_from_policy_bytes_success = _get_policy_token_id_from_policy_bytes_with_one_byte_token_id_success();
+
+const _get_policy_token_id_from_policy_bytes_with_three_bytes_token_id_success = () : unit => {
+  const pricing = bytes(1 as nat);
+  const policy_id_bytes = bytes(3 as nat);
+  const policy_id = bytes(85536 as nat);
+  const policy = bytes `MY_UPDATED_POLICY` as bytes;
+  const message = Bytes.concats(list([pricing, policy_id_bytes, policy_id, policy]));
+
+  const token_id = get_policy_token_id_from_policy_bytes(message);
+  assert_with_error(token_id == (85536 as nat), "Invalid token id");
+}
+
+const test_get_policy_token_id_from_policy_three_bytes_success = _get_policy_token_id_from_policy_bytes_with_three_bytes_token_id_success();

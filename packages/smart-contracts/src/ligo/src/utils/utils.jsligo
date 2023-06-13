@@ -1,0 +1,77 @@
+#import "../storage.jsligo" "Storage"
+#import "../common/errors.jsligo" "Errors"
+
+export namespace Types {
+  export type request =
+    // @layout:comb 
+    {
+      owner: address,
+      token_id: nat
+    };
+
+  export type callback =
+    // @layout:comb 
+    {
+      request: request,
+      balance: nat
+    };
+
+  export type register_policy_response = list<callback>;
+
+  export type balance_of_params_type =
+    // @layout:comb 
+    {
+      requests: list<request>,
+      callback: contract<register_policy_response>
+    };
+};
+
+
+const get_admin = (store: Storage.Types.store) : address => store.admin.address;
+const get_policy_price = (store: Storage.Types.store, policy: bytes) : tez => {
+  const policy_pricing_id_bytes = Bytes.sub(0 as nat, 1 as nat, policy);
+  const policy_pricing_id = nat(policy_pricing_id_bytes);
+
+  return match(Map.find_opt(policy_pricing_id, store.pricing), {
+    None: () => failwith(Errors.pricing_not_found) as tez,
+    Some: (price) => price
+  });
+};
+
+const get_balance_of = (contract: address, token_id: nat): operation => {
+  const token_contract: contract<Types.balance_of_params_type> =
+    match(
+      Tezos.get_entrypoint_opt("%balance_of", contract) as option<contract<Types.balance_of_params_type>>,
+      {
+        None: () => failwith(Errors.fa2_balance_of_entrypoint),
+        Some: (c: contract<Types.balance_of_params_type>) => c
+      }
+    );
+
+  const register_policy_callback: contract<Types.register_policy_response> = match(
+    Tezos.get_entrypoint_opt("%registerPolicy", Tezos.get_self_address()),
+    {
+      None: () => failwith(Errors.register_policy_entrypoint),
+      Some: (cb) => cb
+    }
+  );
+
+  const balance_of_params = {
+    requests: list([{
+      owner: Tezos.get_sender() as address,
+      token_id: token_id as nat
+    }]),
+    callback: register_policy_callback
+  };
+
+  return Tezos.transaction(balance_of_params, 0 as tez, token_contract);
+};
+
+const get_policy_token_id_from_policy_bytes = (policy: bytes) : nat => {
+  const policy_token_id_bytes_length_in_bytes = Bytes.sub(1 as nat, 1 as nat, policy);
+  const policy_token_id_bytes_length = nat(policy_token_id_bytes_length_in_bytes);
+  const policy_token_id_bytes = Bytes.sub(2 as nat, policy_token_id_bytes_length, policy);
+  const policy_token_id = nat(policy_token_id_bytes);
+
+  return policy_token_id;
+}

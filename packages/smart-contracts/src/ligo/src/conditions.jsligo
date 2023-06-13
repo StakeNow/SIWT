@@ -1,0 +1,36 @@
+#import "storage.jsligo" "Storage"
+#import "common/errors.jsligo" "Errors"
+
+const amount_must_be_subscription_value = (amount: tez, price) : unit =>
+  assert_with_error(
+    amount == price,
+    Errors.amount_must_be_subscription_value
+  );
+
+const must_be_admin = (admin: address) : unit =>
+  assert_with_error(
+    Tezos.get_sender() == admin,
+    Errors.incorrect_sender
+  );
+
+const signature_must_be_valid = (public_key: key, signature: signature, message: bytes) : unit =>
+  assert_with_error(
+    Crypto.check(public_key, signature, message),
+    Errors.invalid_signature
+  );
+
+const requested_token_contract_must_be_allowed = (token: address, allowed_tokens: set<address>) : unit =>
+  assert_with_error(
+    Set.mem(token, allowed_tokens),
+    Errors.token_not_allowed
+  );
+
+const must_have_enough_balance = (amount: tez) : unit => assert_with_error(
+  Tezos.get_balance() >= amount,
+  Errors.low_balance
+);
+
+const policy_id_must_exist = (policies: Storage.Types.ledger, policy_id: nat) : unit => assert_with_error(
+ Big_map.mem(policy_id, policies),
+ Errors.token_not_found
+);
