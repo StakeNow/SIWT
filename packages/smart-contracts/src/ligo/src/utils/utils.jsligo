@@ -26,17 +26,11 @@ export namespace Types {
     };
 };
 
-
 const get_admin = (store: Storage.Types.store) : address => store.admin.address;
-const get_policy_price = (store: Storage.Types.store, policy: bytes) : tez => {
-  const policy_pricing_id_bytes = Bytes.sub(0 as nat, 1 as nat, policy);
-  const policy_pricing_id = nat(policy_pricing_id_bytes);
-
-  return match(Map.find_opt(policy_pricing_id, store.pricing), {
-    None: () => failwith(Errors.pricing_not_found) as tez,
-    Some: (price) => price
-  });
-};
+const get_policy_price = (store: Storage.Types.store, policy_pricing_id: nat) : [tez, bool] => match(Map.find_opt(policy_pricing_id, store.pricing), {
+  None: () => failwith(Errors.pricing_not_found) as [tez, bool],
+  Some: (price) => price
+});
 
 const get_balance_of = (contract: address, token_id: nat): operation => {
   const token_contract: contract<Types.balance_of_params_type> =
@@ -67,11 +61,10 @@ const get_balance_of = (contract: address, token_id: nat): operation => {
   return Tezos.transaction(balance_of_params, 0 as tez, token_contract);
 };
 
-const get_policy_token_id_from_policy_bytes = (policy: bytes) : nat => {
-  const policy_token_id_bytes_length_in_bytes = Bytes.sub(1 as nat, 1 as nat, policy);
-  const policy_token_id_bytes_length = nat(policy_token_id_bytes_length_in_bytes);
-  const policy_token_id_bytes = Bytes.sub(2 as nat, policy_token_id_bytes_length, policy);
-  const policy_token_id = nat(policy_token_id_bytes);
-
-  return policy_token_id;
-}
+const deconstruct_message = (message: bytes) => {
+  const message_data = Bytes.sub(2 as nat, abs(Bytes.length(message) - 2) as nat, message);
+  return match(Bytes.unpack(message_data), {
+    None: () => failwith(Errors.invalid_message),
+    Some: (unpacked_message) => unpacked_message,
+  })
+};

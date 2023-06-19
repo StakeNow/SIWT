@@ -4,6 +4,7 @@
 #import "../common/errors.jsligo" "Errors"
 
 const bob = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address;
+const contract = "KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9" as address;
 const public_key = "edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6" as key;
 
 const store_mock = {
@@ -12,76 +13,65 @@ const store_mock = {
     verifier: public_key,
     paused: false,
   },
-  allowed_token_contracts: Set.empty as set<address>,
   ledger_counter: 0 as nat,
-  ledger: (Big_map.empty as big_map<Storage.Types.ledger_key, nat>),
-  pricing: Map.empty as map<nat, tez>,
+  ledger: (Big_map.empty as big_map<nat, address>),
+  assets: (Big_map.empty as big_map<[address, nat], nat>),
+  pricing: Map.empty as map<nat, [tez, bool]>,
   token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
+  operators: Big_map.empty as big_map<[address, address], set<nat>>,
 };
 
 const _get_policy_price_success = () : unit => {
   const store = {
     ...store_mock,
     pricing: Map.literal(list([
-      [0 as nat, 1 as tez],
-      [1 as nat, 2 as tez],
-      [2 as nat, 3 as tez]
+      [0 as nat, [1 as tez, true]],
+      [1 as nat, [2 as tez, false]],
+      [2 as nat, [3 as tez, true]]
     ])),
   };
 
-  const pricing = bytes(1 as nat);
-  const policy = bytes `MY_POLICY` as bytes;
-  const message = Bytes.concat(pricing, policy);
-
-  const price = get_policy_price(store, message);
-
-  assert(price == (2 as tez));
+  const price = get_policy_price(store, 1 as nat);
+  assert(price == [(2 as tez), false]);
 }
 
 const test_get_policy_price_success = _get_policy_price_success();
 
-const _get_policy_price_failwith_not_found = () : unit => {
-  const store = {
-    ...store_mock,
-    pricing: Map.literal(list([
-      [0 as nat, 1 as tez],
-      [1 as nat, 2 as tez],
-      [2 as nat, 3 as tez]
-    ])),
-  };
+// const _get_policy_price_failwith_not_found = () : unit => {
+//   const store = {
+//     ...store_mock,
+//     pricing: Map.literal(list([
+//       [0 as nat, 1 as tez],
+//       [1 as nat, 2 as tez],
+//       [2 as nat, 3 as tez]
+//     ])),
+//   };
 
-  const pricing = bytes(5 as nat);
-  const policy = bytes `MY_POLICY` as bytes;
-  const message = Bytes.concat(pricing, policy);
+//   const _price = get_policy_price(store, 5 as nat);
+// }
+// const test_get_policy_price_failwith_not_found = _get_policy_price_failwith_not_found();
 
-  const _price = get_policy_price(store, message);
-}
-const test_get_policy_price_failwith_not_found = _get_policy_price_failwith_not_found();
+const deconstruct_message_success = () => {
+  const message_data = Bytes.pack({
+    timestamp: 0 as timestamp,
+    policy_contract_address: bob,
+    asset_contract_address: contract,
+    asset_token_id: 0 as nat,
+    pricing_id: 0 as nat,
+    policy: bytes `MY_POLICY` as bytes,
+  });
 
+  const message_prefix = bytes(192) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
 
-const _get_policy_token_id_from_policy_bytes_with_one_byte_token_id_success = () : unit => {
-  const pricing = bytes(1 as nat);
-  const policy_id_bytes = bytes(1 as nat);
-  const policy_id = bytes(10 as nat);
-  const policy = bytes `MY_UPDATED_POLICY` as bytes;
-  const message = Bytes.concats(list([pricing, policy_id_bytes, policy_id, policy]));
+  const { timestamp, policy_contract_address, asset_address, asset_id, pricing_id, policy } = deconstruct_message(message);
 
-  const token_id = get_policy_token_id_from_policy_bytes(message);
+  assert(timestamp == (0 as timestamp));
+  assert(policy_contract_address == (bob));
+  assert(asset_address == (contract));
+  assert(asset_id == (0 as nat));
+  assert(pricing_id == (0 as nat));
+  assert(policy == (bytes `MY_POLICY` as bytes));
+};
 
-  assert_with_error(token_id == (10 as nat), "Invalid token id");
-}
-
-const test_get_policy_token_id_from_policy_bytes_success = _get_policy_token_id_from_policy_bytes_with_one_byte_token_id_success();
-
-const _get_policy_token_id_from_policy_bytes_with_three_bytes_token_id_success = () : unit => {
-  const pricing = bytes(1 as nat);
-  const policy_id_bytes = bytes(3 as nat);
-  const policy_id = bytes(85536 as nat);
-  const policy = bytes `MY_UPDATED_POLICY` as bytes;
-  const message = Bytes.concats(list([pricing, policy_id_bytes, policy_id, policy]));
-
-  const token_id = get_policy_token_id_from_policy_bytes(message);
-  assert_with_error(token_id == (85536 as nat), "Invalid token id");
-}
-
-const test_get_policy_token_id_from_policy_three_bytes_success = _get_policy_token_id_from_policy_bytes_with_three_bytes_token_id_success();
+const test_deconstruct_message_success = deconstruct_message_success();

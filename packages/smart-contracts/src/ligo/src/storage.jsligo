@@ -1,20 +1,26 @@
 export namespace Types {
-  // export type ledger_key = [address, nat];
-  // export type ledger = big_map<ledger_key, nat>;
   export type ledger_key = nat;
   export type ledger = big_map<nat, address>;
   export type admin = [address, key];
 
   export type operators = big_map<[address, address], set<nat>>;
+  
+  export type policy_info_mint = {
+    asset_contract_address: address,
+    asset_token_id: nat,
+    policy: bytes,
+    signature: signature
+  };
+
+  export type policy_info_update = {
+    policy_id: nat,
+    policy: bytes,
+    signature: signature
+  };
 
   export type token_metadata = {
     token_id: nat,
     token_info: map<string, bytes>
-  };
-
-  export type requested_policy = {
-    policy: bytes,
-    policy_uri: bytes
   };
 
   export type store = {
@@ -23,65 +29,66 @@ export namespace Types {
       verifier: key,
       paused: bool,
     },
-    allowed_token_contracts: set<address>,
     ledger_counter: nat,
     ledger: ledger,
-    pricing: map<nat, tez>,
+    assets: big_map<[address, nat], nat>,
+    pricing: map<nat, [tez, bool]>,
     token_metadata: big_map<nat, token_metadata>,
-    requested: map<address, requested_policy>,
     operators: operators
+  };
+
+  export type message = {
+    timestamp: timestamp,
+    policy_contract_address: address,
+    asset_contract_address: address,
+    asset_token_id: nat,
+    policy: bytes,
+    pricing_id: nat,
   };
 };
 
 export namespace Utils {
-  const add_requested_policy = (owner: address, params: Types.requested_policy, store: Types.store) => {
-    return {
-      ...store,
-      requested: Map.add(owner, params, store.requested)
-    };
-  };
-  
-  const remove_requested_policy = (store: Types.store) => {
-    return {
-      ...store,
-      requested: Map.literal(list([]))
-    };
-  };
-
-  const register_policy = (owner: address, store: Types.store) => {
-    const token_metadata = match(Map.find_opt(owner, store.requested), {
-      Some: (policy) => policy,
-      None: () => failwith("temp_register_policy_not_found")
-    });
-
+  const register_policy = (params: Types.policy_info_mint, store: Types.store) => {
     const ledger_counter = store.ledger_counter + (1 as nat);
-    // const ledger_map = Big_map.add([store.admin.address, ledger_counter], 1 as nat, store.ledger);
     const ledger_map = Big_map.add(ledger_counter, store.admin.address, store.ledger);
     const metadata = { 
       token_id: ledger_counter,
       token_info: Map.literal(
         list([
-          ["" as string, token_metadata.policy_uri],
-          ["policy" as string, token_metadata.policy]
-          // ["signature" as string, token_metadata.signature], 
+          ["policy" as string, params.policy],
+          ["signature" as string, Bytes.pack(params.signature)]
         ])
       );
     };
     const token_metadata_map = Big_map.add(ledger_counter, metadata, store.token_metadata);
+    const assets_map = Big_map.add([params.asset_contract_address, params.asset_token_id], ledger_counter, store.assets);
 
     return {
       ...store,
       ledger: ledger_map,
       ledger_counter,
+      assets: assets_map,
       token_metadata: token_metadata_map,
-      requested: Map.remove(owner, store.requested)
     };
   };
 
-  // const update_policy = ([policy_id, policy, policy_uri, signature]: [nat bytes, bytes, bytes], store: Types.store) => {
-  //   return {
-  //     ...store,
-  //     token_metadata: Big_map.update(policy_id, Some(policy, policy_uri, signature), store.token_metadata),
-  //   }
-  // };
+  const update_policy = (params: Types.policy_info_update, store: Types.store) => {
+    return {
+      ...store,
+      token_metadata: Big_map.update(params.policy_id, Some({
+        token_id: params.policy_id,
+        token_info: Map.literal(
+          list([
+            ["policy" as string, params.policy],
+            ["signature" as string, Bytes.pack(params.signature)]
+          ])
+        )}
+      ), store.token_metadata),
+    }
+  };
+
+  const find_policy_id = (assets: big_map<[address, nat], nat>, asset_contract_address: address, asset_token_id: nat) => match(Big_map.find_opt([asset_contract_address, asset_token_id], assets), {
+    Some: (x) => x,
+    None: () => { failwith("Policy not found"); }
+  });
 };

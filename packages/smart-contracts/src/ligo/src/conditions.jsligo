@@ -19,12 +19,6 @@ const signature_must_be_valid = (public_key: key, signature: signature, message:
     Errors.invalid_signature
   );
 
-const requested_token_contract_must_be_allowed = (token: address, allowed_tokens: set<address>) : unit =>
-  assert_with_error(
-    Set.mem(token, allowed_tokens),
-    Errors.token_not_allowed
-  );
-
 const must_have_enough_balance = (amount: tez) : unit => assert_with_error(
   Tezos.get_balance() >= amount,
   Errors.low_balance
@@ -33,4 +27,19 @@ const must_have_enough_balance = (amount: tez) : unit => assert_with_error(
 const policy_id_must_exist = (policies: Storage.Types.ledger, policy_id: nat) : unit => assert_with_error(
  Big_map.mem(policy_id, policies),
  Errors.token_not_found
+);
+
+const message_must_be_valid = (message: bytes): unit => {
+  const message_prefix = Bytes.sub(0 as nat, 2 as nat, message);
+  return assert_with_error(message_prefix == (bytes(192) as bytes), Errors.invalid_message);
+}
+
+const pricing_must_be_active = (isValid): unit => assert_with_error(
+  isValid,
+  Errors.pricing_not_active
+);
+
+const must_be_for_this_contract = (contract: address): unit => assert_with_error(
+  Tezos.get_self_address() == contract,
+  Errors.incorrect_contract
 );
