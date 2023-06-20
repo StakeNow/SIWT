@@ -1,6 +1,7 @@
 export namespace Types {
   export type ledger_key = nat;
   export type ledger = big_map<nat, address>;
+  export type assets = big_map<[address, nat], nat>;
   export type admin = [address, key];
 
   export type operators = big_map<[address, address], set<nat>>;
@@ -31,10 +32,11 @@ export namespace Types {
     },
     ledger_counter: nat,
     ledger: ledger,
-    assets: big_map<[address, nat], nat>,
-    pricing: map<nat, [tez, bool]>,
+    assets: assets,
+    pricing: big_map<nat, [tez, bool]>,
     token_metadata: big_map<nat, token_metadata>,
-    operators: operators
+    operators: operators,
+    metadata: big_map<string, bytes>,
   };
 
   export type message = {

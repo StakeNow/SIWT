@@ -27,42 +27,13 @@ export namespace Types {
 };
 
 const get_admin = (store: Storage.Types.store) : address => store.admin.address;
-const get_policy_price = (store: Storage.Types.store, policy_pricing_id: nat) : [tez, bool] => match(Map.find_opt(policy_pricing_id, store.pricing), {
+const get_policy_price = (store: Storage.Types.store, policy_pricing_id: nat) : [tez, bool] => match(Big_map.find_opt(policy_pricing_id, store.pricing), {
   None: () => failwith(Errors.pricing_not_found) as [tez, bool],
   Some: (price) => price
 });
 
-const get_balance_of = (contract: address, token_id: nat): operation => {
-  const token_contract: contract<Types.balance_of_params_type> =
-    match(
-      Tezos.get_entrypoint_opt("%balance_of", contract) as option<contract<Types.balance_of_params_type>>,
-      {
-        None: () => failwith(Errors.fa2_balance_of_entrypoint),
-        Some: (c: contract<Types.balance_of_params_type>) => c
-      }
-    );
-
-  const register_policy_callback: contract<Types.register_policy_response> = match(
-    Tezos.get_entrypoint_opt("%registerPolicy", Tezos.get_self_address()),
-    {
-      None: () => failwith(Errors.register_policy_entrypoint),
-      Some: (cb) => cb
-    }
-  );
-
-  const balance_of_params = {
-    requests: list([{
-      owner: Tezos.get_sender() as address,
-      token_id: token_id as nat
-    }]),
-    callback: register_policy_callback
-  };
-
-  return Tezos.transaction(balance_of_params, 0 as tez, token_contract);
-};
-
 const deconstruct_message = (message: bytes) => {
-  const message_data = Bytes.sub(2 as nat, abs(Bytes.length(message) - 2) as nat, message);
+  const message_data = Bytes.sub(1 as nat, abs(Bytes.length(message) - 1) as nat, message);
   return match(Bytes.unpack(message_data), {
     None: () => failwith(Errors.invalid_message),
     Some: (unpacked_message) => unpacked_message,

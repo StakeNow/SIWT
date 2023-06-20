@@ -2,7 +2,6 @@
 #include "./test_utils/test_utils.jsligo"
 #import "./storage.jsligo" "Storage"
 #import "./common/errors.jsligo" "Errors"
-#import "./old/test/balance_of.jsligo" "BalanceOf"
 
 const bob = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address;
 const alice = "tz1cQ1mkH1PiCxLUkbWH7SkGj8PrYpffzWxo" as address;
@@ -21,7 +20,7 @@ const store_mock = {
   ledger_counter: 0 as nat,
   ledger: (Big_map.empty as big_map<nat, address>),
   assets: (Big_map.empty as big_map<[address, nat], nat>),
-  pricing: Map.empty as map<nat, [tez, bool]>,
+  pricing: Big_map.empty as big_map<nat, [tez, bool]>,
   token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
   operators: Big_map.empty as big_map<[address, address], set<nat>>,
 };
@@ -41,11 +40,11 @@ type mint_function_request = {
     amount: tez
 };
 
-const _mint = (secret_key, request: mint_function_request, result: nat) : unit => {
-  // Policy
+const _mint = (secret_key, request: mint_function_request, result: nat) : test_exec_result => {
   const initial_storage = {
     ...store_mock,
-    pricing: Map.literal(list([[
+    assets: Big_map.literal(list([])),
+    pricing: Big_map.literal(list([[
       1 as nat, [1000000 as mutez, true as bool]
     ]])),
   };
@@ -58,23 +57,55 @@ const _mint = (secret_key, request: mint_function_request, result: nat) : unit =
     asset_contract_address: token_contract_1,
     asset_token_id: 0 as nat,
     policy: bytes ` `,
-    policy_id: 1 as nat,
+    pricing_id: 1 as nat,
   });
 
-  const message_prefix = bytes(192) as bytes;
+  const message_prefix = bytes(192 as nat) as bytes;
   const message = Bytes.concat(message_prefix, message_data);
   const signature = Test.sign(secret_key, message);
 
-  const _status: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), request.amount as tez);
-  const new_storage = Test.get_storage(taddr);
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), request.amount as tez);
+  const new_storage = Test.get_storage(taddr); 
 
   Test.assert_with_error(new_storage.ledger_counter == result, "Ledger counter is incorrect");
+  return tx;
 };
 
-const _mint_success = () : unit => {
+const _mint_failwith_contract_paused = () : unit => {
+    init_test();
+    const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+    const initial_storage = {
+    ...store_mock,
+    admin: {
+      ...store_mock.admin,
+      paused: true as bool,
+    }
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contract = Test.to_contract(taddr);
+
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: token_contract_1,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes ` `,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), 1000000 as mutez);
+  assert_error(tx, Errors.contract_paused);
+};
+const test_mint_failwith_contract_paused = _mint_failwith_contract_paused();
+
+const _mint_success = () : test_exec_result => {
   const [_address, _public_key, secretkey] = Test.get_bootstrap_account(1 as nat);
   const request = {
-    amount: 0 as mutez
+    amount: 1000000 as mutez
   };
   const ledger_size_result = 1 as nat;
 
@@ -89,16 +120,207 @@ const _mint_failwith_incorrect_signature = () : unit => {
   };
   const ledger_size_result = 0 as nat;
 
-  _mint(secretkey, request, ledger_size_result);
+  const tx = _mint(secretkey, request, ledger_size_result);
+  assert_error(tx, Errors.invalid_signature);
 };
 const test_mint_failwith_incorrect_signature = _mint_failwith_incorrect_signature();
 
-const _update_policy_success = () : unit => {
+const _mint_failwith_invalid_message = () : unit => {
   init_test();
-  const [address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
   const initial_storage = {
     ...store_mock,
-    pricing: Map.literal(list([
+    assets: Big_map.literal(list([])),
+    pricing: Big_map.literal(list([[
+      1 as nat, [1000000 as mutez, true as bool]
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contract = Test.to_contract(taddr);
+
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes ` `,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(193) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), 1000000 as mutez);
+  assert_error(tx, Errors.invalid_message);
+};
+const test_mint_failwith_invalid_message = _mint_failwith_invalid_message();
+
+const _mint_failwith_invalid_contract = () : unit => {
+    init_test();
+    const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+    const initial_storage = {
+    ...store_mock,
+    assets: Big_map.literal(list([])),
+    pricing: Big_map.literal(list([[
+      1 as nat, [1000000 as mutez, true as bool]
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contract = Test.to_contract(taddr);
+
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: token_contract_1,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes ` `,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), 1000000 as mutez);
+  
+  assert_error(tx, Errors.incorrect_contract);
+};
+const test_mint_failwith_invalid_contract = _mint_failwith_invalid_contract();
+
+const _mint_failwith_inactive_pricing = () : unit => {
+    init_test();
+    const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+    const initial_storage = {
+    ...store_mock,
+    assets: Big_map.literal(list([])),
+    pricing: Big_map.literal(list([[
+      1 as nat, [1000000 as mutez, false as bool]
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contract = Test.to_contract(taddr);
+
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes ` `,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), 1000000 as mutez);
+  
+  assert_error(tx, Errors.pricing_not_active);
+};
+const test_mint_failwith_inactive_pricing = _mint_failwith_inactive_pricing();
+
+const _mint_failwith_incorrect_amount = () : unit => {
+    init_test();
+    const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+    const initial_storage = {
+    ...store_mock,
+    assets: Big_map.literal(list([])),
+    pricing: Big_map.literal(list([[
+      1 as nat, [1000000 as mutez, true as bool]
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contract = Test.to_contract(taddr);
+
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes ` `,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), 2000000 as mutez);
+  
+  assert_error(tx, Errors.amount_must_be_pricing_value);
+};
+const test_mint_failwith_incorrect_amount = _mint_failwith_incorrect_amount();
+
+const _mint_failwith_request_expired = () : unit => {
+    init_test();
+    const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+    const initial_storage = {
+    ...store_mock,
+    assets: Big_map.literal(list([])),
+    pricing: Big_map.literal(list([[
+      1 as nat, [1000000 as mutez, true as bool]
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contract = Test.to_contract(taddr);
+
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes ` `,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+  Test.bake_until_n_cycle_end(100 as nat);
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), 1000000 as mutez);
+  assert_error(tx, Errors.request_expired);
+};
+const test_mint_failwith_request_expired = _mint_failwith_request_expired();
+
+const _mint_failwith_asset_already_exists = () : unit => {
+    init_test();
+    const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+    const initial_storage = {
+    ...store_mock,
+    assets: Big_map.literal(list([
+      [([token_contract_1, 0 as nat]), 1 as nat]
+    ])),
+    pricing: Big_map.literal(list([[
+      1 as nat, [1000000 as mutez, true as bool]
+    ]])),
+  };
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  const contract = Test.to_contract(taddr);
+
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes ` `,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+  const tx: test_exec_result = Test.transfer_to_contract(contract, (Mint({ message, signature })), 1000000 as mutez);
+  assert_error(tx, Errors.asset_must_not_exist);
+};
+const test_mint_failwith_asset_already_exists = _mint_failwith_asset_already_exists();
+
+const _update_policy_success = () : unit => {
+  init_test();
+  const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
       [1 as nat, [1000000 as mutez, true as bool]]
     ])),
     ledger: Big_map.literal(list([
@@ -134,7 +356,7 @@ const _update_policy_success = () : unit => {
     pricing_id: 1 as nat,
   });
 
-  const message_prefix = bytes(192) as bytes;
+  const message_prefix = bytes(192 as nat) as bytes;
   const message = Bytes.concat(message_prefix, message_data);
   const signature = Test.sign(secret_key, message);
 
@@ -152,12 +374,12 @@ const _update_policy_success = () : unit => {
 }
 const test_update_policy = _update_policy_success();
 
-const _update_policy_failed_with_invalid_signature = () : unit => {
+const _update_policy_failwith_invalid_signature = () : unit => {
   init_test();
   const [address, _public_key, secret_key] = Test.get_bootstrap_account(0 as nat);
   const initial_storage = {
     ...store_mock,
-    pricing: Map.literal(list([
+    pricing: Big_map.literal(list([
       [1 as nat, [1000000 as mutez, true as bool]]
     ])),
     ledger: Big_map.literal(list([
@@ -193,7 +415,7 @@ const _update_policy_failed_with_invalid_signature = () : unit => {
     pricing_id: 1 as nat,
   });
 
-  const message_prefix = bytes(192) as bytes;
+  const message_prefix = bytes(192 as nat) as bytes;
   const message = Bytes.concat(message_prefix, message_data);
   const signature = Test.sign(secret_key, message);
 
@@ -205,14 +427,51 @@ const _update_policy_failed_with_invalid_signature = () : unit => {
 
   assert_error(tx, Errors.invalid_signature);
 }
-const test_update_policy_failed_with_invalid_signature = _update_policy_failed_with_invalid_signature();
+const test_update_policy_failwith_invalid_signature = _update_policy_failwith_invalid_signature();
 
-const _update_policy_failed_with_token_not_found = () : unit => {
+const _update_policy_failwith_contract_paused = () : unit => {
   init_test();
-  const [address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const [address, _public_key, secret_key] = Test.get_bootstrap_account(0 as nat);
   const initial_storage = {
     ...store_mock,
-    pricing: Map.literal(list([
+    admin: {
+      ...store_mock.admin,
+      paused: true as bool,
+    }
+  };
+
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contract = Test.to_contract(taddr);
+  
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes `POLICY`,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  Test.set_source(address);
+  let tx = Test.transfer_to_contract(contract, (Update ({
+    message: message,
+    signature,
+  })), 1000000 as mutez);
+
+  assert_error(tx, Errors.contract_paused);
+}
+const test_update_policy_failwith_contract_paused = _update_policy_failwith_contract_paused();
+
+const _update_policy_failwith_invalid_message = () : unit => {
+  init_test();
+  const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
       [1 as nat, [1000000 as mutez, true as bool]]
     ])),
     ledger: Big_map.literal(list([
@@ -238,6 +497,169 @@ const _update_policy_failed_with_token_not_found = () : unit => {
  
   const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
   let contract = Test.to_contract(taddr);
+  
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes `POLICY`,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(193) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  let tx = Test.transfer_to_contract(contract, (Update ({
+    message: message,
+    signature,
+  })), 1000000 as mutez);
+
+  assert_error(tx, Errors.invalid_message);
+}
+const test_update_policy_failwith_invalid_message = _update_policy_failwith_invalid_message();
+
+const _update_policy_failwith_invalid_contract = () : unit => {
+  init_test();
+  const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [1 as nat, [1000000 as mutez, true as bool]]
+    ])),
+    ledger: Big_map.literal(list([
+      [1 as nat, bob]
+    ])),
+    token_metadata: Big_map.literal(list([
+      [
+        1 as nat,
+        {
+          token_id: 1 as nat,
+          token_info: Map.literal(
+          list([
+            ["policy" as string, bytes `POLICY`],
+            ["signature" as string, bytes `SIGNATURE`]
+          ]))
+        }
+      ]
+    ])),
+    assets: Big_map.literal(list([
+      [([token_contract_1, 0 as nat]), 1 as nat]
+    ])),
+  };
+ 
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contract = Test.to_contract(taddr);
+  
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: token_contract_2,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes `POLICY`,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  let tx = Test.transfer_to_contract(contract, (Update ({
+    message: message,
+    signature,
+  })), 1000000 as mutez);
+  
+  assert_error(tx, Errors.incorrect_contract);
+}
+const test_update_policy_failwith_invalid_contract = _update_policy_failwith_invalid_contract();
+
+const _update_policy_failwith_inactive_pricing = () : unit => {
+  init_test();
+  const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [1 as nat, [1000000 as mutez, false as bool]]
+    ])),
+    ledger: Big_map.literal(list([
+      [1 as nat, bob]
+    ])),
+    token_metadata: Big_map.literal(list([
+      [
+        1 as nat,
+        {
+          token_id: 1 as nat,
+          token_info: Map.literal(
+          list([
+            ["policy" as string, bytes `POLICY`],
+            ["signature" as string, bytes `SIGNATURE`]
+          ]))
+        }
+      ]
+    ])),
+    assets: Big_map.literal(list([
+      [([token_contract_1, 0 as nat]), 1 as nat]
+    ])),
+  };
+ 
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contract = Test.to_contract(taddr);
+  
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes `POLICY`,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  let tx = Test.transfer_to_contract(contract, (Update ({
+    message: message,
+    signature,
+  })), 1000000 as mutez);
+
+  assert_error(tx, Errors.pricing_not_active);
+}
+const test_update_policy_failwith_inactive_pricing = _update_policy_failwith_inactive_pricing();
+
+
+const _update_policy_failwith_asset_not_found = () : unit => {
+  init_test();
+  const [address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [1 as nat, [1000000 as mutez, true as bool]]
+    ])),
+    ledger: Big_map.literal(list([
+      [1 as nat, bob]
+    ])),
+    token_metadata: Big_map.literal(list([
+      [
+        1 as nat,
+        {
+          token_id: 1 as nat,
+          token_info: Map.literal(
+          list([
+            ["policy" as string, bytes `POLICY`],
+            ["signature" as string, bytes `SIGNATURE`]
+          ]))
+        }
+      ]
+    ])),
+    assets: Big_map.literal(list([
+      [([token_contract_1, 1 as nat]), 0 as nat]
+    ])),
+  };
+ 
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contract = Test.to_contract(taddr);
 
   const message_data = Bytes.pack({
     timestamp: Tezos.get_now(),
@@ -248,7 +670,7 @@ const _update_policy_failed_with_token_not_found = () : unit => {
     pricing_id: 1 as nat,
   });
 
-  const message_prefix = bytes(192) as bytes;
+  const message_prefix = bytes(192 as nat) as bytes;
   const message = Bytes.concat(message_prefix, message_data);
   const signature = Test.sign(secret_key, message);
 
@@ -258,16 +680,16 @@ const _update_policy_failed_with_token_not_found = () : unit => {
     signature,
   })), 1000000 as mutez);
 
-  assert_error(tx, Errors.token_not_found);
+  assert_error(tx, Errors.policy_not_found);
 }
-const test_update_policy_failed_with_token_not_found = _update_policy_failed_with_token_not_found();
+const test_update_policy_failwith_asset_not_found = _update_policy_failwith_asset_not_found();
 
-const _update_policy_failed_with_incorrect_amount = () : unit => {
+const _update_policy_failwith_incorrect_amount = () : unit => {
   init_test();
   const [address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
   const initial_storage = {
     ...store_mock,
-    pricing: Map.literal(list([
+    pricing: Big_map.literal(list([
       [1 as nat, [1000000 as mutez, true as bool]]
     ])),
     ledger: Big_map.literal(list([
@@ -304,18 +726,127 @@ const _update_policy_failed_with_incorrect_amount = () : unit => {
     pricing_id: 1 as nat,
   });
 
-  const message_prefix = bytes(192) as bytes;
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+
+  Test.set_source(address);
+  let tx = Test.transfer_to_contract(contract, (Update ({
+    message,
+    signature,
+  })), 200000 as mutez);
+
+  assert_error(tx, Errors.amount_must_be_pricing_value);
+}
+const test_update_policy_failwith_incorrect_amount = _update_policy_failwith_incorrect_amount();
+
+const _update_policy_failwith_request_expired = () : unit => {
+  init_test();
+  const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [1 as nat, [1000000 as mutez, true as bool]]
+    ])),
+    ledger: Big_map.literal(list([
+      [1 as nat, bob]
+    ])),
+    token_metadata: Big_map.literal(list([
+      [
+        1 as nat,
+        {
+          token_id: 1 as nat,
+          token_info: Map.literal(
+          list([
+            ["policy" as string, bytes `POLICY`],
+            ["signature" as string, bytes `SIGNATURE`]
+          ]))
+        }
+      ]
+    ])),
+    assets: Big_map.literal(list([
+      [([token_contract_1, 0 as nat]), 1 as nat]
+    ])),
+  };
+ 
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contract = Test.to_contract(taddr);
+  
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_1,
+    asset_token_id: 0 as nat,
+    policy: bytes `POLICY`,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+  const signature = Test.sign(secret_key, message);
+  Test.bake_until_n_cycle_end(100 as nat);
+
+  let tx = Test.transfer_to_contract(contract, (Update ({
+    message: message,
+    signature,
+  })), 1000000 as mutez);
+  assert_error(tx, Errors.request_expired);
+}
+const test_update_policy_failwith_request_expired = _update_policy_failwith_request_expired();
+
+const _update_policy_failwith_policy_not_found = () : unit => {
+  init_test();
+  const [_address, _public_key, secret_key] = Test.get_bootstrap_account(1 as nat);
+  const initial_storage = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [1 as nat, [1000000 as mutez, true as bool]]
+    ])),
+    ledger: Big_map.literal(list([
+      [1 as nat, bob]
+    ])),
+    token_metadata: Big_map.literal(list([
+      [
+        1 as nat,
+        {
+          token_id: 1 as nat,
+          token_info: Map.literal(
+          list([
+            ["policy" as string, bytes `POLICY`],
+            ["signature" as string, bytes `SIGNATURE`]
+          ]))
+        }
+      ]
+    ])),
+    assets: Big_map.literal(list([
+      [([token_contract_1, 0 as nat]), 1 as nat]
+    ])),
+  };
+ 
+  const [taddr, _, _] = Test.originate(main, initial_storage, 0 as tez);
+  let contract = Test.to_contract(taddr);
+  
+  const message_data = Bytes.pack({
+    timestamp: Tezos.get_now(),
+    policy_contract_address: contract,
+    asset_contract_address: token_contract_2,
+    asset_token_id: 0 as nat,
+    policy: bytes `POLICY`,
+    pricing_id: 1 as nat,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
   const message = Bytes.concat(message_prefix, message_data);
   const signature = Test.sign(secret_key, message);
 
   let tx = Test.transfer_to_contract(contract, (Update ({
-    message,
+    message: message,
     signature,
-  })), 100000 as mutez);
-
-  assert_error(tx, Errors.amount_must_be_subscription_value);
+  })), 1000000 as mutez);
+  
+  assert_error(tx, Errors.policy_not_found);
 }
-const test_update_policy_failed_with_incorrect_amount = _update_policy_failed_with_incorrect_amount();
+const test_update_policy_failwith_policy_not_found = _update_policy_failwith_policy_not_found();
 
 const _set_administrator_success = () : unit => {
   init_test();
@@ -407,7 +938,7 @@ const _update_pricing_add_success = () : unit => {
       ...store_mock.admin,
       address,
     },
-    pricing: Map.literal(list([
+    pricing: Big_map.literal(list([
       [1 as nat, [1000000 as mutez, true as bool]]
     ]))
   };
@@ -417,7 +948,7 @@ const _update_pricing_add_success = () : unit => {
   Test.set_source(address);
   let _tx = Test.transfer_to_contract(contr, (Update_pricing_model ([2 as nat, 2000000 as mutez, true as bool])), 1 as mutez);
   let new_storage = Test.get_storage(taddr);
-  Test.assert_with_error(Map.find_opt(2 as nat, new_storage.pricing) == Some([2000000 as mutez, true as bool]), "Pricing model not updated");
+  Test.assert_with_error(Big_map.find_opt(2 as nat, new_storage.pricing) == Some([2000000 as mutez, true as bool]), "Pricing model not updated");
 };
 
 const test_update_pricing_add_success = _update_pricing_add_success();
@@ -431,7 +962,7 @@ const _update_pricing_replace_success = () : unit => {
       ...store_mock.admin,
       address,
     },
-    pricing: Map.literal(list([
+    pricing: Big_map.literal(list([
       [1 as nat, [1000000 as mutez, true as bool]]
     ]))
   };
@@ -441,7 +972,7 @@ const _update_pricing_replace_success = () : unit => {
   Test.set_source(address);
   let _tx = Test.transfer_to_contract(contr, (Update_pricing_model ([1 as nat, 2000000 as mutez, true as bool])), 1 as mutez);
   let new_storage = Test.get_storage(taddr);
-  Test.assert_with_error(Map.find_opt(1 as nat, new_storage.pricing) == Some([2000000 as mutez, true as bool]), "Pricing model not or incorrectly updated");
+  Test.assert_with_error(Big_map.find_opt(1 as nat, new_storage.pricing) == Some([2000000 as mutez, true as bool]), "Pricing model not or incorrectly updated");
 };
 
 const test_update_pricing_replace_success = _update_pricing_replace_success();
@@ -450,7 +981,7 @@ const _update_pricing_failwith_not_admin = () : unit => {
   init_test();
   const initial_storage = {
     ...store_mock,
-    pricing: Map.literal(list([
+    pricing: Big_map.literal(list([
       [1 as nat, [1000000 as mutez, true as bool]]
     ]))
   };

@@ -16,7 +16,7 @@ const store_mock = {
   ledger_counter: 0 as nat,
   ledger: (Big_map.empty as big_map<nat, address>),
   assets: (Big_map.empty as big_map<[address, nat], nat>),
-  pricing: Map.empty as map<nat, [tez, bool]>,
+  pricing: Big_map.empty as big_map<nat, [tez, bool]>,
   token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
   operators: Big_map.empty as big_map<[address, address], set<nat>>,
 };
@@ -24,7 +24,7 @@ const store_mock = {
 const _get_policy_price_success = () : unit => {
   const store = {
     ...store_mock,
-    pricing: Map.literal(list([
+    pricing: Big_map.literal(list([
       [0 as nat, [1 as tez, true]],
       [1 as nat, [2 as tez, false]],
       [2 as nat, [3 as tez, true]]
@@ -33,22 +33,22 @@ const _get_policy_price_success = () : unit => {
 
   const price = get_policy_price(store, 1 as nat);
   assert(price == [(2 as tez), false]);
-}
+};
 
 const test_get_policy_price_success = _get_policy_price_success();
 
-// const _get_policy_price_failwith_not_found = () : unit => {
-//   const store = {
-//     ...store_mock,
-//     pricing: Map.literal(list([
-//       [0 as nat, 1 as tez],
-//       [1 as nat, 2 as tez],
-//       [2 as nat, 3 as tez]
-//     ])),
-//   };
+const _get_policy_price_failwith_not_found = () : unit => {
+  const store = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [0 as nat, [1 as tez, true]],
+      [1 as nat, [2 as tez, false]],
+      [2 as nat, [3 as tez, true]]
+    ])),
+  };
 
-//   const _price = get_policy_price(store, 5 as nat);
-// }
+  const _price = get_policy_price(store, 5 as nat);
+};
 // const test_get_policy_price_failwith_not_found = _get_policy_price_failwith_not_found();
 
 const deconstruct_message_success = () => {
@@ -61,7 +61,7 @@ const deconstruct_message_success = () => {
     policy: bytes `MY_POLICY` as bytes,
   });
 
-  const message_prefix = bytes(192) as bytes;
+  const message_prefix = bytes(192 as nat) as bytes;
   const message = Bytes.concat(message_prefix, message_data);
 
   const { timestamp, policy_contract_address, asset_address, asset_id, pricing_id, policy } = deconstruct_message(message);

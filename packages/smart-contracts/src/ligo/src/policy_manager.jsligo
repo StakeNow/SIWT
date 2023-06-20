@@ -45,14 +45,16 @@ const payout = (store: Storage.Types.store, amount: tez): @return => {
 };
 
 const mint = (store: Storage.Types.store, params: policy_params): @return => {
+  Conditions.contract_must_be_active(store.admin.paused);
   Conditions.signature_must_be_valid(store.admin.verifier, params.signature, params.message);
   Conditions.message_must_be_valid(params.message);
   const message: Storage.Types.message = Utils.deconstruct_message(params.message);
   Conditions.must_be_for_this_contract(message.policy_contract_address);
-  const [_price, isValid] = Utils.get_policy_price(store, message.pricing_id);
+  const [price, isValid] = Utils.get_policy_price(store, message.pricing_id);
   Conditions.pricing_must_be_active(isValid);
-
-  // TODO: Check timestamp
+  Conditions.amount_must_be_pricing_value(Tezos.get_amount(), price);
+  Conditions.request_must_not_be_expired(message.timestamp);
+  Conditions.asset_must_not_exist(store.assets_table, [message.asset_contract_address, message.asset_token_id]);
   
   return [
     list([]),
@@ -66,22 +68,23 @@ const mint = (store: Storage.Types.store, params: policy_params): @return => {
 };
 
 const update = (store: Storage.Types.store, params: policy_params): @return => {
+  Conditions.contract_must_be_active(store.admin.paused);
   Conditions.signature_must_be_valid(store.admin.verifier, params.signature, params.message);
   const message: Storage.Types.message = Utils.deconstruct_message(params.message);
   Conditions.message_must_be_valid(params.message);
   Conditions.must_be_for_this_contract(message.policy_contract_address);
   const [price, isValid] = Utils.get_policy_price(store, message.pricing_id);
   Conditions.pricing_must_be_active(isValid);
-  Conditions.amount_must_be_subscription_value(Tezos.get_amount(), price);
-  const policy_id = Storage.Utils.find_policy_id(store.assets, message.asset_contract_address, message.asset_token_id);
-
-  // TODO: Check timestamp
+  Conditions.amount_must_be_pricing_value(Tezos.get_amount(), price);
+  Conditions.request_must_not_be_expired(message.timestamp);
+  const policy_id = Storage.Utils.find_policy_id(store.assets_table, message.asset_contract_address, message.asset_token_id);
+  Conditions.policy_must_exist(store.ledger, policy_id);
 
   return [
     list([]),
     Storage.Utils.update_policy({
-      policy_id: policy_id,
-      policy: params.message,
+      policy_id,
+      policy: message.policy,
       signature: params.signature
     }, store)
   ];
@@ -118,9 +121,9 @@ const set_paused = (store: Storage.Types.store, paused: bool): @return => {
 const update_pricing = (store: Storage.Types.store, [price_id, value, isValid]: [nat, tez, bool]): @return => {
   Conditions.must_be_admin(Utils.get_admin(store));
   
-  const new_pricing = Map.mem(price_id, store.pricing)
-    ? Map.update(price_id, Some([value, isValid]), store.pricing)
-    : Map.add(price_id, [value, isValid], store.pricing);
+  const new_pricing = Big_map.mem(price_id, store.pricing)
+    ? Big_map.update(price_id, Some([value, isValid]), store.pricing)
+    : Big_map.add(price_id, [value, isValid], store.pricing);
   
   return [list([]), {
     ...store,

@@ -1,10 +1,25 @@
 #import "storage.jsligo" "Storage"
 #import "common/errors.jsligo" "Errors"
 
-const amount_must_be_subscription_value = (amount: tez, price) : unit =>
+const contract_must_be_active = (is_paused: bool): unit => assert_with_error(
+  !is_paused,
+  Errors.contract_paused
+);
+
+const asset_must_not_exist = (assets: Storage.Types.assets, asset_key: [address, nat]) : unit => assert_with_error(
+  !Big_map.mem(asset_key, assets),
+  Errors.asset_must_not_exist
+);
+
+const request_must_not_be_expired = (timestamp: timestamp) => {
+  const delta = Tezos.get_now() - timestamp;
+  return assert_with_error(delta >= 0 && delta <= 180, Errors.request_expired);
+};
+
+const amount_must_be_pricing_value = (amount: tez, price) : unit =>
   assert_with_error(
     amount == price,
-    Errors.amount_must_be_subscription_value
+    Errors.amount_must_be_pricing_value
   );
 
 const must_be_admin = (admin: address) : unit =>
@@ -30,8 +45,8 @@ const policy_id_must_exist = (policies: Storage.Types.ledger, policy_id: nat) : 
 );
 
 const message_must_be_valid = (message: bytes): unit => {
-  const message_prefix = Bytes.sub(0 as nat, 2 as nat, message);
-  return assert_with_error(message_prefix == (bytes(192) as bytes), Errors.invalid_message);
+  const message_prefix = Bytes.sub(0 as nat, 1 as nat, message);
+  return assert_with_error(message_prefix == (bytes(192 as nat) as bytes), Errors.invalid_message);
 }
 
 const pricing_must_be_active = (isValid): unit => assert_with_error(
@@ -42,4 +57,9 @@ const pricing_must_be_active = (isValid): unit => assert_with_error(
 const must_be_for_this_contract = (contract: address): unit => assert_with_error(
   Tezos.get_self_address() == contract,
   Errors.incorrect_contract
+);
+
+const policy_must_exist = (policies: Storage.Types.ledger, policy_id: nat) : unit => assert_with_error(
+  Big_map.mem(policy_id, policies),
+  Errors.token_not_found
 );

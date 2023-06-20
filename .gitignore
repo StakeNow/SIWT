@@ -47,3 +47,6 @@ Thumbs.db
 
 # Docusaurus
 .docusaurus
+
+packages/smart-contracts/src/deploy
+.ligo
