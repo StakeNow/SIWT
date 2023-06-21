@@ -19,6 +19,7 @@ const store_mock = {
   pricing: Big_map.empty as big_map<nat, [tez, bool]>,
   token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
   operators: Big_map.empty as big_map<[address, address], set<nat>>,
+  metadata: Big_map.empty as big_map<string, bytes>,
 };
 
 const _get_policy_price_success = () : unit => {

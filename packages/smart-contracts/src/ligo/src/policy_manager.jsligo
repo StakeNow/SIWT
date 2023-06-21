@@ -54,7 +54,7 @@ const mint = (store: Storage.Types.store, params: policy_params): @return => {
   Conditions.pricing_must_be_active(isValid);
   Conditions.amount_must_be_pricing_value(Tezos.get_amount(), price);
   Conditions.request_must_not_be_expired(message.timestamp);
-  Conditions.asset_must_not_exist(store.assets_table, [message.asset_contract_address, message.asset_token_id]);
+  Conditions.asset_must_not_exist(store.assets, [message.asset_contract_address, message.asset_token_id]);
   
   return [
     list([]),
@@ -77,7 +77,7 @@ const update = (store: Storage.Types.store, params: policy_params): @return => {
   Conditions.pricing_must_be_active(isValid);
   Conditions.amount_must_be_pricing_value(Tezos.get_amount(), price);
   Conditions.request_must_not_be_expired(message.timestamp);
-  const policy_id = Storage.Utils.find_policy_id(store.assets_table, message.asset_contract_address, message.asset_token_id);
+  const policy_id = Storage.Utils.find_policy_id(store.assets, message.asset_contract_address, message.asset_token_id);
   Conditions.policy_must_exist(store.ledger, policy_id);
 
   return [
