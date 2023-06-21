@@ -49,4 +49,4 @@ Thumbs.db
 .docusaurus
 
 packages/smart-contracts/src/deploy
-.ligo
+/.ligo

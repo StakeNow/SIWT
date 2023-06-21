@@ -1,10 +1,6 @@
 {
   "implementation": "USE_NFT_TOKEN",
   "admin": "USE_MULTI_ADMIN",
-  "minter": [
-    "CAN_MINT",
-    "CAN_BURN",
-    "CAN_FREEZE"
-  ],
+  "minter": ["CAN_MINT", "CAN_BURN", "CAN_FREEZE"],
   "minterAdmin": "USE_MULTI_MINTER_ADMIN"
 }
