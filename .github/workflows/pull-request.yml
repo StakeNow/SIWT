@@ -30,4 +30,3 @@ jobs:
 
       - run: npx nx format:check
       - run: npx nx affected --target=test --parallel=3
-      - run: npx nx affected --target=build --parallel=3

@@ -1,0 +1,3 @@
+const undefined_token = "FA2_TOKEN_UNDEFINED";
+const ins_balance     = "FA2_INSUFFICIENT_BALANCE";
+const not_operator    = "FA2_NOT_OPERATOR";

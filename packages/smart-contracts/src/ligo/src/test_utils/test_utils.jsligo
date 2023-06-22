@@ -1,0 +1,13 @@
+const assert_error = (res: test_exec_result, expected_error: string): unit => {
+    const expected_error2 = Test.eval(expected_error);
+    match(res, {
+        Fail: (x: test_exec_error) => (
+        match (x, {
+            Rejected: (x: [michelson_program, address]) => assert(Test.michelson_equal(x[0], expected_error2)),
+            Balance_too_low : (_ : { contract_too_low : address , contract_balance : tez , spend_request : tez }) 
+                =>  failwith("contract failed: balance too low"),
+            Other: (s: string) => failwith(s)
+        })),
+        Success: (_ : nat) => failwith("Expected to fail but passed")
+    });
+};

@@ -17,7 +17,7 @@
       "command": "npm run clear --prefix=packages/docs.siwt.xyz"
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/docs.siwt.xyz/**/*.{ts,tsx,js,jsx}"]

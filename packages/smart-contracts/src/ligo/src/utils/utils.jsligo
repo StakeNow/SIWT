@@ -1,0 +1,41 @@
+#import "../storage.jsligo" "Storage"
+#import "../common/errors.jsligo" "Errors"
+
+export namespace Types {
+  export type request =
+    // @layout:comb 
+    {
+      owner: address,
+      token_id: nat
+    };
+
+  export type callback =
+    // @layout:comb 
+    {
+      request: request,
+      balance: nat
+    };
+
+  export type register_policy_response = list<callback>;
+
+  export type balance_of_params_type =
+    // @layout:comb 
+    {
+      requests: list<request>,
+      callback: contract<register_policy_response>
+    };
+};
+
+const get_admin = (store: Storage.Types.store) : address => store.admin.address;
+const get_policy_price = (store: Storage.Types.store, policy_pricing_id: nat) : [tez, bool] => match(Big_map.find_opt(policy_pricing_id, store.pricing), {
+  None: () => failwith(Errors.pricing_not_found) as [tez, bool],
+  Some: (price) => price
+});
+
+const deconstruct_message = (message: bytes) => {
+  const message_data = Bytes.sub(1 as nat, abs(Bytes.length(message) - 1) as nat, message);
+  return match(Bytes.unpack(message_data), {
+    None: () => failwith(Errors.invalid_message),
+    Some: (unpacked_message) => unpacked_message,
+  })
+};
