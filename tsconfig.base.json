@@ -18,7 +18,8 @@
       "@siwt/acq": ["packages/acq/src/index.ts"],
       "@siwt/core": ["packages/core/src/index.ts"],
       "@siwt/react": ["packages/react/src/index.ts"],
-      "@siwt/sdk": ["packages/sdk/src/index.ts"]
+      "@siwt/sdk": ["packages/sdk/src/index.ts"],
+      "@siwt/smart-contracts": ["packages/smart-contracts/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

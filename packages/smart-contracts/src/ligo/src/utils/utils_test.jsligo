@@ -1,0 +1,78 @@
+#include "./utils.jsligo"
+#include "../test_utils/test_utils.jsligo"
+
+#import "../common/errors.jsligo" "Errors"
+
+const bob = "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb" as address;
+const contract = "KT1Hkg5qeNhfwpKW4fXvq7HGZB9z2EnmCCA9" as address;
+const public_key = "edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6" as key;
+
+const store_mock = {
+  admin: {
+    address: bob,
+    verifier: public_key,
+    paused: false,
+  },
+  ledger_counter: 0 as nat,
+  ledger: (Big_map.empty as big_map<nat, address>),
+  assets: (Big_map.empty as big_map<[address, nat], nat>),
+  pricing: Big_map.empty as big_map<nat, [tez, bool]>,
+  token_metadata: Big_map.empty as big_map<nat, Storage.Types.token_metadata>,
+  operators: Big_map.empty as big_map<[address, address], set<nat>>,
+  metadata: Big_map.empty as big_map<string, bytes>,
+};
+
+const _get_policy_price_success = () : unit => {
+  const store = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [0 as nat, [1 as tez, true]],
+      [1 as nat, [2 as tez, false]],
+      [2 as nat, [3 as tez, true]]
+    ])),
+  };
+
+  const price = get_policy_price(store, 1 as nat);
+  assert(price == [(2 as tez), false]);
+};
+
+const test_get_policy_price_success = _get_policy_price_success();
+
+const _get_policy_price_failwith_not_found = () : unit => {
+  const store = {
+    ...store_mock,
+    pricing: Big_map.literal(list([
+      [0 as nat, [1 as tez, true]],
+      [1 as nat, [2 as tez, false]],
+      [2 as nat, [3 as tez, true]]
+    ])),
+  };
+
+  const _price = get_policy_price(store, 5 as nat);
+};
+// const test_get_policy_price_failwith_not_found = _get_policy_price_failwith_not_found();
+
+const deconstruct_message_success = () => {
+  const message_data = Bytes.pack({
+    timestamp: 0 as timestamp,
+    policy_contract_address: bob,
+    asset_contract_address: contract,
+    asset_token_id: 0 as nat,
+    pricing_id: 0 as nat,
+    policy: bytes `MY_POLICY` as bytes,
+  });
+
+  const message_prefix = bytes(192 as nat) as bytes;
+  const message = Bytes.concat(message_prefix, message_data);
+
+  const { timestamp, policy_contract_address, asset_address, asset_id, pricing_id, policy } = deconstruct_message(message);
+
+  assert(timestamp == (0 as timestamp));
+  assert(policy_contract_address == (bob));
+  assert(asset_address == (contract));
+  assert(asset_id == (0 as nat));
+  assert(pricing_id == (0 as nat));
+  assert(policy == (bytes `MY_POLICY` as bytes));
+};
+
+const test_deconstruct_message_success = deconstruct_message_success();

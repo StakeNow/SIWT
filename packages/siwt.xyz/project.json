@@ -5,11 +5,10 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/next:build",
+      "executor": "@nx/next:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "root": "packages/siwt.xyz",
         "outputPath": "dist/packages/siwt.xyz"
       },
       "configurations": {
@@ -20,7 +19,7 @@
       }
     },
     "build-server": {
-      "executor": "@nrwl/webpack:webpack",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -40,7 +39,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/next:server",
+      "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "siwt.xyz:build",
@@ -58,13 +57,13 @@
       }
     },
     "export": {
-      "executor": "@nrwl/next:export",
+      "executor": "@nx/next:export",
       "options": {
         "buildTarget": "siwt.xyz:build:production"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "packages/siwt.xyz/jest.config.ts",
@@ -72,7 +71,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/siwt.xyz/**/*.{ts,tsx,js,jsx}"]

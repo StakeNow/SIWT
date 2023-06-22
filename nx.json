@@ -3,7 +3,7 @@
   "npmScope": "siwt",
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/nx-cloud",
+      "runner": "nx-cloud",
       "options": {
         "cacheableOperations": ["build", "lint", "test", "e2e"],
         "accessToken": "ZTdlYTY2ZDgtY2I3My00YzE4LWEzYTMtYjZmOTdiZDI1MTM0fHJlYWQtd3JpdGU="
@@ -42,7 +42,7 @@
   },
   "defaultProject": "siwt.xyz",
   "generators": {
-    "@nrwl/react": {
+    "@nx/react": {
       "application": {
         "style": "none",
         "linter": "eslint",
@@ -58,7 +58,7 @@
         "unitTestRunner": "jest"
       }
     },
-    "@nrwl/next": {
+    "@nx/next": {
       "application": {
         "style": "css",
         "linter": "eslint"
