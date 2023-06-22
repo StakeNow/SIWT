@@ -3,7 +3,7 @@
 The goal of this Smart Contract is to represent policies as unique digital assets on the blockchain, written in the Open Digital Rights Language (ODRL).
 
 For the full specification visit:
-TBD
+https://github.com/StakeNow/tzip/blob/main/drafts/draft-policy-metadata.md
 
 An example of the smart contract is published at:
 https://better-call.dev/ghostnet/KT1ECkoiEE56wrpugpFLtqcBnwtBB5SmBbDG
