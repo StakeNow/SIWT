@@ -42,7 +42,7 @@ export const checkAccess = async ({
 
   try {
     verifySignature(message, publicKey, signature)
-    const access = await queryAccessControl(query, allowlist)
+    const access = await queryAccessControl({ query, allowlist })
     if (access.testResults.passed) {
       return {
         statusCode: 200,
