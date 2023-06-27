@@ -7,7 +7,7 @@ import { always } from 'ramda'
 import { match } from 'ts-pattern'
 
 import { getAttributesFromStorage, getBalance, getOwnedAssetsForPKH, getTokenBalance, getAssetContractTypeByContract } from './api'
-import { AccessControlQuery, AccessControlQueryDependencies, ConditionType, Network } from './types'
+import { AccessControlQuery, AccessControlQueryDependencies, ConditionType, Network, Options } from './types'
 import {
   validateAllowlistCondition,
   validateNFTCondition,
@@ -17,7 +17,7 @@ import {
 
 export const _queryAccessControl =
   (deps: AccessControlQueryDependencies) =>
-  async (query: AccessControlQuery, allowlist: string[] = [], options = { timeout: 3000 }) => {
+  async ({ query, allowlist = [], options = { timeout: 3000 } }: { query: AccessControlQuery, allowlist?: string[], options?: Options }) => {
     const {
       network = Network.ghostnet,
       parameters: { pkh },

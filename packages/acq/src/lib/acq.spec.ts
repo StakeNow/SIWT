@@ -19,7 +19,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })({
+    })({ query: {
       parameters: {
         pkh: validPkh,
       },
@@ -29,7 +29,7 @@ describe('acq', () => {
         comparator: Comparator.eq,
         value: 1,
       },
-    })
+    }})
     expect(result).toEqual({
       pkh: validPkh,
       network: 'ghostnet',
@@ -62,7 +62,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })({
+    })({ query: {
       network: Network.mainnet,
       parameters: {
         pkh: validPkh,
@@ -73,7 +73,7 @@ describe('acq', () => {
         comparator: Comparator.gt,
         value: 1,
       },
-    })
+    }})
 
     expect(result).toEqual({
       pkh: validPkh,
@@ -104,7 +104,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })({
+    })({ query: {
       parameters: {
         pkh: validPkh,
       },
@@ -114,7 +114,7 @@ describe('acq', () => {
         comparator: Comparator.eq,
         value: 1,
       },
-    })
+    }})
 
     expect(result).toEqual({
       network: 'ghostnet',
@@ -145,7 +145,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })({
+    })({ query: {
       parameters: {
         pkh: validPkh,
       },
@@ -155,7 +155,7 @@ describe('acq', () => {
         comparator: Comparator.eq,
         value: 1,
       },
-    })
+    }})
 
     expect(result).toEqual({
       pkh: validPkh,
@@ -199,7 +199,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })(query as any)
+    })({ query })
 
     // then ... it should fail as expected
     const expected = {
@@ -246,7 +246,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })(query as any)
+    })({ query })
 
     // then ... it should return a passed test as expected
     const expected = {
@@ -291,7 +291,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })(query as any)
+    })({ query })
 
     // then ... it should fail as expected
     const expected = {
@@ -316,7 +316,7 @@ describe('acq', () => {
       },
       test: {
         contractAddress: 'CONTRACT',
-        tokenId: 0,
+        tokenId: '0',
         type: ConditionType.tokenBalance,
         comparator: Comparator.gte,
         value: 1,
@@ -333,7 +333,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })(query as any)
+    })({ query })
 
     // then ... it should return a passed test as expected
     const expected = {
@@ -351,7 +351,7 @@ describe('acq', () => {
       contract: 'CONTRACT',
       network: Network.ghostnet,
       pkh: validPkh,
-      tokenId: 0,
+      tokenId: '0',
     })
   })
 
@@ -364,7 +364,7 @@ describe('acq', () => {
       },
       test: {
         contractAddress: 'CONTRACT',
-        tokenId: 0,
+        tokenId: '0',
         type: ConditionType.tokenBalance,
         comparator: Comparator.gte,
         value: 1,
@@ -381,7 +381,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })(query as any)
+    })({ query })
 
     // then ... it should fail as expected
     const expected = {
@@ -398,7 +398,7 @@ describe('acq', () => {
       contract: 'CONTRACT',
       network: Network.ghostnet,
       pkh: validPkh,
-      tokenId: 0,
+      tokenId: '0',
     })
     expect(getBalanceStub).not.toHaveBeenCalled()
   })
@@ -455,7 +455,7 @@ describe('acq', () => {
       getBalance: getBalanceStub,
       getTokenBalance: getTokenBalanceStub,
       getAssetContractTypeByContract: getAssetContractTypeByContractStub,
-    })(query, allowlist)
+    })({ query, allowlist })
 
     expect(result).toEqual(expected)
   })
