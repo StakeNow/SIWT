@@ -60,7 +60,10 @@ describe('./data', () => {
         contractType: AssetContractType.multi,
         pkh: validPkh,
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/keys?key.address=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&value.gt=0', undefined)
+      expect(httpStub).toHaveBeenCalledWith(
+        'https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/keys?key.address=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&value.gt=0',
+        undefined,
+      )
       expect(result).toEqual(expected)
     })
 
@@ -82,7 +85,10 @@ describe('./data', () => {
         contractType: AssetContractType.multi,
         pkh: validPkh,
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/keys?key.address=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&value.gt=0', { timeout: 5000 })
+      expect(httpStub).toHaveBeenCalledWith(
+        'https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/keys?key.address=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&value.gt=0',
+        { timeout: 5000 },
+      )
       expect(result).toEqual([
         {
           key: 'KEY',
@@ -94,7 +100,7 @@ describe('./data', () => {
     it('should fail to get ledger data', async () => {
       // when ... getting the ledger data fails
       // then ... it should fail as expected
-      const httpStub = jest.fn().mockRejectedValue(new Error('Getting storage failed')) 
+      const httpStub = jest.fn().mockRejectedValue(new Error('Getting storage failed'))
       const result = await SUT._getOwnedAssetsForPKH(httpStub as any)()({
         network: Network.ghostnet,
         contract: 'CONTRACT',
@@ -127,7 +133,9 @@ describe('./data', () => {
         network: Network.ghostnet,
         contract: 'CONTRACT',
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/accounts/CONTRACT/balance', { timeout: 5000 })
+      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/accounts/CONTRACT/balance', {
+        timeout: 5000,
+      })
       expect(result).toEqual(10)
     })
 
@@ -149,23 +157,26 @@ describe('./data', () => {
       // when ... we want a users balance for a specific token
       // then ... it should fetch and format as expected
       const httpStub = jest.fn().mockResolvedValue({
-          data: [
-            {
-              metadata: {
-                decimals: '6',
-              },
-              balance: '1000000',
+        data: [
+          {
+            metadata: {
+              decimals: '6',
             },
-          ],
-        })
- 
+            balance: '1000000',
+          },
+        ],
+      })
+
       const result = await SUT._getTokenBalance(httpStub as any)()({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         pkh: validPkh,
         tokenId: '0',
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&token.contract.eq=CONTRACT&token.tokenId.eq=0', undefined)
+      expect(httpStub).toHaveBeenCalledWith(
+        'https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&token.contract.eq=CONTRACT&token.tokenId.eq=0',
+        undefined,
+      )
       expect(result).toEqual(1)
     })
 
@@ -173,23 +184,26 @@ describe('./data', () => {
       // when ... we want a users balance for a specific token with custom timeout
       // then ... it should fetch and format as expected
       const httpStub = jest.fn().mockResolvedValue({
-          data: [
-            {
-              metadata: {
-                decimals: '6',
-              },
-              balance: '1000000',
+        data: [
+          {
+            metadata: {
+              decimals: '6',
             },
-          ],
-        })
- 
+            balance: '1000000',
+          },
+        ],
+      })
+
       const result = await SUT._getTokenBalance(httpStub as any)({ timeout: 5000 })({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         pkh: validPkh,
         tokenId: '0',
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&token.contract.eq=CONTRACT&token.tokenId.eq=0', { timeout: 5000 })
+      expect(httpStub).toHaveBeenCalledWith(
+        'https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=tz1L9r8mWmRPndRhuvMCWESLGSVeFzQ9NAWx&token.contract.eq=CONTRACT&token.tokenId.eq=0',
+        { timeout: 5000 },
+      )
       expect(result).toEqual(1)
     })
 
@@ -212,35 +226,38 @@ describe('./data', () => {
       // when ... we want the attributes from the token_meta from the storage of a contract
       // then ... it should fetch and format as expected
       const httpStub = jest
-          .fn()
-          .mockResolvedValueOnce({
-            data: [
-              {
-                value: {
-                  token_id: '0',
-                  token_info: {
-                    '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
-                  },
+        .fn()
+        .mockResolvedValueOnce({
+          data: [
+            {
+              value: {
+                token_id: '0',
+                token_info: {
+                  '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
                 },
               },
-            ],
-          })
-          .mockResolvedValueOnce({
-            data: {
-              attributes: [
-                {
-                  name: 'value',
-                },
-              ],
             },
-          })
-      
+          ],
+        })
+        .mockResolvedValueOnce({
+          data: {
+            attributes: [
+              {
+                name: 'value',
+              },
+            ],
+          },
+        })
+
       const result = await SUT._getAttributesFromStorage(httpStub as any)()({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         tokenId: '0',
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/token_metadata/keys?limit=10000', undefined)
+      expect(httpStub).toHaveBeenCalledWith(
+        'https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/token_metadata/keys?limit=10000',
+        undefined,
+      )
       expect(result).toEqual([
         {
           name: 'value',
@@ -252,35 +269,38 @@ describe('./data', () => {
       // when ... we want the attributes from the token_meta from the storage of a contract with custom timeout
       // then ... it should fetch and format as expected
       const httpStub = jest
-          .fn()
-          .mockResolvedValueOnce({
-            data: [
-              {
-                value: {
-                  token_id: '0',
-                  token_info: {
-                    '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
-                  },
+        .fn()
+        .mockResolvedValueOnce({
+          data: [
+            {
+              value: {
+                token_id: '0',
+                token_info: {
+                  '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
                 },
               },
-            ],
-          })
-          .mockResolvedValueOnce({
-            data: {
-              attributes: [
-                {
-                  name: 'value',
-                },
-              ],
             },
-          })
-      
+          ],
+        })
+        .mockResolvedValueOnce({
+          data: {
+            attributes: [
+              {
+                name: 'value',
+              },
+            ],
+          },
+        })
+
       const result = await SUT._getAttributesFromStorage(httpStub as any)({ timeout: 5000 })({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         tokenId: '0',
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/token_metadata/keys?limit=10000', { timeout: 5000 })
+      expect(httpStub).toHaveBeenCalledWith(
+        'https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/token_metadata/keys?limit=10000',
+        { timeout: 5000 },
+      )
       expect(result).toEqual([
         {
           name: 'value',
@@ -292,35 +312,35 @@ describe('./data', () => {
       // when ... we want the attributes from the token_meta from the storage of a contract
       // then ... it should fetch and format as expected
       const httpStub = jest
-          .fn()
-          .mockResolvedValueOnce({
-            data: [
-              {
-                value: {
-                  token_id: '0',
-                  token_info: {
-                    '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
-                  },
+        .fn()
+        .mockResolvedValueOnce({
+          data: [
+            {
+              value: {
+                token_id: '0',
+                token_info: {
+                  '': '697066733a2f2f516d576343694341546a6a69504732364c4d4a4d66363236424e7a6a43707850346f4e695278787868314850566a',
                 },
               },
-            ],
-          })
-          .mockResolvedValueOnce({
-            data: {
-              tags: [
-                {
-                  name: 'value',
-                },
-              ],
             },
-          })
-      
+          ],
+        })
+        .mockResolvedValueOnce({
+          data: {
+            tags: [
+              {
+                name: 'value',
+              },
+            ],
+          },
+        })
+
       const result = await SUT._getAttributesFromStorage(httpStub as any)()({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         tokenId: '0',
       })
-      
+
       expect(result).toEqual([])
     })
 
@@ -333,7 +353,7 @@ describe('./data', () => {
         contract: 'CONTRACT',
         tokenId: '0',
       })
-      
+
       expect(result).toEqual(new Error('Getting attributes failed'))
     })
   })
@@ -352,7 +372,10 @@ describe('./data', () => {
         network: Network.ghostnet,
         contract: 'CONTRACT',
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/', undefined)
+      expect(httpStub).toHaveBeenCalledWith(
+        'https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/',
+        undefined,
+      )
       expect(result).toEqual(expected)
     })
 
@@ -365,7 +388,9 @@ describe('./data', () => {
         network: Network.ghostnet,
         contract: 'CONTRACT',
       })
-      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/', { timeout: 5000 })
+      expect(httpStub).toHaveBeenCalledWith('https://api.ghostnet.tzkt.io/v1/contracts/CONTRACT/bigmaps/ledger/', {
+        timeout: 5000,
+      })
       expect(result).toEqual(AssetContractType.nft)
     })
   })

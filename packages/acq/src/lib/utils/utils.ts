@@ -29,7 +29,16 @@ import {
 } from 'ramda'
 
 import { COMPARISONS } from '../constants'
-import { AccessControlQuery, AssetContractType, GetAssetContractTypeByContract, GetAttributesFromStorage, GetBalance, GetOwnedAssetsForPKH, GetTokenBalance, Network } from '../types'
+import {
+  AccessControlQuery,
+  AssetContractType,
+  GetAssetContractTypeByContract,
+  GetAttributesFromStorage,
+  GetBalance,
+  GetOwnedAssetsForPKH,
+  GetTokenBalance,
+  Network,
+} from '../types'
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
@@ -93,7 +102,7 @@ export const validateNFTCondition =
   }: AccessControlQuery) =>
     getAssetContractTypeByContract({ contract: contractAddress, network }).then(assetContractType =>
       getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh, contractType: assetContractType })
-        .then(async (assets) => {
+        .then(async assets => {
           if (assets.length === 0) {
             return {
               passed: false,

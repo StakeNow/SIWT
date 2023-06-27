@@ -48,7 +48,7 @@ export interface BigmapKeyResponse {
   key: any | null
   value: any | null
   firstLevel: number
-  lastLevel: number 
+  lastLevel: number
   updates: number
 }
 
@@ -70,7 +70,7 @@ export interface TokenInfo {
 
 export interface TokenBalancesResponse {
   id: number
-  account: Alias | null 
+  account: Alias | null
   token: TokenInfo | null
   balance: string | null
   transfersCount: number

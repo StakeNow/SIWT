@@ -101,6 +101,7 @@ in: In (Allowlist only)
 notIn: Not in (Allowlist only)
 
 ## Options
+
 If you want to modify the timeout of the external api calls made by the `queryAccessControl` function you can use the options property:
 
 ```

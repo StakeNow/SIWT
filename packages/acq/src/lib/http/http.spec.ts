@@ -4,18 +4,21 @@
  * SPDX-License-Identifier: MIT
  */
 import * as SUT from './http'
+
 describe('http', () => {
   global.fetch = jest.fn(() =>
     Promise.resolve({
       json: () => Promise.resolve('Sign in with Tezos'),
-    })
+    }),
   ) as any
 
   beforeEach(() => {
-    (fetch as any).mockClear();
+    ;(fetch as any).mockClear()
   })
 
-  afterEach(() => { jest.useRealTimers(); });
+  afterEach(() => {
+    jest.useRealTimers()
+  })
   describe('http/fetchWithTimout', () => {
     it('should fetch as expected', async () => {
       // when ... we want to fetch data
@@ -30,7 +33,7 @@ describe('http', () => {
       // when ... we want to fetch data with custom timeout
       // then ... should return fetched data as expected
 
-      const response = await SUT.fetchWithTimeout('https://example.com', { timeout: 5000 } )
+      const response = await SUT.fetchWithTimeout('https://example.com', { timeout: 5000 })
       expect(fetch).toHaveBeenCalledWith('https://example.com', { timeout: 5000, signal: expect.anything() })
       expect(response).toEqual({ data: 'Sign in with Tezos' })
     })
@@ -38,9 +41,9 @@ describe('http', () => {
     it('should fail with unreachable resource', async () => {
       // when ... our resource is unreachable
       // then ... should return an error
-      
-      expect.assertions(1);
-      (fetch as any).mockImplementationOnce(() => Promise.reject("API is down"));
+
+      expect.assertions(1)
+      ;(fetch as any).mockImplementationOnce(() => Promise.reject('API is down'))
       await expect(async () => {
         await SUT.fetchWithTimeout('https://example.com')
       }).rejects.toThrow('Fetching failed')
