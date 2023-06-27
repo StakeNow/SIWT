@@ -9,10 +9,10 @@ import { AssetContractType, Comparator, ConditionType, Network } from './types'
 
 describe('acq', () => {
   it('should pass test when user has token', async () => {
-    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }])
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }]))
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -38,24 +38,24 @@ describe('acq', () => {
         passed: true,
       },
     })
-    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
       contractType: AssetContractType.nft,
       pkh: validPkh,
     })
-    expect(getBalanceStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).not.toHaveBeenCalled()
+    expect(getBalanceStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).not.toHaveBeenCalled()
   })
 
   it('should pass test and return all tokens of the user', async () => {
-    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue([
       { value: validPkh, key: 1 },
       { value: validPkh, key: 2 },
-    ])
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
+    ]))
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -83,21 +83,21 @@ describe('acq', () => {
         passed: true,
       },
     })
-    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.mainnet,
       contractType: AssetContractType.nft,
       pkh: validPkh,
     })
-    expect(getBalanceStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).not.toHaveBeenCalled()
+    expect(getBalanceStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).not.toHaveBeenCalled()
   })
 
   it('should pass test when user has token', async () => {
-    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }])
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }]))
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -124,21 +124,21 @@ describe('acq', () => {
         passed: true,
       },
     })
-    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
       contractType: AssetContractType.nft,
       pkh: validPkh,
     })
-    expect(getBalanceStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).not.toHaveBeenCalled()
+    expect(getBalanceStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).not.toHaveBeenCalled()
   })
 
   it('should fail when there is no storage', async () => {
-    const getOwnedAssetsForPKHStub = jest.fn().mockResolvedValue([])
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue([]))
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -165,14 +165,14 @@ describe('acq', () => {
         passed: false,
       },
     })
-    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
       contractType: AssetContractType.nft,
       pkh: validPkh,
     })
-    expect(getBalanceStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).not.toHaveBeenCalled()
+    expect(getBalanceStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).not.toHaveBeenCalled()
   })
 
   it('should fail when ledger cannot be fetched', async () => {
@@ -189,10 +189,10 @@ describe('acq', () => {
       },
     }
 
-    const getOwnedAssetsForPKHStub = jest.fn().mockRejectedValue({})
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.nft)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn().mockRejectedValue({}))
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -211,14 +211,14 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getOwnedAssetsForPKHStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
       contractType: AssetContractType.nft,
       pkh: validPkh,
     })
-    expect(getBalanceStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).not.toHaveBeenCalled()
+    expect(getBalanceStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).not.toHaveBeenCalled()
   })
 
   it('should allow access when user has sufficient balance', async () => {
@@ -236,10 +236,10 @@ describe('acq', () => {
       },
     }
 
-    const getOwnedAssetsForPKHStub = jest.fn()
-    const getBalanceStub = jest.fn().mockResolvedValue(balance)
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn())
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(balance))
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.multi))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -258,12 +258,12 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
-    expect(getBalanceStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).not.toHaveBeenCalled()
+    expect(getBalanceStub()).toHaveBeenCalledWith({
       contract: validPkh,
       network: Network.ghostnet,
     })
-    expect(getTokenBalanceStub).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).not.toHaveBeenCalled()
   })
 
   it('should fail when balance cannot be fetched', async () => {
@@ -281,10 +281,10 @@ describe('acq', () => {
       },
     }
 
-    const getOwnedAssetsForPKHStub = jest.fn()
-    const getBalanceStub = jest.fn().mockRejectedValue(balance)
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn())
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn().mockRejectedValue(balance))
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.multi))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -303,8 +303,8 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).not.toHaveBeenCalled()
+    expect(getOwnedAssetsForPKHStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).not.toHaveBeenCalled()
   })
 
   it('should allow access when user has sufficient token balance', async () => {
@@ -323,10 +323,10 @@ describe('acq', () => {
       },
     }
 
-    const getOwnedAssetsForPKHStub = jest.fn()
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn().mockResolvedValue(balance)
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn())
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(balance))
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.multi))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -345,9 +345,9 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
-    expect(getBalanceStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).not.toHaveBeenCalled()
+    expect(getBalanceStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
       pkh: validPkh,
@@ -371,10 +371,10 @@ describe('acq', () => {
       },
     }
 
-    const getOwnedAssetsForPKHStub = jest.fn()
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn().mockRejectedValue(balance)
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn())
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn().mockRejectedValue(balance))
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.multi))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,
@@ -393,8 +393,8 @@ describe('acq', () => {
       },
     }
     expect(result).toEqual(expected)
-    expect(getOwnedAssetsForPKHStub).not.toHaveBeenCalled()
-    expect(getTokenBalanceStub).toHaveBeenCalledWith({
+    expect(getOwnedAssetsForPKHStub()).not.toHaveBeenCalled()
+    expect(getTokenBalanceStub()).toHaveBeenCalledWith({
       contract: 'CONTRACT',
       network: Network.ghostnet,
       pkh: validPkh,
@@ -445,10 +445,10 @@ describe('acq', () => {
   ])('should validate a pkh in the allowlist', async (query, allowlist, expected) => {
     // when ... we want to validate if a pkh should be allowed based on allowlist validation
     // then ... then it should return the correct result as expected
-    const getOwnedAssetsForPKHStub = jest.fn()
-    const getBalanceStub = jest.fn()
-    const getTokenBalanceStub = jest.fn()
-    const getAssetContractTypeByContractStub = jest.fn().mockResolvedValue(AssetContractType.multi)
+    const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn())
+    const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
+    const getAssetContractTypeByContractStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.multi))
 
     const result = await SUT._queryAccessControl({
       getOwnedAssetsForPKH: getOwnedAssetsForPKHStub,

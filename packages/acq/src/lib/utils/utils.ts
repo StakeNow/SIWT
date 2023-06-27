@@ -29,7 +29,7 @@ import {
 } from 'ramda'
 
 import { COMPARISONS } from '../constants'
-import { AccessControlQuery, AccessControlQueryDependencies, AssetContractType, LedgerStorage, Network } from '../types'
+import { AccessControlQuery, AssetContractType, GetAssetContractTypeByContract, GetAttributesFromStorage, GetBalance, GetOwnedAssetsForPKH, GetTokenBalance, Network } from '../types'
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
@@ -82,9 +82,9 @@ export const denominate = ([x, y]: number[]) => divide(y, 10 ** x)
 
 export const validateNFTCondition =
   (
-    getOwnedAssetsForPKH: AccessControlQueryDependencies['getOwnedAssetsForPKH'],
-    getAttributesFromStorage: AccessControlQueryDependencies['getAttributesFromStorage'],
-    getAssetContractTypeByContract: AccessControlQueryDependencies['getAssetContractTypeByContract'],
+    getOwnedAssetsForPKH: GetOwnedAssetsForPKH,
+    getAttributesFromStorage: GetAttributesFromStorage,
+    getAssetContractTypeByContract: GetAssetContractTypeByContract,
   ) =>
   ({
     network = Network.ghostnet,
@@ -93,7 +93,7 @@ export const validateNFTCondition =
   }: AccessControlQuery) =>
     getAssetContractTypeByContract({ contract: contractAddress, network }).then(assetContractType =>
       getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh, contractType: assetContractType })
-        .then(async (assets: LedgerStorage[]) => {
+        .then(async (assets) => {
           if (assets.length === 0) {
             return {
               passed: false,
@@ -149,7 +149,7 @@ export const validateNFTCondition =
     )
 
 export const validateXTZBalanceCondition =
-  (getBalance: AccessControlQueryDependencies['getBalance']) =>
+  (getBalance: GetBalance) =>
   ({ network = Network.ghostnet, parameters: { pkh }, test: { comparator, value } }: AccessControlQuery) =>
     getBalance &&
     getBalance({ network, contract: pkh as string })
@@ -163,7 +163,7 @@ export const validateXTZBalanceCondition =
       }))
 
 export const validateTokenBalanceCondition =
-  (getTokenBalance: AccessControlQueryDependencies['getTokenBalance']) =>
+  (getTokenBalance: GetTokenBalance) =>
   ({
     network = Network.ghostnet,
     test: { contractAddress, comparator, value, tokenId },
