@@ -34,7 +34,7 @@ app.post('/verification/:verificationId', async (req, res) => {
     // if not, return 401
     const {
       testResults: { passed },
-    } = await queryAccessControl(accessControlQuery(pkh))
+    } = await queryAccessControl({ query: accessControlQuery(pkh) })
     const member = getMember({ guildId, discordUserId })(client)
 
     if (!passed) {
