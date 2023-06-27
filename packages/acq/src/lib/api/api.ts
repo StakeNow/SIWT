@@ -26,6 +26,7 @@ export const _getOwnedAssetsForPKH =
 
     return (
       http<HTTPResponse<BigmapKeyResponse[]>>(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/keys?${query}`, options)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .then(pipe(prop('data'), map(pick(['key', 'value']))))
         .catch(error => error)

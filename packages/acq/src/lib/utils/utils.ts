@@ -107,7 +107,7 @@ export const validateNFTCondition =
             const matchingAssets = findMatchingElements(tokenIds as string[], ownedAssetIds)
             if (
               matchingAssets.length === 0 ||
-              !(COMPARISONS[comparator] as Function)(prop('length')(matchingAssets))(value)
+              !(COMPARISONS[comparator] as any)(prop('length')(matchingAssets))(value)
             ) {
               return {
                 passed: false,
@@ -138,7 +138,7 @@ export const validateNFTCondition =
           }
 
           return {
-            passed: (COMPARISONS[comparator] as Function)(prop('length')(assets))(value),
+            passed: (COMPARISONS[comparator] as any)(prop('length')(assets))(value),
             ownedTokenIds: ownedAssetIds,
           }
         })
@@ -191,7 +191,7 @@ export const validateTimeConstraint = (timestamp: number) => Date.now() / 1000 <
 export const hexToAscii = (hex: string) => {
   // convert hex to ascii
   let ascii = ''
-  for (var n = 0; n < hex.length; n += 2) {
+  for (let n = 0; n < hex.length; n += 2) {
     ascii += String.fromCharCode(parseInt(hex.substring(n, n + 2), 16))
   }
   return ascii
