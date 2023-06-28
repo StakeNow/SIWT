@@ -420,7 +420,11 @@ export const Try = () => {
               <div className="mt-6">
                 <span className="lg:ml-2">Signature:</span>
                 <div className="lg:ml-2 mb-1 text-gray-600 break-words">
-                  {signature ? signature : <span className="text-gray-500 italic">Message hasn&apos;t been signed yet</span>}
+                  {signature ? (
+                    signature
+                  ) : (
+                    <span className="text-gray-500 italic">Message hasn&apos;t been signed yet</span>
+                  )}
                 </div>
                 <Button onClick={() => signMessage(activeAccount?.address)}>(Re-) Sign</Button>
               </div>

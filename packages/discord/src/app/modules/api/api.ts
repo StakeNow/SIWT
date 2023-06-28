@@ -15,7 +15,7 @@ import { getMember } from '../../common/discord/utils'
 import { accessControlQuery } from '../../config/config'
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = 3000
 
 app.use(bodyParser.json())
 app.use(cors())
@@ -59,9 +59,8 @@ app.post('/verification/:verificationId', async (req, res) => {
 app.get('/verification/:verificationId/user', async (req, res) => {
   try {
     const { verificationId } = req.params
-
     const { guildId, roleId, discordUserId } = await findVerificationById(verificationId)
-    if (!guildId || !roleId || !discordUserId) return res.status(401).send('Not found')
+    if (!guildId || !roleId || !discordUserId) return res.status(401).send({ message: 'Not found' })
 
     const { user, guild } = getMember({ guildId, discordUserId })(client)
     res.status(200).send({

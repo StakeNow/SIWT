@@ -12,7 +12,6 @@ export const fetchWithTimeout = async <TResponse>(resource: string, userOptions:
     headers: {
       'Content-Type': 'application/json',
     },
-    body: null,
   }
   const options = { ...defaultOptions, ...userOptions }
 

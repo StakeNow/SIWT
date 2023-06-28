@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: MIT
  */
 
-export { ReactComponent as Logo } from './siwt-icon.svg'
+export { SIWTIcon } from './siwt-icon'

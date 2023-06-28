@@ -17,6 +17,7 @@
     "@nx/react": "16.3.2",
     "@nx/vite": "16.3.2",
     "@nx/web": "16.3.2",
+    "@nx/webpack": "^16.4.0",
     "@nx/workspace": "16.3.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@svgr/webpack": "^6.5.1",
