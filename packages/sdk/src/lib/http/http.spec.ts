@@ -25,11 +25,14 @@ describe('http', () => {
       // then ... should return fetched data as expected
 
       const response = await SUT.fetchWithTimeout('https://example.com')
-      expect(fetch).toHaveBeenCalledWith('https://example.com', { timeout: 3000,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }, signal: expect.anything() })
+      expect(fetch).toHaveBeenCalledWith('https://example.com', {
+        timeout: 3000,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: expect.anything(),
+      })
       expect(response).toEqual({ data: 'Sign in with Tezos' })
     })
 
