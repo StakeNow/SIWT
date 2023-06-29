@@ -15,14 +15,13 @@ export namespace Types {
   export type update_operators = list<unit_update>;
 };
 
-const update_ops = ([updates, store]: [Types.update_operators, Storage.Types.store]): [list<operation>, Storage.Types.store] => {
-  const update_operator = ([operators,update]: [FA2_Operators.Types.t, Types.unit_update]): FA2_Operators.Types.t => match(update, {
-    Add_operator: (operator: Types.operator) => FA2_Operators.add_operator([operators, operator.owner, operator.operator, operator.token_id]),
-    Remove_operator: (operator: Types.operator) => FA2_Operators.remove_operator([operators, operator.owner, operator.operator, operator.token_id])
-  });
-  let operators = FA2_Storage.get_operators(store);
-  operators = List.fold_left(update_operator, operators, updates);
-  const update_store = FA2_Storage.set_operators([store, operators]);
-
-  return [list([]), update_store];
+const update_ops = (updates: Types.update_operators, s: Storage.Types.store): [list<operation>, Storage.Types.store] => {
+   const update_operator = ([operators,update] : [FA2_Operators.Types.t, Types.unit_update]) : FA2_Operators.Types.t => match (update,
+   { Add_operator    : (operator: Types.operator) => FA2_Operators.add_operator (operators, operator.owner, operator.operator, operator.token_id)
+   , Remove_operator : (operator: Types.operator) => FA2_Operators.remove_operator (operators, operator.owner, operator.operator, operator.token_id)
+   });
+   let operators = FA2_Storage.get_operators (s);
+   operators = List.fold_left (update_operator, operators, updates);
+   const store = FA2_Storage.set_operators (s, operators);
+   return [list([]),store];
 };

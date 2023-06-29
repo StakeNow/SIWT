@@ -139,14 +139,14 @@ const main = (action: action, store: Storage.Types.store) : @return =>
     Set_paused: (paused: bool) => set_paused(store, paused),
     Update_pricing_model: ([price_id, value, isValid]: [nat, tez, bool]) => update_pricing(store, [price_id, value, isValid]),
     Payout: (amount: tez) => payout(store, amount),
-    Update_operators: (params: FA2_UpdateOperators.Types.update_operators) => FA2_UpdateOperators.update_ops([params, store]),
-    Balance_of: (params: FA2_BalanceOf.Types.balance_of) => FA2_BalanceOf.balance_of([params, store]),
-    Transfer: (params: FA2_Transfer.Types.transfer) => FA2_Transfer.transfer([params, store])
+    Update_operators: (params: FA2_UpdateOperators.Types.update_operators) => FA2_UpdateOperators.update_ops(params, store),
+    Balance_of: (params: FA2_BalanceOf.Types.balance_of) => FA2_BalanceOf.balance_of(params, store),
+    Transfer: (params: FA2_Transfer.Types.transfer) => FA2_Transfer.transfer(params, store)
   });
 
 // @view
 const get_balance = ([p, store]: [[address , nat], Storage.Types.store]): nat => {
   const [owner, token_id] = p;
 
-  return FA2_Storage.get_balance([store, owner, token_id]);
+  return FA2_Storage.get_balance(store, owner, token_id);
 };

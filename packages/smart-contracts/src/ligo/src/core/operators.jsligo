@@ -7,64 +7,57 @@ export namespace Types {
   export type t = big_map<[owner, operator], set<token_id>>;
 }
 
-export const assert_authorisation = ([operators, from_, token_id]: [Types.t, address, nat]): unit => {
-  const sender_ = (Tezos.get_sender());
-  if (sender_ != from_) {
-    const authorized = match((Big_map.find_opt([from_,sender_], operators)), {
-      Some: (a: set<nat>) => a,
-      None: () => Set.empty
-    });
-
-    if (!(Set.mem(token_id, authorized))) {
-      return failwith(FA2_Errors.not_operator);
-    }
+export const assert_authorisation = (operators: Types.t, from_: address, token_id: nat): unit => {
+  const sender_ = (Tezos.get_sender ());
+  if (sender_ != from_){
+      const authorized = match ((Big_map.find_opt ([from_,sender_], operators)),
+      {Some: (a : set<nat>) => a , None : () => Set.empty});
+      if (!(Set.mem (token_id, authorized)))
+        {return failwith (FA2_Errors.not_operator)}
+  } else {
+      return unit;
   }
 };
 
-export const is_operator = ([operators, owner, operator, token_id]: [Types.t, address, address, nat]): bool => {
-  const authorized = match(Big_map.find_opt([owner, operator], operators), {
-    Some: (a : set<nat>) => a,
-    None : () => Set.empty
-  });
-
-  return (Set.mem(token_id, authorized) || owner == operator);
+export const is_operator = (operators: Types.t, owner: Types.owner, operator: Types.operator, token_id: nat) : bool => {
+  const authorized = match (Big_map.find_opt ([owner, operator], operators),
+  {Some: (a : set<nat>) => a , 
+  None : () => Set.empty});
+  return (Set.mem (token_id, authorized) || owner == operator);
 };
 
-const assert_update_permission = (owner: Types.owner): unit =>
-  assert_with_error((owner == (Tezos.get_sender())), "The sender can only manage operators for his own token");
+const assert_update_permission = (owner : Types.owner) : unit => {
+  return  assert_with_error ((owner == (Tezos.get_sender ())), "The sender can only manage operators for his own token");
+}
 
-export const add_operator = ([operators, owner, operator, token_id]: [Types.t, address, Types.operator, nat]): Types.t => {
-  if (owner == operator) {
-    return operators;
-  } else {
-    assert_update_permission(owner);
-    let auth_tokens = match(Big_map.find_opt([owner, operator], operators), {
-      Some: (ts: set<nat>) => ts,
-      None: () => Set.empty
-    });
-    auth_tokens = Set.add(token_id, auth_tokens);
-    
-    return Big_map.update([owner, operator], Some(auth_tokens), operators);
+export const add_operator = (operators: Types.t, owner: Types.owner, operator: Types.operator, token_id: nat) : Types.t => {
+  if (owner == operator) { 
+    return operators; 
+    // assert_authorisation always allow the owner so this case is not relevant
+  } 
+  else {
+    assert_update_permission (owner);
+    let auth_tokens = match (Big_map.find_opt ([owner,operator], operators),
+      {Some : (ts: set<nat>) => ts , None : () => Set.empty});
+    auth_tokens = Set.add (token_id, auth_tokens);
+    return Big_map.update ([owner,operator], Some (auth_tokens), operators);
   }
 };
-        
-export const remove_operator = ([operators, owner, operator, token_id]: [Types.t, address, Types.operator, nat]) : Types.t => {
-  if (owner == operator) {
-    return operators;
-  } else {
-    assert_update_permission(owner);
-    const auth_tokens: option<set<nat>> = match(Big_map.find_opt([owner, operator], operators), {
-      Some: (ts: set<nat>) => {
-        const ts_ = Set.remove(token_id, ts);
-        if (Set.cardinal(ts_) == (0 as nat)) {
-          return None();
-        } else {
-          return Some(ts_);
-        }
-      },
-      None: () => None()
-    });
 
-    return Big_map.update([owner, operator], auth_tokens, operators);
+
+export const remove_operator = (operators: Types.t, owner: Types.owner, operator: Types.operator, token_id: nat) : Types.t => {
+  if (owner == operator) { return operators; 
+    // assert_authorisation always allow the owner so this case is not relevant
+  } 
+  else {
+    assert_update_permission (owner);
+    const auth_tokens : option<set<nat>> = match (Big_map.find_opt ([owner,operator], operators),
+    {Some : (ts : set<nat>) => {
+      const toks = Set.remove (token_id, ts);
+      if (Set.cardinal (toks) == (0 as nat)) { return None ()} else { return Some (toks)};
+    },
+    None : () => None ()
+    });
+    return Big_map.update ([owner,operator], auth_tokens, operators);
   }
 };

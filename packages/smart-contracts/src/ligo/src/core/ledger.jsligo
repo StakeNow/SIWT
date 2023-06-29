@@ -1,25 +1,16 @@
 #import "./errors.jsligo" "FA2_Errors"
+#import "../storage.jsligo" "Storage"
 
-/*
-export namespace Types {
-   type token_id = nat;
-   type owner = address;
-   export type t = big_map<token_id, owner>;
-};
-*/
-
-export const is_owner_of = ([ledger, token_id, owner]: [big_map<nat, address>, nat, address]): bool => {
-    const current_owner = Option.unopt(Big_map.find_opt(token_id, ledger));
-
-    return (current_owner == owner);
+export const is_owner_of = (ledger: Storage.Types.ledger, token_id: nat, owner: address): bool => {
+  // We already sanitized token_id, a failwith here indicated a patological storage
+  const current_owner = Option.unopt (Big_map.find_opt (token_id, ledger));
+  return (current_owner == owner);
 };
 
-const assert_owner_of = ([ledger, token_id, owner]: [big_map<nat, address>, nat, address]): unit =>
-    assert_with_error(is_owner_of([ledger, token_id, owner]), FA2_Errors.ins_balance);
+const assert_owner_of = (ledger: Storage.Types.ledger, token_id: nat, owner: address): unit =>
+  assert_with_error (is_owner_of (ledger, token_id, owner), FA2_Errors.ins_balance);
 
-export const transfer_token_from_user_to_user = ([ledger, token_id, from_, to_]: [big_map<nat, address>, nat, address, address]): big_map<nat, address> => {
-  assert_owner_of([ledger, token_id, from_]);
-  const updated_ledger = Big_map.update(token_id, Some(to_), ledger);
-
-  return Big_map.update(token_id, Some(to_), updated_ledger);
+export const transfer_token_from_user_to_user = (ledger: Storage.Types.ledger, token_id: nat, from_: address, to_: address): Storage.Types.ledger => {
+  assert_owner_of (ledger, token_id, from_);
+  return Big_map.update (token_id, Some (to_), ledger);
 };

@@ -22,23 +22,19 @@ export namespace Types {
   };
 };
 
-const balance_of = ([b, store] : [Types.balance_of, Storage.Types.store]): [list<operation>, Storage.Types.store] => {
-  const { requests, callback } = b;
-  const get_balance_info = (request: Types.request): Types.callback => {
-    const { owner, token_id } = request;
-    FA2_Storage.assert_token_exist([store, token_id]); 
-    let balance_ = 0 as nat;
-    if (FA2_Storage.is_owner_of([store, owner, token_id])) {
-      balance_ = 1 as nat;
-    }
-
-    return ({
-      request: request,
-      balance: balance_
-    });
-  };
-  const callback_param = List.map(get_balance_info, requests);
-  const operation = Tezos.transaction(callback_param, (0 as tez), callback);
-
-  return [list([operation]), store];
+const balance_of = (b: Types.balance_of, s: Storage.Types.store): [list<operation>, Storage.Types.store] => {
+   const {requests, callback} = b;
+   const get_balance_info = (request : Types.request) : Types.callback => {
+      const {owner,token_id} = request;
+      FA2_Storage.assert_token_exist  (s, token_id);
+      let balance_ = 0 as nat;
+      if (FA2_Storage.is_owner_of (s, owner, token_id)) balance_ = 1 as nat;
+      return ({request:request,balance:balance_});
+   };
+   
+   const callback_param = List.map (get_balance_info, requests);
+   const operation = Tezos.transaction (callback_param, (0 as tez), callback);
+   
+   return [list([operation]),s];
 };
+

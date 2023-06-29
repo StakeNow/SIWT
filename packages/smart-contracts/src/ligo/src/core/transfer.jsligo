@@ -2,93 +2,47 @@
 #import "./storage.jsligo" "FA2_Storage"
 #import "./operators.jsligo" "FA2_Operators"
 #import "./ledger.jsligo" "FA2_Ledger"
+#import "./errors.jsligo" "Errors"
 
 export namespace Types {
-  export type atomic_trans = 
-    // @layout:comb
-    {
-      to_      : address,
-      token_id : nat
-    };
+  // Transfer entrypoint
+  export type atomic_trans =
+  // @layout:comb
+  {
+    to_      : address,
+    token_id : nat,
+    amount   : nat,
+  };
 
-  export type transfer_from = {
+  type transfer_from = {
     from_ : address,
-    tx    : list<atomic_trans>
+    txs   : list<atomic_trans>,
   };
 
   export type transfer = list<transfer_from>;
 }
 
-type @return = [list<operation>, Storage.Types.store];
 
-// const transfer = ([transfer, store]: [Types.transfer, Storage.Types.store]): @return => {
-//   const _process_atomic_transfer = (from_) : (ledger: Storage.Types.ledger, t: Types.atomic_trans) => Storage.Types.ledger => {
-//     return (ledger: Storage.Types.ledger, t: Types.atomic_trans): Storage.Types.ledger => ledger;
-//   };
-
-//   /*
-//   const process_atomic_transfer = (from_ : address) 
-//     : (ledger: big_map<nat, address>, t: Types.atomic_trans) => big_map<nat, address> => {
-//     return (ledger: big_map<nat, address>, t: Types.atomic_trans) : big_map<nat, address> => {
-//       const { to_, token_id } = t;
-//       FA2_Storage.assert_token_exist([store, token_id]);
-//       FA2_Operators.assert_authorisation([store.operators, from_, token_id]);
-//       const updated_ledger = FA2_Ledger.transfer_token_from_user_to_user([ledger, token_id, from_, to_]);
-//       return updated_ledger;
-//     };
-//   };
-//   */
-
-//   // const process_single_transfer = ([ledger, t]: [big_map<nat, address>, Types.transfer_from]): big_map<nat, address> => {
-//   //   const { from_, tx } = t;
-
-//   //   return List.fold_left(process_atomic_transfer(from_), ledger, tx);
-//   //   return List.fold_left(_process_atomic_transfer(from_), ledger, tx);
-//   //   return ledger;
-//   // };
-
-//   // const ledger = List.fold_left(process_single_transfer, store.ledger, transfer);
-//   // const updated_store = FA2_Storage.set_ledger([store, ledger]);
-
-//    return [list ([]), store];
-// };
-
-
-const transfer = ([t, s]: [Types.transfer, Storage.Types.store]): [list<operation>, Storage.Types.store] => {
-  // This function process the "tx" list. Since all transfer share the same "from_" address, we use a se
-  /*
-  const process_atomic_transfer = (from_ : address) 
-  : (ledger: Storage.Types.ledger, t: Types.atomic_trans) => Storage.Types.ledger => {
-    return (ledger: Storage.Types.ledger, t: Types.atomic_trans) : Storage.Types.ledger => {
-      const {to_,token_id} = t;
-      FA2_Storage.assert_token_exist ([s, token_id]);
-      FA2_Operators.assert_authorisation ([s.operators, from_, token_id]);
-      const new_ledger = FA2_Ledger.transfer_token_from_user_to_user ([ledger, token_id, from_, to_]);
-      return new_ledger;
-    };
-  };
-  */
-
-  const _process_atomic_transfer = (from_: address) => {
-    return ([ledger, t]: [Storage.Types.ledger, Types.atomic_trans]): Storage.Types.ledger => {
-      const { to_, token_id } = t;
-      FA2_Storage.assert_token_exist ([s, token_id]);
-      FA2_Operators.assert_authorisation ([s.operators, from_, token_id]);
-      const new_ledger = FA2_Ledger.transfer_token_from_user_to_user ([ledger, token_id, from_, to_]);
-
-      return new_ledger;
-    };
-  };
-
-  const process_single_transfer = ([ledger, t]: [Storage.Types.ledger, Types.transfer_from]) : Storage.Types.ledger => {
-    const { from_, tx } : Types.transfer_from = t;
-    const new_ledger = List.fold_left (_process_atomic_transfer (from_), ledger, tx);
-
-    return new_ledger;
-  };
-
-  const ledger = List.fold_left (process_single_transfer, s.ledger, t);
-  const store = FA2_Storage.set_ledger ([s, ledger]);
-
-  return [list([]), store];
-};
+const transfer = (t: Types.transfer, s: Storage.Types.store): [list<operation>, Storage.Types.store] => {
+   // This function process the "txs" list. Since all transfer share the same "from_" address, we use a se
+   const process_atomic_transfer = (from_ : address)
+   : (p: [Storage.Types.ledger, Types.atomic_trans]) => Storage.Types.ledger => {
+     return ([ledger, t]: [Storage.Types.ledger, Types.atomic_trans]) : Storage.Types.ledger => {
+        const {to_,token_id,amount} = t;
+        if(amount != (1 as nat)) {return failwith(Errors.wrong_amount);}
+        else{
+         FA2_Storage.assert_token_exist (s, token_id);
+         FA2_Operators.assert_authorisation (s.operators, from_, token_id);
+         const ledger = FA2_Ledger.transfer_token_from_user_to_user (ledger, token_id, from_, to_);
+         return ledger;
+        }
+     };
+   };
+   const process_single_transfer = ([ledger, t]: [Storage.Types.ledger, Types.transfer_from]) : Storage.Types.ledger => {
+      const {from_,txs}: Types.transfer_from = t;
+      return List.fold_left (process_atomic_transfer (from_), ledger, txs);
+   };
+   const ledger = List.fold_left (process_single_transfer, s.ledger, t);
+   const store = FA2_Storage.set_ledger (s, ledger);
+   return [list ([]),store];
+}
