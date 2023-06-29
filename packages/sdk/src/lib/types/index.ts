@@ -26,3 +26,19 @@ export interface SignInPayload {
   pk: string
   pkh: string
 }
+
+export interface Headers {
+  [key: string]: string
+}
+
+export interface Options {
+  timeout?: number
+  body?: string
+  method?: 'GET' | 'POST'
+  headers?: Headers
+}
+
+export type HTTP = <TResponse>(resource: string, options?: Options) => Promise<TResponse>
+export type HTTPResponse<T> = {
+  data: T
+}

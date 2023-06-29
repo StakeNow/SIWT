@@ -37,7 +37,7 @@ export class AppStack extends Stack {
       code: Lambda.Code.fromAsset('../../dist/packages/siwt.xyz/server'),
     })
 
-    let distributionConfig: Cloudfront.DistributionProps = {
+    const distributionConfig: Cloudfront.DistributionProps = {
       defaultRootObject: 'index.html',
       defaultBehavior: {
         origin: new CloudfrontOrigins.S3Origin(bucket, {

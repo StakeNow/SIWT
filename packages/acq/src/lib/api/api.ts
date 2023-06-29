@@ -3,16 +3,26 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { AxiosInstance } from 'axios'
 import { T, always, cond, find, has, map, path, pathEq, pathOr, paths, pick, pipe, prop, propOr } from 'ramda'
 
 import { API_URLS } from '../constants'
 import { http } from '../http'
-import { AssetContractType, Network } from '../types'
+import {
+  AssetContractType,
+  BalanceResponse,
+  BigmapKeyResponse,
+  BigmapResponse,
+  HTTP,
+  HTTPResponse,
+  Network,
+  Options,
+  TokenBalancesResponse,
+} from '../types'
 import { denominate, hexToAscii } from '../utils'
 
 export const _getOwnedAssetsForPKH =
-  (http: AxiosInstance) =>
+  (http: HTTP) =>
+  (options?: Options) =>
   ({ network, contract, pkh, contractType }) => {
     let query = `key.address=${pkh}&value.gt=0`
 
@@ -25,8 +35,11 @@ export const _getOwnedAssetsForPKH =
     }
 
     return (
-      http
-        .get(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/keys?${query}`)
+      http<HTTPResponse<BigmapKeyResponse[]>>(
+        `https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/keys?${query}`,
+        options,
+      )
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .then(pipe(prop('data'), map(pick(['key', 'value']))))
         .catch(error => error)
@@ -36,19 +49,21 @@ export const _getOwnedAssetsForPKH =
 export const getOwnedAssetsForPKH = _getOwnedAssetsForPKH(http)
 
 export const _getAttributesFromStorage =
-  (http: AxiosInstance) =>
+  (http: HTTP) =>
+  (options?: Options) =>
   ({ network, contract, tokenId }: { network: Network; contract: string; tokenId: string }) =>
-    http
-      .get(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/token_metadata/keys?limit=10000`)
+    http<HTTPResponse<BigmapKeyResponse[]>>(
+      `https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/token_metadata/keys?limit=10000`,
+      options,
+    )
       .then(({ data }) => {
         const metaDataUrl = pipe(
           find(pathEq(['value', 'token_id'], tokenId)),
           propOr('', ''),
           hexToAscii,
-        )(data) as string
+        )(data as any) as string
 
-        return http
-          .get(metaDataUrl)
+        return http(metaDataUrl)
           .then(pathOr([], ['data', 'attributes']))
           .catch(error => error)
       })
@@ -57,17 +72,18 @@ export const _getAttributesFromStorage =
 export const getAttributesFromStorage = _getAttributesFromStorage(http)
 
 export const _getBalance =
-  (http: AxiosInstance) =>
+  (http: HTTP) =>
+  (options?: Options) =>
   ({ network, contract }: { network: Network; contract: string }) =>
-    http
-      .get(`https://${API_URLS[network]}/v1/accounts/${contract}/balance`)
+    http<HTTPResponse<BalanceResponse>>(`https://${API_URLS[network]}/v1/accounts/${contract}/balance`, options)
       .then(prop('data'))
       .catch(error => error)
 
 export const getBalance = _getBalance(http)
 
 export const _getTokenBalance =
-  (http: AxiosInstance) =>
+  (http: HTTP) =>
+  (options?: Options) =>
   ({
     network,
     contract,
@@ -79,10 +95,10 @@ export const _getTokenBalance =
     pkh: string
     tokenId: string
   }) =>
-    http
-      .get(
-        `https://${API_URLS[network]}/v1/tokens/balances?account.eq=${pkh}&token.contract.eq=${contract}&token.tokenId.eq=${tokenId}`,
-      )
+    http<HTTPResponse<TokenBalancesResponse>>(
+      `https://${API_URLS[network]}/v1/tokens/balances?account.eq=${pkh}&token.contract.eq=${contract}&token.tokenId.eq=${tokenId}`,
+      options,
+    )
       .then(
         pipe(
           pathOr('0', ['data', 0]),
@@ -96,10 +112,10 @@ export const _getTokenBalance =
 export const getTokenBalance = _getTokenBalance(http)
 
 export const _getAssetContractTypeByContract =
-  (http: AxiosInstance) =>
+  (http: HTTP) =>
+  (options?: Options) =>
   ({ contract, network }: { contract: string; network: Network.ghostnet }) =>
-    http
-      .get(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/`)
+    http<HTTPResponse<BigmapResponse>>(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/`, options)
       .then(
         pipe(
           path(['data', 'keyType']),

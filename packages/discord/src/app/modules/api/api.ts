@@ -34,7 +34,7 @@ app.post('/verification/:verificationId', async (req, res) => {
     // if not, return 401
     const {
       testResults: { passed },
-    } = await queryAccessControl(accessControlQuery(pkh))
+    } = await queryAccessControl({ query: accessControlQuery(pkh) })
     const member = getMember({ guildId, discordUserId })(client)
 
     if (!passed) {
@@ -59,9 +59,8 @@ app.post('/verification/:verificationId', async (req, res) => {
 app.get('/verification/:verificationId/user', async (req, res) => {
   try {
     const { verificationId } = req.params
-
     const { guildId, roleId, discordUserId } = await findVerificationById(verificationId)
-    if (!guildId || !roleId || !discordUserId) return res.status(401).send('Not found')
+    if (!guildId || !roleId || !discordUserId) return res.status(401).send({ message: 'Not found' })
 
     const { user, guild } = getMember({ guildId, discordUserId })(client)
     res.status(200).send({

@@ -34,16 +34,14 @@ describe('utils', () => {
       })
 
       expect(result).toEqual(true)
-      expect(httpStub).toHaveBeenCalledWith({
-        baseURL: 'URL',
+      expect(httpStub).toHaveBeenCalledWith('URL/signin', {
         method: 'POST',
-        url: '/signin',
-        data: {
+        body: JSON.stringify({
           message: 'MESSAGE',
           signature: 'SIGNATURE',
           pk: 'PUBLIC KEY',
           pkh: 'PUBLIC KEY HASH',
-        },
+        }),
       })
     })
   })

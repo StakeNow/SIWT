@@ -5,7 +5,6 @@
  */
 import { DAppClient, NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
 import { useSiwt } from '@siwt/react'
-import axios from 'axios'
 import { prop } from 'ramda'
 
 import { NotificationStatus } from '../types'
@@ -18,7 +17,10 @@ const dAppClient = new DAppClient({
 
 const verifyWithDiscord = (id: string) => async (params: any) => {
   try {
-    const data = await axios.post(`${process.env.NX_API_URL || ''}/verification/${id}`, params)
+    const data = await fetch(`${process.env.NX_API_URL || ''}/verification/${id}`, {
+      method: 'POST',
+      body: JSON.stringify(params),
+    }).then(res => res.json())
 
     return prop('data')(data)
   } catch (error) {

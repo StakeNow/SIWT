@@ -3,11 +3,10 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import axios from 'axios'
 import { prop } from 'ramda'
 import { useEffect, useState } from 'react'
 
-import Logo from '../../../assets/siwt-icon.svg'
+import { SIWTIcon } from '../../../assets'
 import login from '../../common/signIn/signIn'
 import { NotificationStatus } from '../../common/types'
 import { getRequestId } from '../../common/utils'
@@ -17,16 +16,17 @@ export const Connect = () => {
   const [user, setUser] = useState('')
   const [notification, setNotification] = useState('' as NotificationStatus)
   const requestId = getRequestId()
-
   useEffect(() => {
     if (!requestId) return
     const getUserInformation = async () => {
       try {
-        const data = await axios.get(`${process.env.NX_API_URL || ''}/verification/${requestId}/user`)
-
-        setUser(prop('data')(data))
+        const data = await fetch(
+          `${process.env.NX_API_URL || 'http://localhost:3000'}/verification/${requestId}/user`,
+        ).then(res => res.json())
+        setUser(data)
       } catch (error) {
-        throw new Error(
+        console.log('error', error)
+        return new Error(
           'Verification failed. If you believe this is incorrect please get in touch with an administrator of the Discord server.',
         )
       }
@@ -63,7 +63,7 @@ export const Connect = () => {
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="mx-auto h-12 w-12">
-          <Logo />
+          <SIWTIcon />
         </div>
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200">
           Sign in with Tezos
