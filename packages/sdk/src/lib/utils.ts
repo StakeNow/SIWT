@@ -4,19 +4,16 @@
  * SPDX-License-Identifier: MIT
  */
 import { verifySignature as taquitoVerifySignature } from '@taquito/utils'
-import { AxiosInstance } from 'axios'
 import { assoc, objOf, pipe, prop } from 'ramda'
 
 import { http } from './http'
-import { SignInMessageData, SignInPayload } from './types'
+import { HTTP, SignInMessageData, SignInPayload } from './types'
 import { constructSignPayload, generateMessageData, packMessagePayload } from './utils/index'
 
-export const _signIn = (http: AxiosInstance) => (apiUrl: string) => (payload: SignInPayload) =>
-  http({
-    baseURL: apiUrl,
+export const _signIn = (http: HTTP) => (apiUrl: string) => (payload: SignInPayload) =>
+  http(`${apiUrl}/signin`, {
     method: 'POST',
-    url: '/signin',
-    data: payload,
+    body: JSON.stringify(payload),
   })
 
 export const signIn = _signIn(http)

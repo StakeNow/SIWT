@@ -1,6 +1,6 @@
 import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { AccessControlQuery } from '@siwt/acq/lib/types'
-import { useSiwt } from '@siwt/react'
+import { createMessagePayload } from '@siwt/sdk'
 import { validateContractAddress } from '@taquito/utils'
 import clsx from 'clsx'
 import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, test, uniq, without } from 'ramda'
@@ -15,9 +15,7 @@ import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
 
 export const Try = () => {
-  const { createMessagePayload } = useSiwt(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4200/api')
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
-
   const [acq, setAcq] = useState<AccessControlQuery>({
     network: Network.ghostnet,
     parameters: {
@@ -422,7 +420,11 @@ export const Try = () => {
               <div className="mt-6">
                 <span className="lg:ml-2">Signature:</span>
                 <div className="lg:ml-2 mb-1 text-gray-600 break-words">
-                  {signature ? signature : <span className="text-gray-500 italic">Message hasn't been signed yet</span>}
+                  {signature ? (
+                    signature
+                  ) : (
+                    <span className="text-gray-500 italic">Message hasn&apos;t been signed yet</span>
+                  )}
                 </div>
                 <Button onClick={() => signMessage(activeAccount?.address)}>(Re-) Sign</Button>
               </div>

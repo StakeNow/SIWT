@@ -29,7 +29,16 @@ import {
 } from 'ramda'
 
 import { COMPARISONS } from '../constants'
-import { AccessControlQuery, AccessControlQueryDependencies, AssetContractType, LedgerStorage, Network } from '../types'
+import {
+  AccessControlQuery,
+  AssetContractType,
+  GetAssetContractTypeByContract,
+  GetAttributesFromStorage,
+  GetBalance,
+  GetOwnedAssetsForPKH,
+  GetTokenBalance,
+  Network,
+} from '../types'
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
@@ -82,9 +91,9 @@ export const denominate = ([x, y]: number[]) => divide(y, 10 ** x)
 
 export const validateNFTCondition =
   (
-    getOwnedAssetsForPKH: AccessControlQueryDependencies['getOwnedAssetsForPKH'],
-    getAttributesFromStorage: AccessControlQueryDependencies['getAttributesFromStorage'],
-    getAssetContractTypeByContract: AccessControlQueryDependencies['getAssetContractTypeByContract'],
+    getOwnedAssetsForPKH: GetOwnedAssetsForPKH,
+    getAttributesFromStorage: GetAttributesFromStorage,
+    getAssetContractTypeByContract: GetAssetContractTypeByContract,
   ) =>
   ({
     network = Network.ghostnet,
@@ -93,7 +102,7 @@ export const validateNFTCondition =
   }: AccessControlQuery) =>
     getAssetContractTypeByContract({ contract: contractAddress, network }).then(assetContractType =>
       getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh, contractType: assetContractType })
-        .then(async (assets: LedgerStorage[]) => {
+        .then(async assets => {
           if (assets.length === 0) {
             return {
               passed: false,
@@ -107,7 +116,7 @@ export const validateNFTCondition =
             const matchingAssets = findMatchingElements(tokenIds as string[], ownedAssetIds)
             if (
               matchingAssets.length === 0 ||
-              !(COMPARISONS[comparator] as Function)(prop('length')(matchingAssets))(value)
+              !(COMPARISONS[comparator] as any)(prop('length')(matchingAssets))(value)
             ) {
               return {
                 passed: false,
@@ -138,7 +147,7 @@ export const validateNFTCondition =
           }
 
           return {
-            passed: (COMPARISONS[comparator] as Function)(prop('length')(assets))(value),
+            passed: (COMPARISONS[comparator] as any)(prop('length')(assets))(value),
             ownedTokenIds: ownedAssetIds,
           }
         })
@@ -149,7 +158,7 @@ export const validateNFTCondition =
     )
 
 export const validateXTZBalanceCondition =
-  (getBalance: AccessControlQueryDependencies['getBalance']) =>
+  (getBalance: GetBalance) =>
   ({ network = Network.ghostnet, parameters: { pkh }, test: { comparator, value } }: AccessControlQuery) =>
     getBalance &&
     getBalance({ network, contract: pkh as string })
@@ -163,7 +172,7 @@ export const validateXTZBalanceCondition =
       }))
 
 export const validateTokenBalanceCondition =
-  (getTokenBalance: AccessControlQueryDependencies['getTokenBalance']) =>
+  (getTokenBalance: GetTokenBalance) =>
   ({
     network = Network.ghostnet,
     test: { contractAddress, comparator, value, tokenId },
@@ -191,7 +200,7 @@ export const validateTimeConstraint = (timestamp: number) => Date.now() / 1000 <
 export const hexToAscii = (hex: string) => {
   // convert hex to ascii
   let ascii = ''
-  for (var n = 0; n < hex.length; n += 2) {
+  for (let n = 0; n < hex.length; n += 2) {
     ascii += String.fromCharCode(parseInt(hex.substring(n, n + 2), 16))
   }
   return ascii
