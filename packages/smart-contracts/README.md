@@ -6,7 +6,7 @@ For the full specification visit:
 https://github.com/StakeNow/tzip/blob/main/drafts/draft-policy-metadata.md
 
 An example of the smart contract is published at:
-https://better-call.dev/ghostnet/KT1ECkoiEE56wrpugpFLtqcBnwtBB5SmBbDG
+https://better-call.dev/ghostnet/KT1BFjTv5aNe2EqVJJu1PaKZhQeUgtfGZnyP
 
 ## Requirements
 
