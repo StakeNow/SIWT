@@ -90,6 +90,7 @@ in: In (Whitelist only)
 notIn: Not in (Whitelist only)
 
 ## Options
+
 In case necessary the timeout for the api calls that the accessControlQuery makes can be set using the
 
 ```
@@ -99,6 +100,7 @@ In case necessary the timeout for the api calls that the accessControlQuery make
   }
 }
 ```
+
 property when calling the accessControlQuery.
 
 ## Running unit tests
