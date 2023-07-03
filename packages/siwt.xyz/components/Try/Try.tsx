@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { AccessControlQuery } from '@siwt/acq/lib/types'
 import { createMessagePayload } from '@siwt/sdk'

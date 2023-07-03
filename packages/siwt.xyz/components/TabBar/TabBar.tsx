@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import clsx from 'clsx'
 import React, { FC } from 'react'
 

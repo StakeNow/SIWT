@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 // @ts-nocheck
 import { CloudFrontRequestEvent } from 'aws-lambda'
 import { allPass, append, complement, join, lensProp, over, path, pipe, test, when } from 'ramda'
