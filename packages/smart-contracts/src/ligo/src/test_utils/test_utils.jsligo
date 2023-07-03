@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 const assert_error = (res: test_exec_result, expected_error: string): unit => {
     const expected_error2 = Test.eval(expected_error);
     match(res, {
