@@ -20,18 +20,24 @@ Setting your requirements is done by defining a query in the following format:
 
 ```
 const result = await queryAccessControl({
-  network: Network.mainnet,             // Choose which network should be checked. Options are Mainnet and Ghostnet. Defaults to Ghostnet.
-  parameters: {
-    pkh: 'WALLET ADDRESS',              // Variables that are required for the query. Currently this is limited to the user's wallet address. Required.
+  query: {
+    network: Network.mainnet,             // Choose which network should be checked. Options are Mainnet and Ghostnet. Defaults to Ghostnet.
+    parameters: {
+      pkh: 'WALLET ADDRESS',              // Variables that are required for the query. Currently this is limited to the user's wallet address. Required.
+    },
+    test: {
+      contractAddress: '',                // The smart contract address to check. Required on certain condition types.
+      tokenIds: ['0'],                    // The token id inside the (multi asset) smart contract storage to check against.
+      type: ConditionType.nft,            //
+      comparator: Comparator.gte,         //
+      value: 1,                           // The value to compare against with the comparator.
+      checkTimeConstraint: false          // Tell the ACQ to check for the time constraint. Only applicable to the condition type NFT and requires the 'Valid Until' attribute in the NFT metadata
+    },
   },
-  test: {
-    contractAddress: '',                // The smart contract address to check. Required on certain condition types.
-    tokenIds: ['0'],                    // The token id inside the (multi asset) smart contract storage to check against.
-    type: ConditionType.nft,            //
-    comparator: Comparator.gte,         //
-    value: 1,                           // The value to compare against with the comparator.
-    checkTimeConstraint: false          // Tell the ACQ to check for the time constraint. Only applicable to the condition type NFT and requires the 'Valid Until' attribute in the NFT metadata
-  },
+  allowlist: [],
+  options: {
+    timeout: 3000,
+  }
 })
 ```
 
@@ -63,9 +69,11 @@ Use this if you need your user to hold a certain amount of tez.
 
 Use this if you need your user to hold a certain amount of a fungible token.
 
-#### Whitelist
+#### Allowlist
 
 Use this if you want to provide a specific list of wallet addresses to allow or deny access to.
+
+When using the allowlist scenario, the allowlist property in the queryAccessControl parameter is required.
 
 #### Tezos Tickets (Coming soon)
 
@@ -80,6 +88,18 @@ gt: Greater than
 lt: Less than
 in: In (Whitelist only)
 notIn: Not in (Whitelist only)
+
+## Options
+In case necessary the timeout for the api calls that the accessControlQuery makes can be set using the
+
+```
+{
+  options: {
+    timeout: 3000, // time in milliseconds
+  }
+}
+```
+property when calling the accessControlQuery.
 
 ## Running unit tests
 
