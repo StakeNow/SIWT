@@ -1,12 +1,10 @@
-#import "./errors.jsligo" "FA2_Errors"
-
 /*
-export namespace Types {
-   type token_id = nat;
-   type owner = address;
-   export type t = big_map<token_id, owner>;
-};
-*/
+ * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#import "./errors.jsligo" "FA2_Errors"
 
 export const is_owner_of = ([ledger, token_id, owner]: [big_map<nat, address>, nat, address]): bool => {
     const current_owner = Option.unopt(Big_map.find_opt(token_id, ledger));

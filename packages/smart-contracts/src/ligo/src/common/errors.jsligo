@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 const asset_must_not_exist = "Asset already exists"
 const amount_must_be_pricing_value = "The value is incorrect"
 const incorrect_sender = "Incorrect sender"

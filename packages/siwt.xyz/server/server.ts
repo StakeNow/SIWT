@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ *
+ * SPDX-License-Identifier: MIT
+ */
 // @ts-nocheck
 import { CloudFrontRequestEvent } from 'aws-lambda'
 import { allPass, append, complement, join, lensProp, over, path, pipe, test, when } from 'ramda'
