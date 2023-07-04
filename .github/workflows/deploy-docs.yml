@@ -32,9 +32,9 @@ jobs:
       - name: Install docusaurus dependencies specifically
         run: npm install --prefix ./packages/docs.siwt.xyz
 
-      - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
-      - run: npx nx affected --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
-      - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
+      - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts
+      - run: npx nx affected --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts
+      - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts
 
   deploy:
     runs-on: ubuntu-latest
@@ -64,13 +64,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'eu-central-1'
-      - run: npx nx affected --target=build --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e
+      - run: npx nx affected --target=build --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts
       - run: |
           touch .env
           echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
           echo ENV=$ENV >> .env
           cat .env
       - name: Deploy
-        run: npx nx affected --target=deploy --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e --production
+        run: npx nx affected --target=deploy --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts --production
       - name: Invalidate Distribution
         run: aws cloudfront create-invalidation --distribution-id=$CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
