@@ -1,6 +1,6 @@
-import { prop, propEq } from 'ramda'
+import { InMemorySigner } from '@taquito/signer'
 import * as SUT from './utils'
-import { packMessagePayload, unpackMessagePayload } from './utils/utils'
+import { packMessagePayload } from './utils/utils'
 
 describe('utils', () => {
   describe('createMessagePayload', () => {
@@ -105,6 +105,64 @@ describe('utils', () => {
       // when ... we want to verify the message
       // then ... it should verify the message as expected
       const result = SUT.verifyMessage(payload, pkh)
+
+      expect(result).toEqual(expected)
+    })
+  })
+
+  describe('verifyLogin', () => {
+    it.each([
+      [
+        packMessagePayload({
+          dappUrl: 'DAPPURL',
+          timestamp: new Date().toISOString(),
+          message: 'DAPPURL would like you to sign in with tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zy',
+        }),
+        'tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zy',
+        'edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6',
+        'edsk41oQ9zfvq7HPqUd52fVsU3p8jd9EhTeJUQMb8Ge7LmA87H4epk',
+        true,
+      ], // Should pass
+      [
+        packMessagePayload({
+          dappUrl: 'DAPPURL',
+          timestamp: new Date().toISOString(),
+          message: 'DAPPURL would like you to sign in with tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zy',
+        }),
+        'tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zy',
+        'edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6',
+        'edsk41aRaPPBpidY7w5xu54edk76uJJtJ6myTwYDEWhAwNHce9gKNo',
+        false,
+      ], // Should fail with incorrect signature
+      [
+        packMessagePayload({
+          dappUrl: 'DAPPURL',
+          timestamp: new Date().toISOString(),
+          message: 'DAPPURL would like you to sign in with tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zd',
+        }),
+        'tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zy',
+        'edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6',
+        'edsk41oQ9zfvq7HPqUd52fVsU3p8jd9EhTeJUQMb8Ge7LmA87H4epk',
+        false,
+      ], // Should fail with incorrect message
+      [
+        packMessagePayload({
+          dappUrl: 'DAPPURL',
+          timestamp: new Date().toISOString(),
+          message: 'DAPPURL would like you to sign in with tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zd',
+        }),
+        'tz1hkMbkLPkvhxyqsQoBoLPqb1mruSzZx3zy',
+        'edpktom5rsehpEY6Kp2NShwsnpaaEjWxKFMJ3Rjp99VMJuHS93wxD6',
+        'edsk41aRaPPBpidY7w5xu54edk76uJJtJ6myTwYDEWhAwNHce9gKNo',
+        false,
+      ], // Should fail with incorrect message and incorrect signature
+    ])('should verify the login', async (message, pkh, pk, secret, expected) => {
+      // when ... we want to verify the login
+      // then ... it should verify the login as expected
+      const signer = new InMemorySigner(secret);
+      const bytes = message;
+      const signature = await signer.sign(bytes);
+      const result = SUT.verifyLogin(message, pkh, pk, signature.prefixSig)
 
       expect(result).toEqual(expected)
     })
