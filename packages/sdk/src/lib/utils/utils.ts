@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 import { bytes2Char, char2Bytes } from '@taquito/utils'
-import { always, filter, gt, ifElse, join, pathEq, pathOr, pipe, prop, propEq, replace } from 'ramda'
+import { always, filter, gt, ifElse, join, pathEq, pathOr, pipe, prop, propEq, replace, slice } from 'ramda'
 
 import { TEZOS_SIGNED_MESSAGE_PREFIX } from '../constants'
-import { MessagePayloadData, SignInMessageData } from '../types'
+import { MessagePayloadData, SignInMessageData, UnpackedMessagePayload } from '../types'
 
 export const formatPoliciesString = ifElse(
   propEq('length', 1),
@@ -45,7 +45,7 @@ export const packMessagePayload = (messageData: MessagePayloadData): string =>
     join(''),
   )(messageData)
 
-export const unpackMessagePayload = (packedMessage: string) => {
+export const unpackMessagePayload = (packedMessage: string): UnpackedMessagePayload | Error => {
   try {
     const prefix = packedMessage.slice(0, 4)
     const messageLength = parseInt(packedMessage.slice(4, 12), 16)

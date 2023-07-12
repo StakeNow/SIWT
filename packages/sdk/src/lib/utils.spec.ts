@@ -1,5 +1,6 @@
+import { prop, propEq } from 'ramda'
 import * as SUT from './utils'
-import { packMessagePayload } from './utils/utils'
+import { packMessagePayload, unpackMessagePayload } from './utils/utils'
 
 describe('utils', () => {
   describe('createMessagePayload', () => {

@@ -42,3 +42,14 @@ export type HTTP = <TResponse>(resource: string, options?: Options) => Promise<T
 export type HTTPResponse<T> = {
   data: T
 }
+
+export interface UnpackedMessagePayload {
+  prefix: string
+  messageLength: number
+  message: string
+  messagePrefix: string
+  dappUrl: string
+  timestamp: string
+  messageBytes: string
+  pkh: string
+}

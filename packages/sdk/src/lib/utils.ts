@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 import { verifySignature as taquitoVerifySignature } from '@taquito/utils'
-import { assoc, objOf, pipe, prop } from 'ramda'
+import { allPass, always, assoc, ifElse, is, objOf, pipe, prop, propEq, propOr } from 'ramda'
 
 import { TEZOS_SIGNED_MESSAGE_PREFIX } from './constants'
 import { http } from './http'
-import { HTTP, SignInMessageData, SignInPayload } from './types'
+import { HTTP, SignInMessageData, SignInPayload, UnpackedMessagePayload } from './types'
 import { constructSignPayload, generateMessageData, packMessagePayload, unpackMessagePayload } from './utils/index'
 
 export const _signIn = (http: HTTP) => (apiUrl: string) => (payload: SignInPayload) =>
@@ -30,38 +30,20 @@ export const createMessagePayload = (signatureRequestData: SignInMessageData) =>
 
 export const verifySignature = taquitoVerifySignature
 
-export const verifyMessage = (messagePayload: string, pkh: string) => {
-  const unpackedMessagePayload = unpackMessagePayload(messagePayload)
-  
-  if (unpackedMessagePayload instanceof Error) {
-    return false
-  }
-
-  const { prefix, messageLength, messageBytes, messagePrefix, timestamp, pkh: messagePkh } = unpackedMessagePayload
-
-  if (prefix !== '0501') {
-    return false
-  }
-
-  if (messageLength !== messageBytes.length) {
-    return false
-  }
-
-  if (messagePrefix !== TEZOS_SIGNED_MESSAGE_PREFIX) {
-    return false
-  }
-
-  if (isNaN(new Date(timestamp).getTime()) || Date.now() - new Date(timestamp).getTime() > 300000) {
-    // 5 minutes
-    return false
-  }
-
-  if (pkh !== messagePkh) {
-    return false
-  }
-
-  return true
-}
+export const verifyMessage = (messagePayload: string, pkh: string) => pipe(
+  unpackMessagePayload,
+  ifElse(
+    is(Error),
+    always(false),
+    allPass([
+      propEq('prefix', '0501'),
+      propEq('messagePrefix', TEZOS_SIGNED_MESSAGE_PREFIX),
+      propEq('pkh', pkh),
+      pipe(prop('timestamp'), (timestamp: string) => !isNaN(new Date(timestamp).getTime())),
+      pipe(prop('timestamp'), (timestamp: string) => Date.now() - new Date(timestamp).getTime() < 300000), // 5 minutes
+      (unpackedMessagePayload: UnpackedMessagePayload) => propEq('messageLength', (propOr('', 'messageBytes', unpackedMessagePayload) as string).length)(unpackedMessagePayload),
+    ]),
+  ))(messagePayload)
 
 export const verifyLogin = (message: string, pkh: string, pk: string, signature: string) =>
   verifyMessage(message, pkh) && verifySignature(message, pk, signature)
