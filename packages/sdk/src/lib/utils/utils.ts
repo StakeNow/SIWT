@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { char2Bytes } from '@taquito/utils'
+import { bytes2Char, char2Bytes } from '@taquito/utils'
 import { always, filter, gt, ifElse, join, pathEq, pathOr, pipe, prop, propEq, replace } from 'ramda'
 
 import { TEZOS_SIGNED_MESSAGE_PREFIX } from '../constants'
@@ -44,6 +44,31 @@ export const packMessagePayload = (messageData: MessagePayloadData): string =>
     (bytes: string) => ['05', '01', prop('length')(bytes).toString(16).padStart(8, '0'), bytes],
     join(''),
   )(messageData)
+
+export const unpackMessagePayload = (packedMessage: string) => {
+  try {
+    const prefix = packedMessage.slice(0, 4)
+    const messageLength = parseInt(packedMessage.slice(4, 12), 16)
+    const messageBytes = packedMessage.slice(12)
+    const message = bytes2Char(packedMessage.slice(12))
+    const [messagePrefix, messageContents] = message.split(': ')
+    const pkh = message.split('would like you to sign in with ')[1].slice(0, 36)
+    const [dappUrl, timestamp] = messageContents.split(' ')
+
+    return {
+      prefix,
+      messageLength,
+      message,
+      messagePrefix: `${messagePrefix}:`,
+      dappUrl,
+      timestamp,
+      messageBytes,
+      pkh,
+    }
+  } catch (error) {
+    return new Error('Invalid message payload')
+  }
+}
 
 export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
 export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))

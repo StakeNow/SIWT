@@ -5,7 +5,7 @@
  */
 import { queryAccessControl } from '@siwt/acq'
 import { AccessControlQuery } from '@siwt/acq/lib/types'
-import { verifySignature } from '@siwt/sdk'
+import { verifyLogin } from '@siwt/sdk'
 import { assocPath, multiply, path } from 'ramda'
 
 import { validateAccessData } from './siwt.validation'
@@ -14,12 +14,14 @@ export const checkAccess = async ({
   acq,
   signature,
   message,
+  publicKeyHash,
   publicKey,
   allowlist,
 }: {
   acq: AccessControlQuery
   signature: string
   message: string
+  publicKeyHash: string
   publicKey: string
   allowlist: string[]
 }) => {
@@ -46,7 +48,15 @@ export const checkAccess = async ({
   }
 
   try {
-    verifySignature(message, publicKey, signature)
+    const isValidLogin = verifyLogin(message, publicKeyHash, publicKey, signature)
+
+    if (!isValidLogin) {
+      return {
+        statusCode: 401,
+        data: 'Invalid login',
+      }
+    }
+
     const access = await queryAccessControl({ query, allowlist })
     if (access.testResults.passed) {
       return {

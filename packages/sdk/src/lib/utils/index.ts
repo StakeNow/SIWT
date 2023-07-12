@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: MIT
  */
 
-export { constructSignPayload, generateMessageData, packMessagePayload } from './utils'
+export { constructSignPayload, generateMessageData, packMessagePayload, unpackMessagePayload } from './utils'
