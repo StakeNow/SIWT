@@ -4,12 +4,12 @@ title: Server
 sidebar_position: 2
 ---
 
-#### **Verifying the signature**
+#### **Verifying the login**
 
-Just having the user sign this message is not enough. We also have to make sure the signature is valid before allowing the user to use our dApp. This happens on the server and requires only the following statement:
+Just having the user sign this message is not enough. We also have to make sure the signature and the message is valid before allowing the user to use our dApp. This happens on the server and requires only the following statement:
 
 ```
-const isValidSignature = verifySignature(message, pk, signature)
+const isValidLogin = verifyLogin(message, pkh, pk, signature)
 ```
 
 #### **Creating tokens**
