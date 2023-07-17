@@ -9,7 +9,8 @@ sidebar_position: 2
 Just having the user sign this message is not enough. We also have to make sure the signature and the message is valid before allowing the user to use our dApp. This happens on the server and requires only the following statement:
 
 ```
-const isValidLogin = verifyLogin(message, pkh, pk, signature)
+const dappUrl = process.env.DAPP_URL || 'http://localhost:4200'
+const isValidLogin = verifyLogin(message, pkh, pk, signature, dappUrl)
 ```
 
 #### **Creating tokens**

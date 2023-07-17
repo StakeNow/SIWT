@@ -10,6 +10,12 @@ import { assocPath, multiply, path } from 'ramda'
 
 import { validateAccessData } from './siwt.validation'
 
+
+/*
+* Checking for access should always be done server-side. This demo is for demonstration purposes only.
+*/
+const dappUrl = process.env.NEXT_PUBLIC_DAPP_URL || 'http://localhost:4200'
+
 export const checkAccess = async ({
   acq,
   signature,
@@ -48,7 +54,7 @@ export const checkAccess = async ({
   }
 
   try {
-    const isValidLogin = verifyLogin(message, publicKeyHash, publicKey, signature)
+    const isValidLogin = verifyLogin(message, publicKeyHash, publicKey, signature, dappUrl)
 
     if (!isValidLogin) {
       return {

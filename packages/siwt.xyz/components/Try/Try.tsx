@@ -182,7 +182,14 @@ export const Try = () => {
       .catch(() => console.log('Failed to disconnect'))
 
   const requestResource = () =>
-    checkAccess({ acq, signature, message, publicKeyHash: activeAccount?.address, publicKey: activeAccount?.publicKey, allowlist: split(',')(allowlist) })
+    checkAccess({
+      acq,
+      signature,
+      message,
+      publicKeyHash: activeAccount?.address,
+      publicKey: activeAccount?.publicKey,
+      allowlist: split(',')(allowlist),
+    })
       .then(({ data }) => setAccessResponse(data))
       .catch(console.log)
 
@@ -432,7 +439,10 @@ export const Try = () => {
                   )}
                 </div>
                 <Button onClick={() => signMessage(activeAccount?.address)}>(Re-) Sign</Button>
-                <div className='mt-4 text-sm italic text-gray-500'>A signature is only valid for 5 minutes. If you get an "Invalid login" message, you might need create a new signature.</div>
+                <div className="mt-4 text-sm italic text-gray-500">
+                  A signature is only valid for 5 minutes. If you get an "Invalid login" message, you might need create
+                  a new signature.
+                </div>
               </div>
             </>
           ) : (

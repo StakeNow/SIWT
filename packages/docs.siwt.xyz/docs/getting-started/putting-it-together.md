@@ -158,6 +158,7 @@ import { queryAccessControl } from '@siwt/acq'
 
 const app = express()
 const port = 3000
+const dappUrl = process.env.DAPP_URL || 'http://localhost:4200'
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -202,7 +203,7 @@ const authenticate = async (req, res, next) => {
 app.post('/signin', (req, res) => {
   const { message, signature, pk, pkh } = req.body
   try {
-    const isValidLogin = siwtClient.verifyLogin(message, pkh, pk, signature)
+    const isValidLogin = siwtClient.verifyLogin(message, pkh, pk, signature, dappUrl)
     if (isValidLogin) {
       // when a user provided a valid signature, we can obtain and
       // return the required information about the user.

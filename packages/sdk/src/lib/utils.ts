@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { verifySignature as taquitoVerifySignature } from '@taquito/utils'
-import { allPass, always, assoc, ifElse, is, objOf, pipe, prop, propEq, propOr } from 'ramda'
+import { allPass, always, assoc, ifElse, is, objOf, pipe, prop, propEq, propOr, tap } from 'ramda'
 
 import { MESSAGE_PAYLOAD_PREFIX, TEZOS_SIGNED_MESSAGE_PREFIX } from './constants'
 import { http } from './http'
@@ -30,20 +30,29 @@ export const createMessagePayload = (signatureRequestData: SignInMessageData) =>
 
 export const verifySignature = taquitoVerifySignature
 
-export const verifyMessage = (messagePayload: string, pkh: string) => pipe(
-  unpackMessagePayload,
-  ifElse(
-    is(Error),
-    always(false),
-    allPass([
-      propEq('prefix', MESSAGE_PAYLOAD_PREFIX),
-      propEq('messagePrefix', TEZOS_SIGNED_MESSAGE_PREFIX),
-      propEq('pkh', pkh),
-      pipe(prop('timestamp'), (timestamp: string) => !isNaN(new Date(timestamp).getTime())),
-      pipe(prop('timestamp'), (timestamp: string) => Date.now() - new Date(timestamp).getTime() < 300000), // 5 minutes
-      (unpackedMessagePayload: UnpackedMessagePayload) => propEq('messageLength', (propOr('', 'messageBytes', unpackedMessagePayload) as string).length)(unpackedMessagePayload),
-    ]),
-  ))(messagePayload)
+export const verifyMessage = (messagePayload: string, pkh: string, dappUrl: string) =>
+  pipe(
+    unpackMessagePayload,
+    tap(console.log),
+    ifElse(
+      is(Error),
+      always(false),
+      pipe(
+        allPass([
+        propEq('prefix', MESSAGE_PAYLOAD_PREFIX),
+        propEq('messagePrefix', TEZOS_SIGNED_MESSAGE_PREFIX),
+        propEq('pkh', pkh),
+        propEq('dappUrl', dappUrl),
+        pipe(prop('timestamp'), (timestamp: string) => !isNaN(new Date(timestamp).getTime())),
+        pipe(prop('timestamp'), (timestamp: string) => Date.now() - new Date(timestamp).getTime() < 300000), // 5 minutes
+        (unpackedMessagePayload: UnpackedMessagePayload) =>
+          propEq(
+            'messageLength',
+            (propOr('', 'messageBytes', unpackedMessagePayload) as string).length,
+          )(unpackedMessagePayload),
+      ])),
+    ),
+  )(messagePayload)
 
-export const verifyLogin = (message: string, pkh: string, pk: string, signature: string) =>
-  verifyMessage(message, pkh) && verifySignature(message, pk, signature)
+export const verifyLogin = (message: string, pkh: string, pk: string, signature: string, dappUrl: string) =>
+  verifyMessage(message, pkh, dappUrl) && verifySignature(message, pk, signature)
