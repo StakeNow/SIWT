@@ -6,7 +6,7 @@
 import { verifySignature as taquitoVerifySignature } from '@taquito/utils'
 import { allPass, always, assoc, ifElse, is, objOf, pipe, prop, propEq, propOr } from 'ramda'
 
-import { TEZOS_SIGNED_MESSAGE_PREFIX } from './constants'
+import { MESSAGE_PAYLOAD_PREFIX, TEZOS_SIGNED_MESSAGE_PREFIX } from './constants'
 import { http } from './http'
 import { HTTP, SignInMessageData, SignInPayload, UnpackedMessagePayload } from './types'
 import { constructSignPayload, generateMessageData, packMessagePayload, unpackMessagePayload } from './utils/index'
@@ -36,7 +36,7 @@ export const verifyMessage = (messagePayload: string, pkh: string) => pipe(
     is(Error),
     always(false),
     allPass([
-      propEq('prefix', '0501'),
+      propEq('prefix', MESSAGE_PAYLOAD_PREFIX),
       propEq('messagePrefix', TEZOS_SIGNED_MESSAGE_PREFIX),
       propEq('pkh', pkh),
       pipe(prop('timestamp'), (timestamp: string) => !isNaN(new Date(timestamp).getTime())),

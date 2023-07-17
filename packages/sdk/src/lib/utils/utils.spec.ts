@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+import { MESSAGE_PAYLOAD_PREFIX } from '../constants'
 import * as SUT from './utils'
 
 describe('utils/siwt.utils', () => {
@@ -121,7 +122,7 @@ describe('utils/siwt.utils', () => {
     const messagePayload = SUT.packMessagePayload(messageData)
     const result = SUT.unpackMessagePayload(messagePayload)
     const expected = {
-      prefix: '0501',
+      prefix: MESSAGE_PAYLOAD_PREFIX,
       messageLength: 220,
       message:
         'Tezos Signed Message: DAPPURL TIMESTAMP DAPPURL would like you to sign in with tz1KrexxxxxxYRMxECNVzEyU1kL2sFv',

@@ -10,3 +10,5 @@ export const API_URLS = {
 }
 
 export const TEZOS_SIGNED_MESSAGE_PREFIX = 'Tezos Signed Message:'
+
+export const MESSAGE_PAYLOAD_PREFIX = '0501'
