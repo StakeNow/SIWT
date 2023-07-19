@@ -39,18 +39,19 @@ export const verifyMessage = (messagePayload: string, pkh: string, dappUrl: stri
       always(false),
       pipe(
         allPass([
-        propEq('prefix', MESSAGE_PAYLOAD_PREFIX),
-        propEq('messagePrefix', TEZOS_SIGNED_MESSAGE_PREFIX),
-        propEq('pkh', pkh),
-        propEq('dappUrl', dappUrl),
-        pipe(prop('timestamp'), (timestamp: string) => !isNaN(new Date(timestamp).getTime())),
-        pipe(prop('timestamp'), (timestamp: string) => Date.now() - new Date(timestamp).getTime() < 300000), // 5 minutes
-        (unpackedMessagePayload: UnpackedMessagePayload) =>
-          propEq(
-            'messageLength',
-            (propOr('', 'messageBytes', unpackedMessagePayload) as string).length,
-          )(unpackedMessagePayload),
-      ])),
+          propEq('prefix', MESSAGE_PAYLOAD_PREFIX),
+          propEq('messagePrefix', TEZOS_SIGNED_MESSAGE_PREFIX),
+          propEq('pkh', pkh),
+          propEq('dappUrl', dappUrl),
+          pipe(prop('timestamp'), (timestamp: string) => !isNaN(new Date(timestamp).getTime())),
+          pipe(prop('timestamp'), (timestamp: string) => Date.now() - new Date(timestamp).getTime() < 300000), // 5 minutes
+          (unpackedMessagePayload: UnpackedMessagePayload) =>
+            propEq(
+              'messageLength',
+              (propOr('', 'messageBytes', unpackedMessagePayload) as string).length,
+            )(unpackedMessagePayload),
+        ]),
+      ),
     ),
   )(messagePayload)
 
