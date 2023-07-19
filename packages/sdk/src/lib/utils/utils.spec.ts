@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+import { MESSAGE_PAYLOAD_PREFIX } from '../constants'
 import * as SUT from './utils'
 
 describe('utils/siwt.utils', () => {
@@ -107,5 +108,31 @@ describe('utils/siwt.utils', () => {
 
       expect(result).toEqual(expected)
     })
+  })
+
+  describe('unpackMessagePayload', () => {
+    // when ... we want to unpack the message payload
+    // then ... it should unpack it as expected
+    const messageData = {
+      dappUrl: 'DAPPURL',
+      timestamp: 'TIMESTAMP',
+      message: 'DAPPURL would like you to sign in with tz1KrexxxxxxYRMxECNVzEyU1kL2sFv',
+    }
+
+    const messagePayload = SUT.packMessagePayload(messageData)
+    const result = SUT.unpackMessagePayload(messagePayload)
+    const expected = {
+      prefix: MESSAGE_PAYLOAD_PREFIX,
+      messageLength: 220,
+      message:
+        'Tezos Signed Message: DAPPURL TIMESTAMP DAPPURL would like you to sign in with tz1KrexxxxxxYRMxECNVzEyU1kL2sFv',
+      messageBytes:
+        '54657a6f73205369676e6564204d6573736167653a204441505055524c2054494d455354414d50204441505055524c20776f756c64206c696b6520796f7520746f207369676e20696e207769746820747a314b726578787878787859524d7845434e567a457955316b4c32734676',
+      messagePrefix: 'Tezos Signed Message:',
+      dappUrl: 'DAPPURL',
+      timestamp: 'TIMESTAMP',
+      pkh: 'tz1KrexxxxxxYRMxECNVzEyU1kL2sFv',
+    }
+    expect(result).toEqual(expected)
   })
 })
