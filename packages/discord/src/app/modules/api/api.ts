@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { queryAccessControl } from '@siwt/acq'
-import { verifySignature } from '@siwt/sdk'
+import { verifyLogin } from '@siwt/sdk'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
@@ -16,6 +16,7 @@ import { accessControlQuery } from '../../config/config'
 
 const app = express()
 const port = process.env.PORT || 3000
+const dappUrl = process.env.DAPP_URL || 'http://localhost:4200'
 
 app.use(bodyParser.json())
 app.use(cors())
@@ -25,10 +26,10 @@ app.post('/verification/:verificationId', async (req, res) => {
     const { verificationId } = req.params
     const { message, pk, signature, pkh } = req.body
     const { guildId, roleId, discordUserId } = await findVerificationById(verificationId)
-    const isValidSignature = verifySignature(message, pk, signature)
+    const isValidLogin = verifyLogin(message, pkh, pk, signature, dappUrl)
 
     // guards
-    if (!isValidSignature || !guildId || !roleId || !discordUserId) return res.status(401).send()
+    if (!isValidLogin || !guildId || !roleId || !discordUserId) return res.status(401).send()
 
     // use SIWT to check if the user has all the requirements
     // if not, return 401
