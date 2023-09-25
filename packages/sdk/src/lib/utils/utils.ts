@@ -15,7 +15,12 @@ export const formatPoliciesString = ifElse(
   pipe(join(', '), replace(/,([^,]*)$/, ' and$1')),
 )
 
-export const generateMessageData = ({ dappUrl, pkh, options = { policies: [] }, message = null }: SignInMessageData) => {
+export const generateMessageData = ({
+  dappUrl,
+  pkh,
+  options = { policies: [] },
+  message = null,
+}: SignInMessageData) => {
   const timestamp = new Date().toISOString()
   if (message) {
     return {
