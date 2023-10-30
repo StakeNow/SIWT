@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { bytes2Char, char2Bytes } from '@taquito/utils'
-import { always, filter, gt, ifElse, join, pathEq, pathOr, pipe, prop, propEq, replace, slice } from 'ramda'
+import { always, filter, gt, ifElse, join, pathEq, pathOr, pipe, prop, propEq, replace } from 'ramda'
 
 import { TEZOS_SIGNED_MESSAGE_PREFIX } from '../constants'
 import { MessagePayloadData, SignInMessageData, UnpackedMessagePayload } from '../types'
@@ -15,15 +15,31 @@ export const formatPoliciesString = ifElse(
   pipe(join(', '), replace(/,([^,]*)$/, ' and$1')),
 )
 
-export const generateMessageData = ({ dappUrl, pkh, options = { policies: [] } }: SignInMessageData) => ({
+export const generateMessageData = ({
   dappUrl,
-  timestamp: new Date().toISOString(),
-  message: `${dappUrl} would like you to sign in with ${pkh}. ${
-    gt(pathOr(0, ['policies', 'length'])(options), 0)
-      ? `By signing this message you accept our ${formatPoliciesString(prop('policies')(options))}`
-      : ''
-  }`,
-})
+  pkh,
+  options = { policies: [] },
+  message = null,
+}: SignInMessageData) => {
+  const timestamp = new Date().toISOString()
+  if (message) {
+    return {
+      dappUrl,
+      timestamp,
+      message,
+    }
+  }
+
+  return {
+    dappUrl,
+    timestamp,
+    message: `${dappUrl} would like you to sign in with ${pkh}. ${
+      gt(pathOr(0, ['policies', 'length'])(options), 0)
+        ? `By signing this message you accept our ${formatPoliciesString(prop('policies')(options))}`
+        : ''
+    }`,
+  }
+}
 
 export const constructSignPayload = ({ payload, pkh }: { payload: string; pkh: string }) => ({
   signingType: 'micheline',
