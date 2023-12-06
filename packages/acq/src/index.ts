@@ -5,3 +5,5 @@
  */
 
 export * from './lib/acq'
+
+export { Network, Comparator, ConditionType } from './lib/types'

@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: MIT
  */
 
-export enum Network {
+export const enum Network {
   mainnet = 'mainnet',
   ghostnet = 'ghostnet',
 }
 
-export enum ConditionType {
+export const enum ConditionType {
   nft = 'nft',
   xtzBalance = 'xtzBalance',
   tokenBalance = 'tokenBalance',
   allowlist = 'allowlist',
 }
 
-export enum Comparator {
+export const enum Comparator {
   eq = '=',
   gte = '>=',
   lte = '<=',
@@ -26,7 +26,7 @@ export enum Comparator {
   notIn = 'NOT IN',
 }
 
-export enum AssetContractType {
+export const enum AssetContractType {
   single = 'Single',
   multi = 'Multi',
   nft = 'Nft',
