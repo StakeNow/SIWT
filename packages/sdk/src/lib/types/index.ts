@@ -18,6 +18,7 @@ export interface SignInMessageData {
   dappUrl: string
   pkh: string
   options?: SignInMessageDataOptions
+  message?: string
 }
 
 export interface SignInPayload {
