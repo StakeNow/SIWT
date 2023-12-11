@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - uses: nrwl/nx-set-shas@v3
         with:
           main-branch-name: 'develop'
@@ -43,7 +43,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
       - uses: nrwl/nx-set-shas@v3
         with:
           main-branch-name: 'develop'
@@ -57,7 +57,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'eu-central-1'
       - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
-      - run: npx nx affected --target=build-server --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
+      - run: npx nx --target=build-server --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
       - run: npx nx affected --target=export --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
 
       - name: Setup staging env file
