@@ -26,8 +26,8 @@ jobs:
           workflow-id: 'deploy-demo.yml'
       - run: npm ci
 
-      - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e
-      - run: npx nx affected --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e
+      - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
+      - run: npx nx affected --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
       - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
 
   deploy:
