@@ -3,7 +3,6 @@ name: Demo deployment workflow
 on:
   push:
     branches:
-      - main
       - develop
 
 jobs:
@@ -13,11 +12,11 @@ jobs:
       contents: 'read'
       actions: 'read'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - uses: nrwl/nx-set-shas@v3
@@ -37,11 +36,11 @@ jobs:
       contents: 'read'
       actions: 'read'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
       - uses: nrwl/nx-set-shas@v3
