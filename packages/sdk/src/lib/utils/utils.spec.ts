@@ -4,9 +4,49 @@
  * SPDX-License-Identifier: MIT
  */
 import { MESSAGE_PAYLOAD_PREFIX } from '../constants'
+import { SignInMessageData } from '../types'
 import * as SUT from './utils'
 
 describe('utils/siwt.utils', () => {
+  describe('generateMessageData', () => {
+    it.each([
+      {
+        domain: 'DOMAIN',
+        address: 'ADDRESS',
+        uri: 'URI',
+        version: 'VERSION',
+        chainId: 'CHAIN_ID',
+        statement: 'STATEMENT',
+        nonce: 'NONCE',
+        issuedAt: 'ISSUED_AT',
+        expirationTime: 'EXPIRATION_TIME',
+        notBefore: 'NOT_BEFORE',
+        requestId: 'REQUEST_ID',
+        resources: ['RESOURCE1', 'RESOURCE2'],
+      }, [
+        'DOMAIN: DOMAIN',
+        'address: ADDRESS',
+        'URI: URI',
+        'Version: VERSION',
+        'Chain ID: CHAIN_ID',
+        'STATEMENT: STATEMENT',
+        'nonce: NONCE',
+        'issuedAt: ISSUED_AT',
+        'expirationTime: EXPIRATION_TIME',
+        'notBefore: NOT_BEFORE',
+        'requestId: REQUEST_ID',
+        'RESOURCE1',
+        'RESOURCE2',
+      ],
+    ])('should generate the message data as expected', (messageData, expected) => {
+      // when ... we want to generate the message data
+      // then ... it should generate it as expected
+      
+      const result = SUT.generateMessageData(messageData as SignInMessageData)
+
+      expect(result).toEqual(expected)
+    })
+  })
   describe('constructSignPayload', () => {
     it('should create the Beacon SignPayload as expected', () => {
       // when ... we want to construct the Beacon SignPayload

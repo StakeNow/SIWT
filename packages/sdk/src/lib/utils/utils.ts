@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 import { bytes2Char, char2Bytes } from '@taquito/utils'
-import { always, filter, gt, ifElse, join, pathEq, pathOr, pipe, prop, propEq, replace } from 'ramda'
+import { always, append, filter, gt, ifElse, isEmpty, join, map, mapObjIndexed, pathEq, pathOr, pipe, prepend, prop, propEq, replace, unless, values, when } from 'ramda'
 
-import { TEZOS_SIGNED_MESSAGE_PREFIX } from '../constants'
+import { OPTIONAL_MESSAGE_PROPERTIES, SIGN_IN_MESSAGE, TEZOS_SIGNED_MESSAGE_PREFIX } from '../constants'
 import { MessagePayloadData, SignInMessageData, UnpackedMessagePayload } from '../types'
+import { stat } from 'fs'
 
 export const formatPoliciesString = ifElse(
   propEq('length', 1),
@@ -15,30 +16,24 @@ export const formatPoliciesString = ifElse(
   pipe(join(', '), replace(/,([^,]*)$/, ' and$1')),
 )
 
-export const generateMessageData = ({
-  dappUrl,
-  pkh,
-  options = { policies: [] },
-  message = null,
-}: SignInMessageData) => {
-  const timestamp = new Date().toISOString()
-  if (message) {
-    return {
-      dappUrl,
-      timestamp,
-      message,
-    }
+export const generateMessageData = (messageData: SignInMessageData) => {
+  const {
+    domain,
+    address,
+  } = messageData
+
+  if (!messageData?.nonce && !messageData?.requestId && !messageData?.issuedAt) {
+    throw new Error('Invalid message format')
   }
 
-  return {
-    dappUrl,
-    timestamp,
-    message: `${dappUrl} would like you to sign in with ${pkh}. ${
-      gt(pathOr(0, ['policies', 'length'])(options), 0)
-        ? `By signing this message you accept our ${formatPoliciesString(prop('policies')(options))}`
-        : ''
-    }`,
-  }
+  return pipe(
+    mapObjIndexed((value: string, key: string) => `${value}: ${messageData[key]}`),
+    values,
+    unless(() => isEmpty(messageData?.statement), prepend(`\n$[messageData.statement\n`)),
+    prepend(address),
+    prepend(`${domain} ${SIGN_IN_MESSAGE}`),
+    unless(() => isEmpty(messageData?.resources), append(map((resource: string) => `${resource}\n`)(messageData.resources))),
+  )(OPTIONAL_MESSAGE_PROPERTIES)
 }
 
 export const constructSignPayload = ({ payload, pkh }: { payload: string; pkh: string }) => ({

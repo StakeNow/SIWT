@@ -15,10 +15,18 @@ export interface SignInMessageDataOptions {
 }
 
 export interface SignInMessageData {
-  dappUrl: string
-  pkh: string
-  options?: SignInMessageDataOptions
-  message?: string
+  domain: string
+  address: string
+  uri: string
+  version: string
+  chainId: string
+  statement?: string
+  nonce?: string
+  issuedAt?: string
+  expirationTime?: string
+  notBefore?: string
+  requestId?: string
+  resources?: string[]
 }
 
 export interface SignInPayload {

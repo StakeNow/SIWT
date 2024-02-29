@@ -22,10 +22,10 @@ export const signIn = _signIn(http)
 export const createMessagePayload = (signatureRequestData: SignInMessageData) =>
   pipe(
     generateMessageData,
-    packMessagePayload,
-    objOf('payload'),
-    assoc('pkh', prop('pkh')(signatureRequestData)),
-    constructSignPayload,
+    // packMessagePayload,
+    // objOf('payload'),
+    // assoc('pkh', prop('pkh')(signatureRequestData)),
+    // constructSignPayload,
   )(signatureRequestData)
 
 export const verifySignature = taquitoVerifySignature
@@ -33,7 +33,6 @@ export const verifySignature = taquitoVerifySignature
 export const verifyMessage = (messagePayload: string, pkh: string, dappUrl: string) =>
   pipe(
     unpackMessagePayload,
-    tap(console.log),
     ifElse(
       is(Error),
       always(false),
