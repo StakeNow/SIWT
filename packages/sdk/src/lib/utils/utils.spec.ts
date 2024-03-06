@@ -29,14 +29,14 @@ describe('utils/siwt.utils', () => {
           'DOMAIN wants you to sign in with your Tezos account:',
           'ADDRESS',
           '\nSTATEMENT\n',
-          'URI: URI',
+          'Uri: URI',
           'Version: VERSION',
           'Chain ID: CHAIN_ID',
           'Nonce: NONCE',
           'Issued At: ISSUED_AT',
           'Expiration Time: EXPIRATION_TIME',
           'Not Before: NOT_BEFORE',
-          'Request Id: REQUEST_ID',
+          'Request ID: REQUEST_ID',
           ['RESOURCE1\n', 'RESOURCE2\n'],
         ],
       ],
@@ -58,14 +58,14 @@ describe('utils/siwt.utils', () => {
           'DOMAIN wants you to sign in with your Tezos account:',
           'ADDRESS',
           '\nSTATEMENT\n',
-          'URI: URI',
+          'Uri: URI',
           'Version: VERSION',
           'Chain ID: CHAIN_ID',
           'Nonce: NONCE',
           'Issued At: ISSUED_AT',
           'Expiration Time: EXPIRATION_TIME',
           'Not Before: NOT_BEFORE',
-          'Request Id: REQUEST_ID',
+          'Request ID: REQUEST_ID',
         ],
       ],
       [
@@ -85,14 +85,14 @@ describe('utils/siwt.utils', () => {
         [
           'DOMAIN wants you to sign in with your Tezos account:',
           'ADDRESS',
-          'URI: URI',
+          'Uri: URI',
           'Version: VERSION',
           'Chain ID: CHAIN_ID',
           'Nonce: NONCE',
           'Issued At: ISSUED_AT',
           'Expiration Time: EXPIRATION_TIME',
           'Not Before: NOT_BEFORE',
-          'Request Id: REQUEST_ID',
+          'Request ID: REQUEST_ID',
           ['RESOURCE1\n', 'RESOURCE2\n'],
         ],
       ],
@@ -144,10 +144,22 @@ describe('utils/siwt.utils', () => {
     it('should create the message payload as expected', () => {
       // when ... we want to create the message payload
       // then ... it should create it as expected
-      const messageData = ['DAPP URL', 'TIMESTAMP', 'MESSAGE']
+      const messageData = [
+        'DOMAIN',
+        'ADDRESS',
+        'URI',
+        'VERSION',
+        'CHAIN_ID',
+        'STATEMENT',
+        'NONCE',
+        'ISSUED_AT',
+        'EXPIRATION_TIME',
+        'NOT_BEFORE',
+        'REQUEST_ID',
+      ]
 
       const expected =
-        '05010000006054657a6f73205369676e6564204d6573736167653a0a444150502055524c0a54494d455354414d500a4d455353414745'
+        '0501000000f454657a6f73205369676e6564204d6573736167653a200a444f4d41494e0a414444524553530a5552490a56455253494f4e0a434841494e5f49440a53544154454d454e540a4e4f4e43450a4953535545445f41540a45585049524154494f4e5f54494d450a4e4f545f4245464f52450a524551554553545f4944'
       const result = SUT.packMessagePayload(messageData)
 
       expect(result).toEqual(expected)
@@ -228,9 +240,17 @@ describe('utils/siwt.utils', () => {
       // when ... we want to unpack the message payload
       // then ... it should unpack it as expected
       const messageData = [
-        'DAPPURL',
-        'TIMESTAMP',
-        'DAPPURL would like you to sign in with tz1KrexxxxxxYRMxECNVzEyU1kL2sFv',
+        'DOMAIN',
+        'ADDRESS',
+        'URI',
+        'VERSION',
+        'CHAIN_ID',
+        'STATEMENT',
+        'NONCE',
+        'ISSUED_AT',
+        'EXPIRATION_TIME',
+        'NOT_BEFORE',
+        'REQUEST_ID',
       ]
 
       const messagePayload = SUT.packMessagePayload(messageData)
@@ -238,15 +258,10 @@ describe('utils/siwt.utils', () => {
 
       const expected = {
         prefix: '0501',
-        messageLength: 220,
-        messageParts: [
-          'Tezos Signed Message:',
-          'DAPPURL',
-          'TIMESTAMP',
-          'DAPPURL would like you to sign in with tz1KrexxxxxxYRMxECNVzEyU1kL2sFv',
-        ],
+        messageLength: 244,
+        message: 'Tezos Signed Message: \nDOMAIN\nADDRESS\nURI\nVERSION\nCHAIN_ID\nSTATEMENT\nNONCE\nISSUED_AT\nEXPIRATION_TIME\nNOT_BEFORE\nREQUEST_ID',
         messageBytes:
-          '54657a6f73205369676e6564204d6573736167653a0a4441505055524c0a54494d455354414d500a4441505055524c20776f756c64206c696b6520796f7520746f207369676e20696e207769746820747a314b726578787878787859524d7845434e567a457955316b4c32734676',
+          '54657a6f73205369676e6564204d6573736167653a200a444f4d41494e0a414444524553530a5552490a56455253494f4e0a434841494e5f49440a53544154454d454e540a4e4f4e43450a4953535545445f41540a45585049524154494f4e5f54494d450a4e4f545f4245464f52450a524551554553545f4944',
       }
       expect(result).toEqual(expected)
     })

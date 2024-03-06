@@ -55,6 +55,19 @@ export type HTTPResponse<T> = {
 export interface UnpackedMessagePayload {
   prefix: string
   messageLength: number
-  messageParts: string[]
+  message: string
   messageBytes: string
+}
+
+export interface ParsedMessage {
+  domain: string
+  nonce: string
+  version: string
+  statement: string
+  issuedAt: string
+  accountAddress: string
+  expirationTime?: string
+  notBefore?: string
+  requestId?: string
+  resources?: string[]
 }

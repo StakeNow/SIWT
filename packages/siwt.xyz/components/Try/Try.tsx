@@ -154,17 +154,16 @@ export const Try = () => {
       domain: 'SIWT',
       address,
       uri: 'https://siwt.xyz',
-      version: '1.0',
+      version: 1,
       chainId: NETWORK_IDS[acq.network],
       statement: 'By signing this message, you agree to the resources mentioned in this message.',
-      nonce: '123456',
+      nonce: '12345678',
       issuedAt: new Date().toISOString(),
       expirationTime: new Date(Date.now() + 300000).toISOString(),
       resources: pipe(split(','), concat(selectedPolicies), uniq, reject(isEmpty))(customPolicies),
     })
-    console.log('PAYLOAD', messagePayload)
+
     setMessage(messagePayload.payload)
-    client.getPeers().then(console.log).catch(console.log)
     return requestSignPayload(messagePayload).then(({ signature }: SignPayloadResponse) => setSignature(signature))
   }
 
@@ -193,7 +192,7 @@ export const Try = () => {
       signature,
       message,
       publicKeyHash: activeAccount?.address,
-      publicKey: activeAccount?.publicKey,
+      publicKey: activeAccount?.publicKey || '',
       allowlist: split(',')(allowlist),
     })
       .then(({ data }) => setAccessResponse(data))

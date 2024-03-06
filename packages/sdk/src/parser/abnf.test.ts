@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-
 import * as SUT from './abnf'
 
 describe('src/parser/abnf', () => {
@@ -13,6 +12,7 @@ describe('src/parser/abnf', () => {
 
     const message =
       'SIWT wants you to sign in with your Tezos account:\ntz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8\n\nadsf\n\nUri: https://siwt.xyz\nVersion: 1\nChain ID: NetXdQprcVkpaWU\nNonce: 12345678\nIssued At: 2021-08-25T12:34:56Z\nExpiration Time: 2021-08-25T12:34:56Z\nNot Before: 2021-08-25T12:34:56Z\nRequest ID: 123456789\nResources:\n- https://a.com\n- https://b.com'
+
     const expected = {
       domain: 'SIWT',
       namespace: 'Tezos',
@@ -78,9 +78,8 @@ describe('src/parser/abnf', () => {
     // when ... we want to parse an invalid SIWT message
     // then ... it should throw an error as expected
 
-    const message =
-      'SIWT wants you to sign in with your tezos account:\ntz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8'
-    
+    const message = 'SIWT wants you to sign in with your tezos account:\ntz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8'
+
     expect(() => SUT.parseSIWTMessage(message)).toThrow()
-  }) 
+  })
 })

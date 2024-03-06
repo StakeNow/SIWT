@@ -72,22 +72,21 @@ export const packMessagePayload = (messageData: string[]): string =>
     join(''),
   )(messageData)
 
-export const unpackMessagePayload = (packedMessage: string): UnpackedMessagePayload | Error => {
+export const unpackMessagePayload = (packedMessage: string): UnpackedMessagePayload => {
   try {
     const prefix = packedMessage.slice(0, 4)
     const messageLength = parseInt(packedMessage.slice(4, 12), 16)
     const messageBytes = packedMessage.slice(12)
     const message = bytes2Char(packedMessage.slice(12))
-    const messageParts = message.split('\n')
 
     return {
       prefix,
       messageLength,
-      messageParts,
+      message,
       messageBytes,
     }
   } catch (error) {
-    return new Error('Invalid message payload')
+    throw new Error('Invalid message payload')
   }
 }
 
