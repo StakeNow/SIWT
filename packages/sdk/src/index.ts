@@ -5,3 +5,4 @@
  */
 
 export * from './lib/utils'
+export { NETWORK_IDS } from './lib/constants'

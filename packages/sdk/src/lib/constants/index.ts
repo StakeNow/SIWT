@@ -9,6 +9,11 @@ export const API_URLS = {
   ghostnet: 'api.ghostnet.tzkt.io',
 }
 
+export const NETWORK_IDS = {
+  mainnet: 'NetXdQprcVkpaWU',
+  ghostnet: 'NetXnHfVqm9iesp',
+}
+
 export const TEZOS_SIGNED_MESSAGE_PREFIX = 'Tezos Signed Message:'
 
 export const MESSAGE_PAYLOAD_PREFIX = '0501'

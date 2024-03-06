@@ -5,7 +5,7 @@
  */
 import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { AccessControlQuery } from '@siwt/acq/lib/types'
-import { createMessagePayload } from '@siwt/sdk'
+import { NETWORK_IDS, createMessagePayload } from '@siwt/sdk'
 import { validateContractAddress } from '@taquito/utils'
 import clsx from 'clsx'
 import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, test, uniq, without } from 'ramda'
@@ -20,7 +20,7 @@ import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
 
 export const Try = () => {
-  const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
+  const { connect, disconnect, requestSignPayload, getActiveAccount, client } = useBeacon()
   const [acq, setAcq] = useState<AccessControlQuery>({
     network: Network.ghostnet,
     parameters: {
@@ -151,14 +151,20 @@ export const Try = () => {
 
   const signMessage = (address: string) => {
     const messagePayload = createMessagePayload({
-      dappUrl: 'SIWT.xyz',
-      pkh: address,
-      options: {
-        policies: pipe(split(','), concat(selectedPolicies), uniq, reject(isEmpty))(customPolicies),
-      },
+      domain: 'SIWT',
+      address,
+      uri: 'https://siwt.xyz',
+      version: '1.0',
+      chainId: NETWORK_IDS[acq.network],
+      statement: 'By signing this message, you agree to the resources mentioned in this message.',
+      nonce: '123456',
+      issuedAt: new Date().toISOString(),
+      expirationTime: new Date(Date.now() + 300000).toISOString(),
+      resources: pipe(split(','), concat(selectedPolicies), uniq, reject(isEmpty))(customPolicies),
     })
+    console.log('PAYLOAD', messagePayload)
     setMessage(messagePayload.payload)
-
+    client.getPeers().then(console.log).catch(console.log)
     return requestSignPayload(messagePayload).then(({ signature }: SignPayloadResponse) => setSignature(signature))
   }
 
@@ -440,8 +446,8 @@ export const Try = () => {
                 </div>
                 <Button onClick={() => signMessage(activeAccount?.address)}>(Re-) Sign</Button>
                 <div className="mt-4 text-sm italic text-gray-500">
-                  A signature is only valid for 5 minutes. If you get an "Invalid login" message, you might need create
-                  a new signature.
+                  A signature is only valid for 5 minutes. If you get an &quot;Invalid login&quot; message, you might
+                  need create a new signature.
                 </div>
               </div>
             </>

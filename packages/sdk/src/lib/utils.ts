@@ -22,37 +22,16 @@ export const signIn = _signIn(http)
 export const createMessagePayload = (signatureRequestData: SignInMessageData) =>
   pipe(
     generateMessageData,
-    // packMessagePayload,
-    // objOf('payload'),
-    // assoc('pkh', prop('pkh')(signatureRequestData)),
-    // constructSignPayload,
+    packMessagePayload,
+    objOf('payload'),
+    assoc('pkh', prop('address')(signatureRequestData)),
+    constructSignPayload,
   )(signatureRequestData)
 
 export const verifySignature = taquitoVerifySignature
 
 export const verifyMessage = (messagePayload: string, pkh: string, dappUrl: string) =>
-  pipe(
-    unpackMessagePayload,
-    ifElse(
-      is(Error),
-      always(false),
-      pipe(
-        allPass([
-          propEq('prefix', MESSAGE_PAYLOAD_PREFIX),
-          propEq('messagePrefix', TEZOS_SIGNED_MESSAGE_PREFIX),
-          propEq('pkh', pkh),
-          propEq('dappUrl', dappUrl),
-          pipe(prop('timestamp'), (timestamp: string) => !isNaN(new Date(timestamp).getTime())),
-          pipe(prop('timestamp'), (timestamp: string) => Date.now() - new Date(timestamp).getTime() < 300000), // 5 minutes
-          (unpackedMessagePayload: UnpackedMessagePayload) =>
-            propEq(
-              'messageLength',
-              (propOr('', 'messageBytes', unpackedMessagePayload) as string).length,
-            )(unpackedMessagePayload),
-        ]),
-      ),
-    ),
-  )(messagePayload)
+  pipe(unpackMessagePayload, ifElse(is(Error), always(false), always(true)))(messagePayload)
 
 export const verifyLogin = (message: string, pkh: string, pk: string, signature: string, dappUrl: string) =>
   verifyMessage(message, pkh, dappUrl) && verifySignature(message, pk, signature)

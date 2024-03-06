@@ -55,10 +55,6 @@ export type HTTPResponse<T> = {
 export interface UnpackedMessagePayload {
   prefix: string
   messageLength: number
-  message: string
-  messagePrefix: string
-  dappUrl: string
-  timestamp: string
+  messageParts: string[]
   messageBytes: string
-  pkh: string
 }
