@@ -54,7 +54,7 @@ export const checkAccess = async ({
 
   try {
     const isValidLogin = verify(message, publicKey, signature, domain, nonce)
-  
+
     if (!isValidLogin) {
       return {
         statusCode: 401,
