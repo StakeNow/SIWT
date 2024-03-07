@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { MESSAGE_PAYLOAD_PREFIX } from '../constants'
 import { SignInMessageData } from '../types'
 import * as SUT from './utils'
 

@@ -5,6 +5,7 @@
  */
 import { bytes2Char, char2Bytes } from '@taquito/utils'
 import {
+  addIndex,
   append,
   filter,
   ifElse,
@@ -51,7 +52,7 @@ export const generateMessageData = (messageData: SignInMessageData) => {
     prepend(`${domain} ${SIGN_IN_MESSAGE}`),
     unless(
       () => isEmpty(messageData?.resources) || isNil(messageData?.resources),
-      messageData.resources && append(map(resource => `${resource}\n`)(messageData.resources) as any),
+      messageData.resources && append(pipe(addIndex(map)((resource: string, idx: number) => idx === 0 ? `Resources:\n- ${resource}` : `- ${resource}`) as any, join('\n'))(messageData.resources) as any),
     ),
     reject(isNil),
   )(OPTIONAL_MESSAGE_PROPERTIES)
