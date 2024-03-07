@@ -36,7 +36,7 @@ describe('utils/siwt.utils', () => {
           'Expiration Time: EXPIRATION_TIME',
           'Not Before: NOT_BEFORE',
           'Request ID: REQUEST_ID',
-          ['RESOURCE1\n', 'RESOURCE2\n'],
+          'Resources:\n- RESOURCE1\n- RESOURCE2',
         ],
       ],
       [
@@ -92,7 +92,7 @@ describe('utils/siwt.utils', () => {
           'Expiration Time: EXPIRATION_TIME',
           'Not Before: NOT_BEFORE',
           'Request ID: REQUEST_ID',
-          ['RESOURCE1\n', 'RESOURCE2\n'],
+          'Resources:\n- RESOURCE1\n- RESOURCE2',
         ],
       ],
     ])('should generate the message data as expected', (messageData, expected) => {
