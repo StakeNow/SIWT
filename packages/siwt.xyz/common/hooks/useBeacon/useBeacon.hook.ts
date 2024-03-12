@@ -17,7 +17,7 @@ export const beacon = (client: DAppClient) => () => {
   const requestSignPayload = (payload: RequestSignPayloadInput) => client.requestSignPayload(payload)
   const getActiveAccount = () => client.getActiveAccount()
 
-  return { disconnect, connect, requestSignPayload, getActiveAccount }
+  return { disconnect, connect, requestSignPayload, getActiveAccount, client }
 }
 
 export const useBeacon = beacon(dAppClient())

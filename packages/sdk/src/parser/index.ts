@@ -4,5 +4,4 @@
  * SPDX-License-Identifier: MIT
  */
 
-export * from './lib/utils'
-export { NETWORK_IDS } from './lib/constants'
+export { parseSIWTMessage } from './abnf'

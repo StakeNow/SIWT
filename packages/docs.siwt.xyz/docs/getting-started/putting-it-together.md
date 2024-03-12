@@ -203,7 +203,7 @@ const authenticate = async (req, res, next) => {
 app.post('/signin', (req, res) => {
   const { message, signature, pk, pkh } = req.body
   try {
-    const isValidLogin = siwtClient.verifyLogin(message, pkh, pk, signature, dappUrl)
+    const isValidLogin = siwtClient.verify(message, pkh, pk, signature, dappUrl)
     if (isValidLogin) {
       // when a user provided a valid signature, we can obtain and
       // return the required information about the user.

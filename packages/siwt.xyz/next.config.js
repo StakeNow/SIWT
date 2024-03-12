@@ -16,6 +16,17 @@ const nextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve = {
+        ...config.resolve,
+        fallback: {
+          fs: false,
+        },
+      }
+    }
+    return config
+  },
 }
 
 module.exports = withNx(nextConfig)
