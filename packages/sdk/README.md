@@ -9,8 +9,8 @@ This SDK library (sdk) is used to interact with SIWT.
 The message is constructed following the [CAIP-122](https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-122.md) standard and will have the following structure:
 
 ```txt
-${domain} wants you to sign in with your **blockchain** account:
-${account_address(address)}
+${domain} wants you to sign in with your ${namespace(account-id)} account:
+${account_address(account-id)}
 
 ${statement}
 
@@ -21,7 +21,7 @@ Issued At: ${issued-at}
 Expiration Time: ${expiration-time}
 Not Before: ${not-before}
 Request ID: ${request-id}
-Chain ID: ${chain_id(address)}
+Chain ID: ${chain_id(account-id)}
 Resources:
 - ${resources[0]}
 - ${resources[1]}
