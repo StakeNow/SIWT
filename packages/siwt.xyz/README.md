@@ -4,7 +4,7 @@ This application is meant as a demo of the features what SIWT.xyz is capable of.
 
 ## Requirements
 
-Make sure you run 
+Make sure you run
 
 ```
 npm install
