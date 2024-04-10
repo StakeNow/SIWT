@@ -10,7 +10,7 @@ Just having the user sign this message is not enough. We also have to make sure 
 
 ```
 const dappUrl = process.env.DAPP_URL || 'http://localhost:4200'
-const isValidLogin = verifyLogin(message, pkh, pk, signature, dappUrl)
+const isValidLogin = verify(message, pkh, pk, signature, dappUrl)
 ```
 
 #### **Creating tokens**

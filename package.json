@@ -73,12 +73,13 @@
     "vitest": "0.31.4"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^3.3.4",
+    "@airgap/beacon-sdk": "^4.1.2",
     "@headlessui/react": "^1.7.8",
     "@tailwindcss/forms": "^0.5.3",
     "@taquito/taquito": "^17.0.0",
     "@taquito/utils": "^15.0.1",
     "ajv": "^8.12.0",
+    "apg-js": "^4.3.0",
     "aws-lambda": "^1.0.7",
     "body-parser": "^1.20.1",
     "clsx": "^1.2.1",

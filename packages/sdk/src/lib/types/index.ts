@@ -15,10 +15,18 @@ export interface SignInMessageDataOptions {
 }
 
 export interface SignInMessageData {
-  dappUrl: string
-  pkh: string
-  options?: SignInMessageDataOptions
-  message?: string
+  domain: string
+  address: string
+  uri: string
+  version: string
+  chainId: string
+  statement?: string
+  nonce?: string
+  issuedAt?: string
+  expirationTime?: string
+  notBefore?: string
+  requestId?: string
+  resources?: string[]
 }
 
 export interface SignInPayload {
@@ -48,9 +56,18 @@ export interface UnpackedMessagePayload {
   prefix: string
   messageLength: number
   message: string
-  messagePrefix: string
-  dappUrl: string
-  timestamp: string
   messageBytes: string
-  pkh: string
+}
+
+export interface ParsedMessage {
+  domain: string
+  nonce: string
+  version: string
+  statement: string
+  issuedAt: string
+  accountAddress: string
+  expirationTime?: string
+  notBefore?: string
+  requestId?: string
+  resources?: string[]
 }

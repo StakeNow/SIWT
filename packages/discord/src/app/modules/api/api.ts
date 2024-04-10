@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { queryAccessControl } from '@siwt/acq'
-import { verifyLogin } from '@siwt/sdk'
+import { verify } from '@siwt/sdk'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import express from 'express'
@@ -26,7 +26,7 @@ app.post('/verification/:verificationId', async (req, res) => {
     const { verificationId } = req.params
     const { message, pk, signature, pkh } = req.body
     const { guildId, roleId, discordUserId } = await findVerificationById(verificationId)
-    const isValidLogin = verifyLogin(message, pkh, pk, signature, dappUrl)
+    const isValidLogin = verify(message, pkh, pk, signature, dappUrl)
 
     // guards
     if (!isValidLogin || !guildId || !roleId || !discordUserId) return res.status(401).send()
