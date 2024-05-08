@@ -5,8 +5,10 @@
  */
 import { bytes2Char, char2Bytes } from '@taquito/utils'
 import {
+  __,
   addIndex,
   append,
+  divide,
   filter,
   ifElse,
   isEmpty,
@@ -21,6 +23,7 @@ import {
   propEq,
   reject,
   replace,
+  slice,
   unless,
   values,
 } from 'ramda'
@@ -72,12 +75,20 @@ export const constructSignPayload = ({ payload, pkh }: { payload: string; pkh: s
   sourceAddress: pkh,
 })
 
+export const calculateLength = pipe(
+  prop('length'),
+  divide(__, 2),
+  (length: number) => length.toString(16),
+  (length: string) => `00000000${length}`,
+  (length: string) => slice(length.length - 8, length.length)(length),
+)
+
 export const packMessagePayload = (messageData: string[]): string =>
   pipe(
     prepend(TEZOS_SIGNED_MESSAGE_PREFIX),
     join('\n'),
     char2Bytes,
-    (bytes: string) => ['05', '01', prop('length')(bytes).toString(16).padStart(8, '0'), bytes],
+    (bytes: string) => ['05', '01', calculateLength(bytes), bytes],
     join(''),
   )(messageData)
 

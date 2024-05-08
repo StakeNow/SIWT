@@ -1,5 +1,3 @@
-import { InMemorySigner } from '@taquito/signer'
-
 import * as SUT from './utils'
 import { packMessagePayload } from './utils/utils'
 
@@ -70,7 +68,7 @@ describe('utils', () => {
           'Request ID: REQUEST_ID',
         ]),
         'edpktzrUyEY5iTgYVvZQyNFUoMxArP7gGoQ9fV9yoQgb22MCf6QzoA',
-        'edsigu4BnkGR1yPSpTsz1rGcgkdtTSv77iyJ2JhDJLBDD3YZRXYEZLHJfCMJQYEPoDAThW1CCB439JownUmgEAuYXCVuthbdr98',
+        'edsigtdMCCAerKcb6CEWe1BdrGQpE54pFvfwgCmp62Arp254G6G5NW6iituQ9DoAaXuGmNUUovAm1hwbYHSgnJCMWymGtxM4C9E',
         'DOMAIN',
         'NONCE123',
         true,
@@ -90,7 +88,7 @@ describe('utils', () => {
           'Request ID: REQUEST_ID',
         ]),
         'edpktzrUyEY5iTgYVvZQyNFUoMxArP7gGoQ9fV9yoQgb22MCf6QzoA',
-        'edsigtzL8FrR2SUjVmk1qqEUUiPsY7nz2yStmAbgoDMhR4ZQEqRcgHGF8DBpzciNVsaCTiZah47tG3Z4MyLcVFuNa76Lk7jrQPf',
+        'edsigtdMCCAerKcb6CEWe1BdrGQpE54pFvfwgCmp62Arp254G6G5NW6iituQ9DoAaXuGmNUUovAm1hwbYHSgnJCMWymGtxM4C9E',
         'DOMAIN',
         'NONCE123',
         false,
@@ -110,7 +108,7 @@ describe('utils', () => {
           'Request ID: REQUEST_ID',
         ]),
         'edpktzrUyEY5iTgYVvZQyNFUoMxArP7gGoQ9fV9yoQgb22MCf6QzoA',
-        'edsigu4BnkGR1yPSpTsz1rGcgkdtTSv77iyJ2JhDJLBDD3YZRXYEZLHJfCMJQYEPoDAThW1CCB439JownUmgEAuYXCVuthbdr98',
+        'edsigtdMCCAerKcb6CEWe1BdrGQpE54pFvfwgCmp62Arp254G6G5NW6iituQ9DoAaXuGmNUUovAm1hwbYHSgnJCMWymGtxM4C9E',
         'DOMAIN',
         'NONCE123',
         false,
@@ -130,7 +128,7 @@ describe('utils', () => {
           'Request ID: REQUEST_ID',
         ]),
         'edpktzrUyEY5iTgYVvZQyNFUoMxArP7gGoQ9fV9yoQgb22MCf6QzoA',
-        'edsigu4BnkGR1yPSpTsz1rGcgkdtTSv77iyJ2JhDJLBDD3YZRXYEZLHJfCMJQYEPoDAThW1CCB439JownUmgEAuYXCVuthbdr98',
+        'edsigtdMCCAerKcb6CEWe1BdrGQpE54pFvfwgCmp62Arp254G6G5NW6iituQ9DoAaXuGmNUUovAm1hwbYHSgnJCMWymGtxM4C9E',
         'DOMAIN',
         'NONCE124',
         false,
@@ -150,7 +148,7 @@ describe('utils', () => {
           'Request ID: REQUEST_ID',
         ]),
         'edpktzrUyEY5iTgYVvZQyNFUoMxArP7gGoQ9fV9yoQgb22MCf6QzoA',
-        'edsigtkRYGcZLSdY7qUrDddHf6aCYC7owBaRXVYnKBRdJMoWYFgAHCgEakZRHTdAAHd4uaZ6pkoiTX3wZRW162xK9F68NfHCUBd',
+        'edsigtdMCCAerKcb6CEWe1BdrGQpE54pFvfwgCmp62Arp254G6G5NW6iituQ9DoAaXuGmNUUovAm1hwbYHSgnJCMWymGtxM4C9E',
         'DOMAIN',
         'NONCE123',
         false,
@@ -158,7 +156,7 @@ describe('utils', () => {
     ])('should verify the message', (payload, pk, signature, domain, nonce, expected) => {
       // when ... we want to verify the message
       // then ... it should verify the message as expected
-
+      
       if (expected === false) {
         expect(() => SUT.verify(payload, pk, signature, domain, nonce)).toThrow()
         return
