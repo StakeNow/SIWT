@@ -20,7 +20,7 @@ import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
 
 export const Try = () => {
-  const { connect, disconnect, requestSignPayload, getActiveAccount, client } = useBeacon()
+  const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
   const [acq, setAcq] = useState<AccessControlQuery>({
     network: Network.ghostnet,
     parameters: {
