@@ -156,7 +156,7 @@ describe('utils', () => {
     ])('should verify the message', (payload, pk, signature, domain, nonce, expected) => {
       // when ... we want to verify the message
       // then ... it should verify the message as expected
-      
+
       if (expected === false) {
         expect(() => SUT.verify(payload, pk, signature, domain, nonce)).toThrow()
         return
