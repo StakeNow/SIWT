@@ -1,5 +1,3 @@
-import { InMemorySigner } from '@taquito/signer'
-
 import * as SUT from './utils'
 import { packMessagePayload } from './utils/utils'
 

@@ -5,6 +5,7 @@
  */
 import { act, render } from '@testing-library/react'
 import React from 'react'
+import "fake-indexeddb/auto"
 
 import { Try } from './Try'
 

@@ -13,7 +13,7 @@
     "incremental": true,
     "types": ["jest", "node"],
     "declaration": true,
-    "module": "commonjs"
+    "module": "commonjs",
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx", "next-env.d.ts"],
   "exclude": ["node_modules", "jest.config.ts"]
