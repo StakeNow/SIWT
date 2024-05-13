@@ -20,7 +20,9 @@
       "@siwt/react": ["packages/react/src/index.ts"],
       "@siwt/sdk": ["packages/sdk/src/index.ts"],
       "@siwt/smart-contracts": ["packages/smart-contracts/src/index.ts"]
-    }
+    },
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
   },
   "exclude": ["node_modules", "tmp"]
 }

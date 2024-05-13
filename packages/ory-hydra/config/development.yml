@@ -1,0 +1,24 @@
+serve:
+  cookies:
+    same_site_mode: Lax
+
+urls:
+  self:
+    issuer: http://localhost:5004
+  consent: http://localhost:5002/consent
+  login: http://localhost:4201/login
+  logout: http://localhost:4201/logout
+
+secrets:
+  system:
+    - e5Mcyq@EU@iT=1hH
+
+oidc:
+  subject_identifiers:
+    supported_types:
+      - pairwise
+      - public
+    pairwise:
+      salt: e5Mcyq@EU@iT=1hH
+log:
+  level: debug
