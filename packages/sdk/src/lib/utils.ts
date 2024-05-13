@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { verifySignature as taquitoVerifySignature, validateAddress } from '@taquito/utils'
-import { assoc, has, objOf, pipe, prop, replace, tap } from 'ramda'
+import { assoc, has, objOf, pipe, prop, replace } from 'ramda'
 
 import { parseSIWTMessage } from '../parser'
 import { TEZOS_SIGNED_MESSAGE_PREFIX } from './constants'
