@@ -10,7 +10,8 @@ Sign In With Tezos (SIWT) is a library that supports the development of your dec
 - proving the users ownership of the private key to the address the user signs in with,
 - adding permissions to use your API or backend using on chain data,
 - SIWT complies with [CAIP-2/10/122])(https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-122.md)
-- and TZIPs: Off-Chain Message Singing, SIWT, Signer Requests
+- and TZIP-33 Sign-In with Tezos (SIWT),
+- at a later stage TZIP-31/32 Signer Requests and Off-Chain Message Singing will be supported after support from Tezos wallets.
 
 ## Packages
 
