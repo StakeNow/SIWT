@@ -7,7 +7,7 @@ tmp
 *.db
 .env
 .env.*
-
+.nx
 
 # dependencies
 node_modules

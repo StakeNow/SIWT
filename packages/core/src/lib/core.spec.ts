@@ -45,7 +45,6 @@ describe('./siwt', () => {
     it('should generate the access token', () => {
       // when ... we want to get the Access token
       // then ... it should generate and sign as expected
-      const httpStub = jest.fn().mockReturnValue(true) as any
       const signStub = jest.fn().mockReturnValue('JWT')
       const jwtStub = {
         sign: signStub,
@@ -79,7 +78,6 @@ describe('./siwt', () => {
     it('should generate the refresh token', () => {
       // when ... we want to get the refresh token
       // then ... it should generate and sign as expected
-      const httpStub = jest.fn().mockReturnValue(true) as any
       const signStub = jest.fn().mockReturnValue('JWT')
       const jwtStub = {
         sign: signStub,
@@ -104,7 +102,6 @@ describe('./siwt', () => {
     it('should verify a valid access token', () => {
       // when ... we want to verify a valid access token
       // then ... it should return the subject
-      const httpStub = jest.fn().mockReturnValue(true) as any
       const verifyStub = jest.fn().mockReturnValue({ sub: 'PKH' })
       const jwtStub = {
         verify: verifyStub,
@@ -125,7 +122,6 @@ describe('./siwt', () => {
     it('should fail to verify an invalid access token', () => {
       // when ... we want to verify an invalid access token
       // then ... it should return false
-      const httpStub = jest.fn().mockReturnValue(true) as any
       const verifyStub = jest.fn().mockImplementation(() => {
         throw new Error('ERROR MESSAGE')
       })
@@ -150,7 +146,6 @@ describe('./siwt', () => {
     it('should verify a valid refresh token', () => {
       // when ... we want to verify a valid refresh token
       // then ... it should return the subject
-      const httpStub = jest.fn().mockReturnValue(true) as any
       const verifyStub = jest.fn().mockReturnValue({
         pkh: 'PKH',
       })
@@ -173,7 +168,6 @@ describe('./siwt', () => {
     it('should fail to verify an invalid refresh token', () => {
       // when ... we want to verify an invalid refresh token
       // then ... it should throw
-      const httpStub = jest.fn().mockReturnValue(true) as any
       const verifyStub = jest.fn().mockImplementation(() => {
         throw new Error('ERROR MESSAGE')
       })

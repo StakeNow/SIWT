@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { act, renderHook } from '@testing-library/react'
+import 'fake-indexeddb/auto'
 
 import { network } from './beaconClient'
 import * as SUT from './useBeacon.hook'

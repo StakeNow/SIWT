@@ -67,7 +67,7 @@ export const verify = (messagePayload: string, pk: string, signature: string, do
   }
 
   // check if message is expired
-  if (has('expirationTime')(parsedMessage)) {
+  if (has('expirationTime', parsedMessage)) {
     const expirationTime = new Date(prop('expirationTime')(parsedMessage) as string)
     if (expirationTime.getTime() < issuedAtDate.getTime()) {
       throw new Error('Message expired')
@@ -75,7 +75,7 @@ export const verify = (messagePayload: string, pk: string, signature: string, do
   }
 
   // check if message is already valid (not before)
-  if (has('notBefore')(parsedMessage)) {
+  if (has('notBefore', parsedMessage)) {
     const notBefore = new Date(prop('notBefore')(parsedMessage) as string)
     if (notBefore.getTime() > Date.now()) {
       throw new Error('Message not yet valid')

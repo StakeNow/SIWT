@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { render } from '@testing-library/react'
+import 'fake-indexeddb/auto'
 
 import App from './app'
 

@@ -64,5 +64,6 @@
         "linter": "eslint"
       }
     }
-  }
+  },
+  "neverConnectToCloud": true
 }
