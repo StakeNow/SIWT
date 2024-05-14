@@ -27,6 +27,12 @@ const nextConfig = {
     }
     return config
   },
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: false,
+    dirs: ['common', 'mocks', 'server'],
+  },
 }
 
 module.exports = withNx(nextConfig)

@@ -9,6 +9,7 @@ tmp
 .env.*
 !.env.example
 
+.nx
 
 # dependencies
 node_modules

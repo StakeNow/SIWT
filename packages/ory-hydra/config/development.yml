@@ -6,8 +6,8 @@ urls:
   self:
     issuer: http://localhost:5004
   consent: http://localhost:5002/consent
-  login: http://localhost:4201/login
-  logout: http://localhost:4201/logout
+  login: http://localhost:4200
+  logout: http://localhost:4200
 
 secrets:
   system:
