@@ -16,25 +16,25 @@ export const Footer = () => {
   return (
     <footer className="bg-slate-50">
       <Container>
-        <div className="py-16 flex flex-row w-full justify-between items-center">
-          <div className="w-1/3">
+        <div className="py-16 flex flex-col md:flex-row w-full justify-between md:items-center">
+          <div className="md:w-1/3 h-16">
             <Link href="/">
               <Logo />
             </Link>
           </div>
-          <div className="w-1/3">
-            <nav className="-mt-6 text-sm" aria-label="quick links">
-              <div className="-my-1 flex justify-center gap-x-6">
+          <div className="md:w-1/3">
+            <nav className="md:-mt-6 text-sm" aria-label="quick links">
+              <div className="-my-1 flex flex-col md:flex-row md:justify-center md:gap-x-6">
                 <NavLink href="/try">Try it out</NavLink>
                 <NavLink href="https://docs.siwt.xyz">Get Started</NavLink>
               </div>
             </nav>
           </div>
-          <div className="w-1/3 text-center">
+          <div className="md:w-1/3 md:text-center mt-6 md:mt-0">
             <p className="font-display text-base text-slate-900">Development supported by:</p>
             <ul
               role="list"
-              className="mt-2 flex items-center justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0"
+              className="mt-2 flex md:items-center md:justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0"
             >
               {[[{ name: 'The Tezos Foundation', logo: TFLogo }]].map((group, groupIndex) => (
                 <li key={groupIndex}>

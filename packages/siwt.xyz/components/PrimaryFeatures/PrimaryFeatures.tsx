@@ -15,6 +15,7 @@ const features = [
     title: 'Standardized message signing',
     description: 'Verify ownership by having your users sign a message.',
     image: '/images/signing.png',
+    imageSmall: '/images/signing-mobile.png'
   },
   {
     title: 'Agreement to usage policies',
@@ -117,13 +118,24 @@ export function PrimaryFeatures() {
                         {feature.description}
                       </p>
                     </div>
-                    <div className="mt-10 w-[45rem] overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 lg:w-[67.8125rem]">
+                    <div className="mt-10 overflow-hidden rounded-xl bg-slate-50 shadow-xl shadow-blue-900/20 sm:w-auto lg:mt-0 lg:w-[67.8125rem]">
+                      
                       <Image
-                        className="w-full"
+                        className="w-full lg:hidden"
+                        src={feature.imageSmall ?? feature.image}
+                        alt=""
+                        priority
+                        sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 100%"
+                        width={1920}
+                        height={1080}
+                      />
+                      
+                      <Image
+                        className="hidden lg:block w-full"
                         src={feature.image}
                         alt=""
                         priority
-                        sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 45rem"
+                        sizes="(min-width: 1024px) 67.8125rem, (min-width: 640px) 100vw, 100%"
                         width={1920}
                         height={1080}
                       />
