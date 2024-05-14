@@ -19,9 +19,9 @@ jobs:
         run: npm ci
 
       - name: Build packages
-        run: npx nx run-many --target=build --projects=acq,core,react,sdk
+        run: npx nx run-many --target=build --projects=acq,core,react,sdk --skip-nx-cache
 
       - name: Publish packages
-        run: npx nx run-many --target=publish --projects=acq,core,react,sdk
+        run: npx nx run-many --target=publish --projects=acq,core,react,sdk --skip-nx-cache
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
