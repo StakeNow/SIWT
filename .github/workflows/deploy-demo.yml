@@ -26,8 +26,8 @@ jobs:
       - run: npm ci
 
       - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
-      - run: npx nx affected --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
-      - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
+      - run: npx nx run-many --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
+      - run: npx nx run-many --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,9 +55,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'eu-central-1'
-      - run: npx nx affected --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
-      - run: npx nx affected --target=build-server --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
-      - run: npx nx affected --target=export --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
+      - run: npx nx run-many --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
+      - run: npx nx run-many --target=build-server --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
+      - run: npx nx run-many --target=export --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
 
       - name: Setup staging env file
         if: github.ref == 'refs/heads/develop'
@@ -82,7 +82,7 @@ jobs:
           echo ENV=$ENV >> .env
           cat .env
       - name: Deploy
-        run: npx nx affected --target=deploy --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --production
+        run: npx nx run-many --target=deploy --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --production --skip-nx-cache
       - name: Invalidate Staging Distribution
         if: github.ref == 'refs/heads/develop'
         env:
