@@ -56,7 +56,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'eu-central-1'
       - run: npx nx build siwt.xyz --skip-nx-cache
-      - run: npx nx build-server siwt.xyz --skip-nx-cache 
+      - run: npx nx build-server siwt.xyz --skip-nx-cache
 
       - name: Setup staging env file
         if: github.ref == 'refs/heads/develop'
