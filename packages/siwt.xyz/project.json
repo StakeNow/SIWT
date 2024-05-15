@@ -4,20 +4,6 @@
   "sourceRoot": "packages/siwt.xyz",
   "projectType": "application",
   "targets": {
-    "build": {
-      "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/packages/siwt.xyz"
-      },
-      "configurations": {
-        "development": {
-          "outputPath": "packages/siwt.xyz"
-        },
-        "production": {}
-      }
-    },
     "build-server": {
       "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
@@ -54,12 +40,6 @@
           "buildTarget": "siwt.xyz:build:production",
           "dev": false
         }
-      }
-    },
-    "export": {
-      "executor": "@nx/next:export",
-      "options": {
-        "buildTarget": "siwt.xyz:build:production"
       }
     },
     "test": {
