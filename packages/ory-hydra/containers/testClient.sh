@@ -8,6 +8,7 @@ client=$(docker run --rm \
     --grant-type authorization_code \
     --response-type token,code,id_token \
     --scope openid \
+    --skip-consent \
     --redirect-uri http://localhost:4200/api/auth/callback/siwt \
     -e http://hydra:4445 \
     --format json )

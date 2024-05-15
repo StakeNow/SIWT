@@ -5,9 +5,9 @@ serve:
 urls:
   self:
     issuer: http://localhost:5004
-  consent: http://localhost:5002/consent
-  login: http://localhost:4200
-  logout: http://localhost:4200
+  consent: http://localhost:4200/api/consent
+  login: http://localhost:4200/signin
+  logout: http://localhost:4200/signout
 
 secrets:
   system:
