@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    environment: Packages
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
