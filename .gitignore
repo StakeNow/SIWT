@@ -44,6 +44,7 @@ Thumbs.db
 
 # Next.js
 .next
+out
 
 # Docusaurus
 .docusaurus
