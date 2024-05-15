@@ -8,7 +8,7 @@ const { withNx } = require('@nx/next/plugins/with-nx')
  **/
 const nextConfig = {
   output: 'export',
-  distDir: '../../dist/packages/siwt.xyz',
+  distDir: '../../dist/packages/siwt.xyz/exported',
   nx: {
     // Set this to true if you would like to to use SVGR
     // See: https://github.com/gregberge/svgr
