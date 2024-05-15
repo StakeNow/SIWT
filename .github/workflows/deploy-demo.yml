@@ -57,7 +57,6 @@ jobs:
           aws-region: 'eu-central-1'
       - run: npx nx run-many --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
       - run: npx nx run-many --target=build-server --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
-      - run: npx nx run-many --target=export --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
 
       - name: Setup staging env file
         if: github.ref == 'refs/heads/develop'
