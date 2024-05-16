@@ -139,7 +139,10 @@ export const Try = () => {
 
   const onChangeCustomPolicies = (event: ChangeEvent<HTMLInputElement>) => {
     setCustomPolicies(event.currentTarget.value)
-    test(/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/, event.currentTarget.value) || event.currentTarget.value === ''
+    test(
+      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
+      event.currentTarget.value,
+    ) || event.currentTarget.value === ''
       ? setAreCustomPoliciesValid(true)
       : setAreCustomPoliciesValid(false)
   }
