@@ -46,7 +46,7 @@ export const Try = () => {
   const [isAllowlistInputValid, setIsAllowlistInputValid] = useState<boolean>(true)
   const [selectedPolicies, setSelectedPolicies] = useState<string[]>([])
   const [customPolicies, setCustomPolicies] = useState<string>('')
-  const [isCustomPoliciesValid, setIsCustomPoliciesValid] = useState<boolean>(true)
+  const [areCustomPoliciesValid, setAreCustomPoliciesValid] = useState<boolean>(true)
   const [activeAccount, setActiveAccount] = useState<AccountInfo>({} as AccountInfo)
   const [message, setMessage] = useState<string>('')
   const [signature, setSignature] = useState<string>('')
@@ -139,9 +139,9 @@ export const Try = () => {
 
   const onChangeCustomPolicies = (event: ChangeEvent<HTMLInputElement>) => {
     setCustomPolicies(event.currentTarget.value)
-    test(/^([A-Za-z0-9]+, )*[A-Za-z0-9]+$/, event.currentTarget.value) || event.currentTarget.value === ''
-      ? setIsCustomPoliciesValid(true)
-      : setIsCustomPoliciesValid(false)
+    test(/^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/, event.currentTarget.value) || event.currentTarget.value === ''
+      ? setAreCustomPoliciesValid(true)
+      : setAreCustomPoliciesValid(false)
   }
 
   const onChangeSelectedPolicies = (id: string) => {
@@ -347,7 +347,7 @@ export const Try = () => {
               <CheckboxSet
                 id="policies"
                 label="Policies"
-                options={['Terms and Conditions', 'Privacy Policy']}
+                options={['https://siwt.xyz/terms-conditions', 'https://siwt.xyz/privacy-policy']}
                 onChange={onChangeSelectedPolicies}
                 checked={selectedPolicies}
               />
@@ -357,8 +357,8 @@ export const Try = () => {
                   id="other-policies"
                   value={customPolicies}
                   onChange={onChangeCustomPolicies}
-                  explainer="Comma separated list of other policies your dApp may have. For example: 'Cookie policy, Refund policy'"
-                  hasValidInput={isCustomPoliciesValid}
+                  explainer="Comma separated list of urls to other policies your dApp may have."
+                  hasValidInput={areCustomPoliciesValid}
                 />
               </div>
             </div>
