@@ -1,13 +1,3 @@
 {
-  "arrowParens": "avoid",
-  "endOfLine": "lf",
-  "printWidth": 120,
-  "quoteProps": "consistent",
-  "semi": false,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "all",
-  "importOrder": ["^[./]"],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "singleQuote": true
 }

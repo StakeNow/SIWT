@@ -23,7 +23,7 @@ import { denominate, hexToAscii } from '../utils'
 export const _getOwnedAssetsForPKH =
   (http: HTTP) =>
   (options?: Options) =>
-  ({ network, contract, pkh, contractType }) => {
+  ({ network, contract, pkh, contractType }: { network: 'mainnet' | 'ghostnet', contract: string, pkh: string, contractType: AssetContractType }) => {
     let query = `key.address=${pkh}&value.gt=0`
 
     if (contractType === AssetContractType.nft) {
@@ -58,10 +58,10 @@ export const _getAttributesFromStorage =
     )
       .then(({ data }) => {
         const metaDataUrl = pipe(
-          find(pathEq(['value', 'token_id'], tokenId)),
+          find(pathEq(tokenId, ['value', 'token_id'])),
           propOr('', ''),
           hexToAscii,
-        )(data as any) as string
+        )(data)
 
         return http(metaDataUrl)
           .then(pathOr([], ['data', 'attributes']))
@@ -114,7 +114,7 @@ export const getTokenBalance = _getTokenBalance(http)
 export const _getAssetContractTypeByContract =
   (http: HTTP) =>
   (options?: Options) =>
-  ({ contract, network }: { contract: string; network: Network.ghostnet }) =>
+  ({ contract, network }: { contract: string; network: Network }) =>
     http<HTTPResponse<BigmapResponse>>(`https://${API_URLS[network]}/v1/contracts/${contract}/bigmaps/ledger/`, options)
       .then(
         pipe(

@@ -3,7 +3,8 @@
  *
  * SPDX-License-Identifier: MIT
  */
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { apgApi, apgLib } from 'apg-js'
 import { map } from 'ramda'
 
@@ -200,9 +201,6 @@ const generateGrammarApi = (grammar: string) => {
   const api = new apgApi(grammar)
   api.generate()
   if (api.errors.length) {
-    console.log(api.errorsToAscii())
-    console.log(api.linesToAscii())
-    console.log(api.displayAttributeErrors())
     throw new Error(`ABNF grammar has errors`)
   }
   return api.toObject()

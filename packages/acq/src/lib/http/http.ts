@@ -3,11 +3,11 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { HTTP } from '../types'
+import { HTTP, Options } from '../types'
 
 export const fetchWithTimeout = async <TResponse>(
   resource: string,
-  options: { timeout: number } = { timeout: 3000 },
+  options: Options = { timeout: 3000 },
 ) => {
   const { timeout } = options
 

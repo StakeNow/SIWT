@@ -12,7 +12,7 @@ import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
 import { useRouter } from 'next/router'
 import { useBeacon } from '../../common/hooks/useBeacon'
-import { NetworkType } from '@airgap/beacon-sdk'
+import { NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
 
 const Index = () => {
   const { query: { login_challenge } } = useRouter()
@@ -30,7 +30,7 @@ const Index = () => {
           domain: 'SIWT',
           address,
           uri: 'https://siwt.xyz',
-          version: 1,
+          version: '1',
           chainId: NETWORK_IDS['mainnet'],
           statement: 'By signing this message, you agree to the resources mentioned in this message.',
           nonce,
@@ -39,7 +39,7 @@ const Index = () => {
           resources: [],
         })
 
-        requestSignPayload(messagePayload)
+        requestSignPayload(messagePayload as RequestSignPayloadInput)
           .then(async ({ signature }) => {
             console.log('Sign request sent', signature)
             console.log(messagePayload)

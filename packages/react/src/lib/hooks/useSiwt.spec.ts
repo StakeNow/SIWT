@@ -15,7 +15,7 @@ describe('./lib/hooks', () => {
       const { createMessagePayload, signIn } = SUT._useSiwt({
         createMessagePayload: createMessagePayloadStub,
         signIn: signInStub,
-      })()
+      })('API_URL')
 
       // then ... we should be able to use createMessagePayload and signIn functions
       const payload = createMessagePayload()

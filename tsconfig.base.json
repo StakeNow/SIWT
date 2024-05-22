@@ -10,7 +10,7 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -19,11 +19,9 @@
       "@siwt/core": ["packages/core/src/index.ts"],
       "@siwt/react": ["packages/react/src/index.ts"],
       "@siwt/sdk": ["packages/sdk/src/index.ts"],
-      "@siwt/siwt.xyz": ["packages/siwt.xyz/src/index.ts"],
-      "@siwt/smart-contracts": ["packages/smart-contracts/src/index.ts"]
-    },
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+      "discord": ["packages/discord/src/index.ts"],
+      "smart-contracts": ["packages/smart-contracts/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -50,6 +50,7 @@ export interface BigmapKeyResponse {
   firstLevel: number
   lastLevel: number
   updates: number
+  name: string | null
 }
 
 export type BalanceResponse = number
@@ -140,11 +141,11 @@ export type GetAssetContractTypeByContract = ({
 }) => Promise<AssetContractType>
 
 export interface AccessControlQueryDependencies {
-  getOwnedAssetsForPKH?: (options?: Options) => GetOwnedAssetsForPKH
-  getBalance?: (options?: Options) => GetBalance
-  getTokenBalance?: (options?: Options) => GetTokenBalance
-  getAttributesFromStorage?: (options?: Options) => GetAttributesFromStorage
-  getAssetContractTypeByContract?: (options?: Options) => GetAssetContractTypeByContract
+  getOwnedAssetsForPKH: (options?: Options) => GetOwnedAssetsForPKH
+  getBalance: (options?: Options) => GetBalance
+  getTokenBalance: (options?: Options) => GetTokenBalance
+  getAttributesFromStorage: (options?: Options) => GetAttributesFromStorage
+  getAssetContractTypeByContract: (options?: Options) => GetAssetContractTypeByContract
 }
 
 export interface AccessControlQuery {

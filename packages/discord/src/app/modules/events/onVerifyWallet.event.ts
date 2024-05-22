@@ -29,7 +29,7 @@ const onVerifyWallet =
     const memberRoles = member?.roles as GuildMemberRoleManager
     const memberRoleNames = pipe(propOr([], 'cache') as any, map(prop('name')))(memberRoles) as []
     const verifiedRole = pipe(pathOr([], ['roles', 'cache']), find(propEq('name', 'Verified')))(guild) as
-      | Role
+      | unknown as Role
       | undefined
 
     if (bot) return

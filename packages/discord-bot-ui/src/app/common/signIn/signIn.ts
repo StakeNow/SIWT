@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 import { DAppClient, NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
-import { useSiwt } from '@siwt/react'
+import { createMessagePayload } from '@siwt/sdk'
 import { prop } from 'ramda'
 
 import { NotificationStatus } from '../types'
@@ -31,8 +31,6 @@ const verifyWithDiscord = (id: string) => async (params: any) => {
 }
 
 const login = async (onVerify: (x: any) => void) => {
-  const { createMessagePayload } = useSiwt()
-
   try {
     const requestId = getRequestId()
     if (!requestId) return
@@ -46,8 +44,16 @@ const login = async (onVerify: (x: any) => void) => {
 
     // create the message to be signed
     const messagePayload = createMessagePayload({
-      dappUrl: process.env.NX_APPLICATION_URL || '',
-      pkh: walletPermissions.address,
+      domain: 'SIWT',
+      address: walletPermissions.address,
+      uri: 'https://siwt.xyz',
+      version: '1',
+      chainId: 'mainnet',
+      statement: 'By signing this message, you agree to the resources mentioned in this message.',
+      nonce: 'nonce',
+      issuedAt: new Date().toISOString(),
+      expirationTime: new Date(Date.now() + 300000).toISOString(),
+      resources: [],
     })
 
     // request the signature

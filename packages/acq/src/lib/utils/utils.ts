@@ -45,17 +45,17 @@ export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(
 export const filterOwnedAssetsFromMultiAssetContract = (pkh: string, tokenIds: string[]) =>
   filter(
     allPass([
-      pathEq(['key', 'address'], pkh),
-      pipe(path(['key', 'nat']), (tokenId: string) => gt(indexOf(tokenId, tokenIds), -1)),
+      pathEq(pkh, ['key', 'address']),
+      pipe(pathOr('', ['key', 'nat']), (tokenId: string) => gt(indexOf(tokenId, tokenIds), -1)),
     ]),
   )
 
 export const determineContractAssetTypeFromLedger = pipe(
   head,
   cond([
-    [pipe(prop('key'), validateAddress, equals(3)), always(AssetContractType.single)],
+    [pipe(propOr('', 'key'), validateAddress, equals(3)), always(AssetContractType.single)],
     [pipe(propOr('', 'value'), validateAddress, equals(3)), always(AssetContractType.nft)],
-    [pipe(path(['key', 'address']), validateAddress, equals(3)), always(AssetContractType.multi)],
+    [pipe(pathOr('', ['key', 'address']), validateAddress, equals(3)), always(AssetContractType.multi)],
     [T, always(AssetContractType.unknown)],
   ]),
 )
@@ -100,8 +100,8 @@ export const validateNFTCondition =
     parameters: { pkh },
     test: { contractAddress, comparator, value, checkTimeConstraint = false, tokenIds = ['0'] },
   }: AccessControlQuery) =>
-    getAssetContractTypeByContract({ contract: contractAddress, network }).then(assetContractType =>
-      getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh, contractType: assetContractType })
+    getAssetContractTypeByContract({ contract: contractAddress as string, network }).then(assetContractType =>
+      getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh: pkh as string, contractType: assetContractType })
         .then(async assets => {
           if (assets.length === 0) {
             return {
@@ -129,10 +129,10 @@ export const validateNFTCondition =
             const attributes = (await getAttributesFromStorage({
               network,
               contract: contractAddress as string,
-              tokenId: ownedAssetIds[0],
-            })) as any[]
+              tokenId: ownedAssetIds[0] as string,
+            })) 
             const validityAttribute = find(
-              ({ name }: { name: string; value: string | number }) => name === 'Valid Until',
+              ({ name }: { name: string | null; value: string | number }) => name === 'Valid Until',
             )(attributes)
             if (
               !attributes.length ||
