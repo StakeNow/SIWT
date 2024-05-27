@@ -22,6 +22,7 @@ import {
   propEq,
   reject,
   slice,
+  tap,
   unless,
   values,
 } from 'ramda'
@@ -37,8 +38,10 @@ export const generateMessageData = (messageData: SignInMessageData) => {
   }
 
   return pipe(
-    mapObjIndexed((value: string, key: keyof typeof OPTIONAL_MESSAGE_PROPERTIES) => (messageData[key] ? `${value}: ${messageData[key]}` : '')),
+    mapObjIndexed((value: string, key: keyof typeof OPTIONAL_MESSAGE_PROPERTIES) => (messageData[key] ? `${value}: ${messageData[key]}` : null)),
     values,
+    reject(isNil),
+    tap(console.log),
     unless(
       () => isEmpty(messageData?.statement) || isNil(messageData?.statement),
       prepend(`\n${messageData.statement}\n`),
@@ -46,7 +49,7 @@ export const generateMessageData = (messageData: SignInMessageData) => {
     prepend(address),
     prepend(`${domain} ${SIGN_IN_MESSAGE}`),
     unless(
-      () => isNil(messageData.resources),
+      () => isEmpty(messageData?.resources) || isNil(messageData.resources),
         append(
           pipe(
             addIndex(map)((resource: unknown, idx: number) =>

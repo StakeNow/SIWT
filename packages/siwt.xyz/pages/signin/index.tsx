@@ -19,7 +19,11 @@ const Index = () => {
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
 
   const handleSignIn = async () => {
-    signIn('siwt')
+    signIn().then(() => {
+      console.log('Sign in successful')
+    }).catch((error) => {
+      console.error('Sign in failed', error)
+    })
   }
 
   const connectAndSign = async () => {
@@ -41,8 +45,6 @@ const Index = () => {
 
         requestSignPayload(messagePayload as RequestSignPayloadInput)
           .then(async ({ signature }) => {
-            console.log('Sign request sent', signature)
-            console.log(messagePayload)
             const accountInfo = await getActiveAccount()
 
             if (accountInfo) {
@@ -53,6 +55,7 @@ const Index = () => {
                 headers: {
                   'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({ signature, message: messagePayload.payload, publicKey, loginChallenge: login_challenge }),
               })
                 .then((response) => response.json())

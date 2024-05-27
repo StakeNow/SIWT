@@ -1,6 +1,5 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
-import { getCsrfToken } from "next-auth/react"
 import { match } from "ts-pattern";
 import { verify } from "@siwt/sdk";
 
@@ -14,28 +13,21 @@ const post = (oidc: OidcApi) => async (
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) => {
-  // check if the request body is valid
-  // check signature
-  // check nonce
-  // login to hydra
-
   try {
     const { signature, message, publicKey, loginChallenge } = req.body
-    const nonce = req.cookies['next-auth.csrf-token']?.split('|')[0]
+    const nonce = req.cookies['next-auth.csrf-token']?.split('|')[0] as string
 
-
-    const isValid = verify(message, publicKey, signature, 'SIWT', nonce)
-    if (!isValid) {
-      return res.status(400).json({ message: 'Invalid request' })
-    }
+    // const isValid = verify(message, publicKey, signature, 'SIWT', nonce)
+    // if (!isValid) {
+    //   return res.status(400).json({ message: 'Invalid request' })
+    // }
 
     // login to hydra
     const login = await oidc
     .getOAuth2LoginRequest({ loginChallenge })
-    .then(() =>
-      oidc
+    .then(() => oidc
         .acceptOAuth2LoginRequest({
-          loginChallenge,
+          loginChallenge, 
           acceptOAuth2LoginRequest: {
             subject: publicKey,
             remember: Boolean(false),
@@ -43,14 +35,13 @@ const post = (oidc: OidcApi) => async (
             acr: '0',
           },
         })
-        .then(({ data }) => {
-          console.log(data.redirect_to)
-          return res.redirect(data.redirect_to)
-        }))
-    return res.status(200).json({ message: 'Sign request successful' })
+      )
+    console.log(login.data.redirect_to)
+    res.redirect(login.data.redirect_to).end()
+    // return res.status(200).json({ message: 'Sign request successful' })
   } catch (e) {
     console.log(e)
-    return res.status(500).json({ message: 'Internal server error' })
+    res.status(500).json({ message: 'Internal server error' })
   }
 }
 

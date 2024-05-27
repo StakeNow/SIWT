@@ -1,0 +1,56 @@
+{
+  "name": "oidc-bridge",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/oidc-bridge/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/packages/oidc-bridge",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "packages/oidc-bridge/src/main.ts",
+        "tsConfig": "packages/oidc-bridge/tsconfig.app.json",
+        "assets": ["packages/oidc-bridge/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "oidc-bridge:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "oidc-bridge:build:development"
+        },
+        "production": {
+          "buildTarget": "oidc-bridge:build:production"
+        }
+      }
+    }
+  }
+}

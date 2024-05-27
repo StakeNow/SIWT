@@ -1,13 +1,50 @@
 serve:
   cookies:
     same_site_mode: Lax
-
+  admin:
+    cors:
+      debug: true
+      enabled: true
+      allowed_origins:
+        - http://localhost:3000
+        - http://localhost:5001
+        - http://localhost:5004
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+      allowed_headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Content-Type
+  public:
+    cors:
+      debug: true
+      enabled: true
+      allowed_origins:
+        - http://localhost:3000
+        - http://localhost:5001
+        - http://localhost:5004
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+      allowed_headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Content-Type
 urls:
   self:
     issuer: http://localhost:5004
-  consent: http://localhost:4200/api/consent
-  login: http://localhost:4200/signin
-  logout: http://localhost:4200/signout
+  consent: http://localhost:3000/api/consent
+  login: http://localhost:3000/signin
+  logout: http://localhost:3000/signout
 
 secrets:
   system:

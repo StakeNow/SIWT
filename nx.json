@@ -38,7 +38,8 @@
       "exclude": [
         "packages/discord-e2e/**/*",
         "packages/docs.siwt.xyz-e2e/**/*",
-        "packages/ory-hydra-e2e/**/*"
+        "packages/ory-hydra-e2e/**/*",
+        "packages/oidc-bridge-e2e/**/*"
       ]
     },
     {

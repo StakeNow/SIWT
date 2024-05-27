@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
+import { AccountInfo, NetworkType, RequestSignPayloadInput, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { AccessControlQuery } from '@siwt/acq/lib/types'
 import { NETWORK_IDS, createMessagePayload } from '@siwt/sdk'
 import { validateContractAddress } from '@taquito/utils'
@@ -154,7 +154,7 @@ export const Try = () => {
       domain: 'SIWT',
       address,
       uri: 'https://siwt.xyz',
-      version: 1,
+      version: '1',
       chainId: NETWORK_IDS[acq.network],
       statement: 'By signing this message, you agree to the resources mentioned in this message.',
       nonce: '12345678',
@@ -164,7 +164,7 @@ export const Try = () => {
     })
 
     setMessage(messagePayload.payload)
-    return requestSignPayload(messagePayload).then(({ signature }: SignPayloadResponse) => setSignature(signature))
+    return requestSignPayload(messagePayload as RequestSignPayloadInput).then(({ signature }: SignPayloadResponse) => setSignature(signature))
   }
 
   const connectAndSign = () =>
