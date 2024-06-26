@@ -79,7 +79,9 @@ describe('./data', () => {
           },
         ],
       })
-      const result = await SUT._getOwnedAssetsForPKH(httpStub as any)({ timeout: 5000 })({
+      const result = await SUT._getOwnedAssetsForPKH(httpStub as any)({
+        timeout: 5000,
+      })({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         contractType: AssetContractType.multi,
@@ -194,7 +196,9 @@ describe('./data', () => {
         ],
       })
 
-      const result = await SUT._getTokenBalance(httpStub as any)({ timeout: 5000 })({
+      const result = await SUT._getTokenBalance(httpStub as any)({
+        timeout: 5000,
+      })({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         pkh: validPkh,
@@ -292,7 +296,9 @@ describe('./data', () => {
           },
         })
 
-      const result = await SUT._getAttributesFromStorage(httpStub as any)({ timeout: 5000 })({
+      const result = await SUT._getAttributesFromStorage(httpStub as any)({
+        timeout: 5000,
+      })({
         network: Network.ghostnet,
         contract: 'CONTRACT',
         tokenId: '0',

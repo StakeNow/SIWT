@@ -40,7 +40,9 @@ describe('http', () => {
       // when ... we want to fetch data with custom timeout
       // then ... should return fetched data as expected
 
-      const response = await SUT.fetchWithTimeout('https://example.com', { timeout: 5000 })
+      const response = await SUT.fetchWithTimeout('https://example.com', {
+        timeout: 5000,
+      })
       expect(fetch).toHaveBeenCalledWith('https://example.com', {
         timeout: 5000,
         method: 'GET',

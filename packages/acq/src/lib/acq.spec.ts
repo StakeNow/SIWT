@@ -14,7 +14,7 @@ describe('acq', () => {
       .mockReturnValue(jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }]))
     const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
     const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
-    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn()) 
+    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn())
     const getAssetContractTypeByContractStub = jest
       .fn()
       .mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
@@ -66,7 +66,7 @@ describe('acq', () => {
     )
     const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
     const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
-    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn()) 
+    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn())
     const getAssetContractTypeByContractStub = jest
       .fn()
       .mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
@@ -116,7 +116,7 @@ describe('acq', () => {
       .mockReturnValue(jest.fn().mockResolvedValue([{ value: validPkh, key: 1 }]))
     const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
     const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
-    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn()) 
+    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn())
     const getAssetContractTypeByContractStub = jest
       .fn()
       .mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
@@ -163,7 +163,7 @@ describe('acq', () => {
     const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue([]))
     const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
     const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
-    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn()) 
+    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn())
     const getAssetContractTypeByContractStub = jest
       .fn()
       .mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
@@ -223,7 +223,7 @@ describe('acq', () => {
     const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn().mockRejectedValue({}))
     const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
     const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
-    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn()) 
+    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn())
     const getAssetContractTypeByContractStub = jest
       .fn()
       .mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.nft))
@@ -274,7 +274,7 @@ describe('acq', () => {
     const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn())
     const getBalanceStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(balance))
     const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn())
-    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn()) 
+    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn())
     const getAssetContractTypeByContractStub = jest
       .fn()
       .mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.multi))
@@ -369,7 +369,7 @@ describe('acq', () => {
     const getOwnedAssetsForPKHStub = jest.fn().mockReturnValue(jest.fn())
     const getBalanceStub = jest.fn().mockReturnValue(jest.fn())
     const getTokenBalanceStub = jest.fn().mockReturnValue(jest.fn().mockResolvedValue(balance))
-    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn()) 
+    const getAttributesFromStorageStub = jest.fn().mockReturnValue(jest.fn())
     const getAssetContractTypeByContractStub = jest
       .fn()
       .mockReturnValue(jest.fn().mockResolvedValue(AssetContractType.multi))

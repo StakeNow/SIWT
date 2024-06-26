@@ -3,10 +3,10 @@
  *
  * SPDX-License-Identifier: MIT
  */
+import { SessionProvider } from 'next-auth/react'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
 import React from 'react'
-import { SessionProvider } from 'next-auth/react'
 
 import './styles.css'
 
@@ -18,7 +18,7 @@ function CustomApp({ Component, pageProps: { session, ...pageProps } }: AppProps
       </Head>
       <main className="app">
         <SessionProvider session={session}>
-          <Component {...pageProps}/>
+          <Component {...pageProps} />
         </SessionProvider>
       </main>
     </>

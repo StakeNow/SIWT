@@ -3,27 +3,31 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { signIn, getCsrfToken } from 'next-auth/react'
-import Head from 'next/head'
-import React from 'react'
+import { NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
 import { NETWORK_IDS, createMessagePayload } from '@siwt/sdk'
+import { getCsrfToken, signIn } from 'next-auth/react'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import React from 'react'
 
+import { useBeacon } from '../../common/hooks/useBeacon'
 import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
-import { useRouter } from 'next/router'
-import { useBeacon } from '../../common/hooks/useBeacon'
-import { NetworkType, RequestSignPayloadInput } from '@airgap/beacon-sdk'
 
 const Index = () => {
-  const { query: { login_challenge } } = useRouter()
+  const {
+    query: { login_challenge },
+  } = useRouter()
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
 
   const handleSignIn = async () => {
-    signIn().then(() => {
-      console.log('Sign in successful')
-    }).catch((error) => {
-      console.error('Sign in failed', error)
-    })
+    signIn('siwt')
+      .then(() => {
+        console.log('Sign in successful')
+      })
+      .catch(error => {
+        console.error('Sign in failed', error)
+      })
   }
 
   const connectAndSign = async () => {
@@ -48,7 +52,7 @@ const Index = () => {
             const accountInfo = await getActiveAccount()
 
             if (accountInfo) {
-              const {publicKey} = accountInfo
+              const { publicKey } = accountInfo
 
               fetch('/api/siwt', {
                 method: 'POST',
@@ -56,22 +60,27 @@ const Index = () => {
                   'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ signature, message: messagePayload.payload, publicKey, loginChallenge: login_challenge }),
+                body: JSON.stringify({
+                  signature,
+                  message: messagePayload.payload,
+                  publicKey,
+                  loginChallenge: login_challenge,
+                }),
               })
-                .then((response) => response.json())
-                .then((data) => {
+                .then(response => response.json())
+                .then(data => {
                   console.log('Sign request successful', data)
                 })
-                .catch((error) => {
+                .catch(error => {
                   console.error('Sign request failed', error)
                 })
             }
           })
-          .catch((error) => {
+          .catch(error => {
             console.error('Sign request failed', error)
           })
       })
-      .catch((error) => {
+      .catch(error => {
         console.error('Connection failed', error)
       })
   }
@@ -84,11 +93,21 @@ const Index = () => {
       </Head>
       <Header />
       <main>
-        {login_challenge ? <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={connectAndSign}>
-          Select Wallet
-        </button> : <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleSignIn}>
-          Sign in with Tezos
-        </button>}
+        {login_challenge ? (
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={connectAndSign}
+          >
+            Select Wallet
+          </button>
+        ) : (
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={handleSignIn}
+          >
+            Sign in with Tezos
+          </button>
+        )}
       </main>
       <Footer />
     </>

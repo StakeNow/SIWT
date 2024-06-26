@@ -100,8 +100,16 @@ export const validateNFTCondition =
     parameters: { pkh },
     test: { contractAddress, comparator, value, checkTimeConstraint = false, tokenIds = ['0'] },
   }: AccessControlQuery) =>
-    getAssetContractTypeByContract({ contract: contractAddress as string, network }).then(assetContractType =>
-      getOwnedAssetsForPKH({ network, contract: contractAddress as string, pkh: pkh as string, contractType: assetContractType })
+    getAssetContractTypeByContract({
+      contract: contractAddress as string,
+      network,
+    }).then(assetContractType =>
+      getOwnedAssetsForPKH({
+        network,
+        contract: contractAddress as string,
+        pkh: pkh as string,
+        contractType: assetContractType,
+      })
         .then(async assets => {
           if (assets.length === 0) {
             return {
@@ -126,11 +134,11 @@ export const validateNFTCondition =
           }
 
           if (checkTimeConstraint) {
-            const attributes = (await getAttributesFromStorage({
+            const attributes = await getAttributesFromStorage({
               network,
               contract: contractAddress as string,
               tokenId: ownedAssetIds[0] as string,
-            })) 
+            })
             const validityAttribute = find(
               ({ name }: { name: string | null; value: string | number }) => name === 'Valid Until',
             )(attributes)
@@ -179,7 +187,12 @@ export const validateTokenBalanceCondition =
     parameters: { pkh },
   }: AccessControlQuery) =>
     getTokenBalance &&
-    getTokenBalance({ network, contract: contractAddress as string, pkh: pkh as string, tokenId: tokenId as string })
+    getTokenBalance({
+      network,
+      contract: contractAddress as string,
+      pkh: pkh as string,
+      tokenId: tokenId as string,
+    })
       .then((balance: number) => ({
         balance,
         passed: (COMPARISONS[comparator] as any)(balance)(value),

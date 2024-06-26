@@ -38,7 +38,9 @@ export const generateMessageData = (messageData: SignInMessageData) => {
   }
 
   return pipe(
-    mapObjIndexed((value: string, key: keyof typeof OPTIONAL_MESSAGE_PROPERTIES) => (messageData[key] ? `${value}: ${messageData[key]}` : null)),
+    mapObjIndexed((value: string, key: keyof typeof OPTIONAL_MESSAGE_PROPERTIES) =>
+      messageData[key] ? `${value}: ${messageData[key]}` : null,
+    ),
     values,
     reject(isNil),
     tap(console.log),
@@ -50,14 +52,14 @@ export const generateMessageData = (messageData: SignInMessageData) => {
     prepend(`${domain} ${SIGN_IN_MESSAGE}`),
     unless(
       () => isEmpty(messageData?.resources) || isNil(messageData.resources),
-        append(
-          pipe(
-            addIndex(map)((resource: unknown, idx: number) =>
-              idx === 0 ? `Resources:\n- ${resource}` : `- ${resource}`,
-            ) as any,
-            join('\n'),
-          )(messageData.resources || []),
-        ),
+      append(
+        pipe(
+          addIndex(map)((resource: unknown, idx: number) =>
+            idx === 0 ? `Resources:\n- ${resource}` : `- ${resource}`,
+          ) as any,
+          join('\n'),
+        )(messageData.resources || []),
+      ),
     ),
     reject(isNil),
   )(OPTIONAL_MESSAGE_PROPERTIES) as string[]
