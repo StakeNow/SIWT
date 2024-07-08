@@ -1,5 +1,5 @@
-import Controller from "@ember/controller";
 import TezosClient from "../lib/tezos-client";
+import Controller from "@ember/controller";
 
 export default Controller.extend({
   init() {
@@ -19,12 +19,17 @@ export default Controller.extend({
     await client.init();
     const account = await client.requestAccountInfo();
     const { signature, message } = await client.signMessage(account);
-    this.verifySignature(account.address, account.publicKey, message, signature);
+    this.verifySignature(
+      account.address,
+      account.publicKey,
+      message,
+      signature
+    );
   },
 
   actions: {
     async initAuth() {
       this.initAuth();
-    }
-  }
+    },
+  },
 });

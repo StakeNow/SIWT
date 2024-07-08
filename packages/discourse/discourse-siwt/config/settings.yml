@@ -4,4 +4,4 @@ plugin_name:
     client: true
   discourse_siwt_statement:
     client: true
-    default: 'Sign-in to Discourse with your Tezos account'
+    default: "Sign-in to Discourse with your Tezos account"

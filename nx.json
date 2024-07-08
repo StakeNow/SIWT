@@ -85,7 +85,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["packages/discourse-e2e/**/*"]
+      "exclude": ["packages/discourse-e2e/**/*", "packages/test-e2e/**/*"]
     },
     {
       "plugin": "@nx/eslint/plugin",
