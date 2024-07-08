@@ -1,3 +1,5 @@
+"use client"
+
 import { map, prop, uniqBy } from 'ramda'
 import { useEffect, useState } from 'react'
 
@@ -5,7 +7,7 @@ import { useWallet } from '../common/wallet'
 import { AccountInfo, NetworkType } from '../common/wallet'
 import { getMessage, signIn } from '../common/siwt'
 
-export const App = () => {
+export const Index = () => {
   const { connect, disconnect, activeAccountListener, getAccounts, getActiveAccount, requestSignPayload } = useWallet()
 
   const [accounts, setAccounts] = useState<AccountInfo[] | []>([])
@@ -99,4 +101,4 @@ export const App = () => {
   )
 }
 
-export default App
+export default Index

@@ -1,16 +1,18 @@
+"use client"
+
 import { map, prop, uniqBy } from 'ramda'
 import { useEffect, useState } from 'react'
 
-import { useWallet } from '../common/wallet'
-import { AccountInfo, NetworkType } from '../common/wallet'
-import { getMessage, signIn } from '../common/siwt'
+import { useWallet } from '../../common/wallet'
+import { AccountInfo, NetworkType } from '../../common/wallet'
+import { getMessage, signIn } from '../../common/siwt'
 
-export const App = () => {
+export const Index = () => {
   const { connect, disconnect, activeAccountListener, getAccounts, getActiveAccount, requestSignPayload } = useWallet()
 
   const [accounts, setAccounts] = useState<AccountInfo[] | []>([])
   const [activeAccount, setActiveAccount] = useState<AccountInfo | undefined>(undefined)
-  const [loginChallenge, setLoginChallenge] = useState<string | null>(null)
+  const [loginChallenge, setLoginChallenge] = useState<string | undefined>(undefined)
 
   const handleConnect = () => {
     connect(NetworkType.MAINNET).then(permissions => {
@@ -53,12 +55,15 @@ export const App = () => {
 
     const searchParams = new URLSearchParams(window.location.search)
     const loginChallenge = searchParams.get('login_challenge')
-    setLoginChallenge(loginChallenge)
+    loginChallenge && setLoginChallenge(loginChallenge)
   }, [])
 
   return (
     <div>
       <h1>SIWT.xyz is requesting you to Sign in with your Tezos wallet</h1>
+      <form action="/api/signin" method="post">
+        <input type="text" value={loginChallenge} disabled />
+      </form>
       {activeAccount ? (
         <div>
           <h2>Active Account</h2>
@@ -99,4 +104,4 @@ export const App = () => {
   )
 }
 
-export default App
+export default Index

@@ -1,0 +1,11 @@
+<%- include('header.ejs') -%>
+
+<h1>Users</h1>
+<form action="/signin" method="post">
+
+  <input type="text" name="publicKey" value="SIGNATURE">
+  <input type="text" name="loginChallenge" value=<%- loginChallenge -%>>
+  <input type="submit" value="Submit" />
+</form>
+
+<%- include('footer.ejs') -%>
