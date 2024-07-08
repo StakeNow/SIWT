@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+ * SPDX-FileCopyrightText: Copyright (C) 2021, Spruce Systems, Inc.
+ * 
+ * SPDX-License-Identifier: MIT
+*/
+
 import EmberObject from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";

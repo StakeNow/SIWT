@@ -1,3 +1,10 @@
+#
+# SPDX-FileCopyrightText: Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+# SPDX-FileCopyrightText: Copyright (C) 2014, Chain Inc.
+#
+# SPDX-License-Identifier: MIT
+#
+
 module BTC
   # Base58 is used for compact human-friendly representation of Bitcoin addresses and private keys.
   # Typically Base58-encoded text also contains a checksum (so-called "Base58Check").

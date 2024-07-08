@@ -1,3 +1,10 @@
+#
+# SPDX-FileCopyrightText: Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+# SPDX-FileCopyrightText: Copyright (C) 2014, Chain Inc.
+#
+# SPDX-License-Identifier: MIT
+#
+
 require 'digest/sha1'
 require 'digest/sha2'
 require 'digest/rmd160'

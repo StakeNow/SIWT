@@ -1,3 +1,10 @@
+#
+# SPDX-FileCopyrightText: Copyright (C) 2022, vDL Digital Ventures GmbH <info@vdl.digital>
+# SPDX-FileCopyrightText: Copyright (C) 2021, Spruce Systems, Inc.
+#
+# SPDX-License-Identifier: MIT
+#
+
 # frozen_string_literal: true
 
 # name: discourse-siwt
@@ -20,7 +27,7 @@ gem 'mkmfmf', '0.4', require: false
 gem 'mini_portile2', '2.8.0', require: false
 gem 'rbsecp256k1', '6.0.0', require: false
 gem 'konstructor', '1.0.2', require: false
-gem 'ffi', '1.16.3', require: false
+gem 'ffi', '1.17.0', require: false
 gem 'ffi-compiler', '1.0.1', require: false
 gem 'ecdsa', '1.2.0', require: false
 gem 'base58', '0.2.3', require: false
