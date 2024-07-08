@@ -1,0 +1,19 @@
+en:
+  site_settings:
+    discourse_siwt_enabled: "Either the plugin is enabled or not"
+    discourse_siwt_statement: "Statement that will be displayed in the message"
+
+  js:
+    login:
+      siwt:
+        name: "SIWT"
+        title: "with Tezos"
+    tezos_providers:
+      title: "Sign-in with Tezos"
+      buttons:
+        start: "Sign-in with Tezos"
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          plugin_name: SIWT

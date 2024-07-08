@@ -1,0 +1,56 @@
+{
+  "name": "discourse",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/discourse/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/packages/discourse",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "packages/discourse/src/main.ts",
+        "tsConfig": "packages/discourse/tsconfig.app.json",
+        "assets": ["packages/discourse/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "discourse:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "discourse:build:development"
+        },
+        "production": {
+          "buildTarget": "discourse:build:production"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+plugin_name:
+  discourse_siwt_enabled:
+    default: false
+    client: true
+  discourse_siwt_statement:
+    client: true
+    default: 'Sign-in to Discourse with your Tezos account'

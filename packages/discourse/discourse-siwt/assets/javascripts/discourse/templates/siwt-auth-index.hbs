@@ -1,0 +1,15 @@
+<form id="siwt-sign" method="POST" action="/auth/siwt/callback" >
+  <textarea id="tezos_account" name="tezos_account"></textarea>
+  <textarea id="tezos_message" name="tezos_message"></textarea>
+  <textarea id="tezos_signature" name="tezos_signature"></textarea>
+  <textarea id="tezos_public_key" name="tezos_public_key"></textarea>
+</form>
+<div class="tezos_provider_container">
+  <div class="tezos_provider_auth_button">
+    {{d-button
+      class="btn-primary"
+      action=(action "initAuth")
+      label="tezos_providers.buttons.start"
+    }}
+  </div>
+</div>

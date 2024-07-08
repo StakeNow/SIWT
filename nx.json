@@ -23,6 +23,11 @@
     },
     "e2e": {
       "inputs": ["default", "^production"]
+    },
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "namedInputs": {
@@ -79,7 +84,8 @@
       "plugin": "@nx/jest/plugin",
       "options": {
         "targetName": "test"
-      }
+      },
+      "exclude": ["packages/discourse-e2e/**/*"]
     },
     {
       "plugin": "@nx/eslint/plugin",
