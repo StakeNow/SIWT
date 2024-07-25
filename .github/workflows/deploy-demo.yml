@@ -55,22 +55,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'eu-central-1'
-      - run: npx nx run-many --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
-      - run: npx nx run-many --target=build-server --parallel=3 --exclude=acq,core,discord,discord-bot-ui,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
+      - run: npx nx build siwt.xyz --skip-nx-cache
+      - run: npx nx build-server siwt.xyz --skip-nx-cache
 
-      - name: Setup staging env file
-        if: github.ref == 'refs/heads/develop'
-        env:
-          CERTIFICATE_ARN: ${{ secrets.STAGING_SIWT_XYZ_SSL_CERTIFICATE_ARN }}
-          ENV: staging
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.STAGING_SIWT_XYZ_DISTRIBUTION_ID }}
-        run: |
-          touch .env
-          echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
-          echo ENV=$ENV >> .env
-          cat .env
       - name: Setup production env file
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/develop'
         env:
           CERTIFICATE_ARN: ${{ secrets.SIWT_XYZ_SSL_CERTIFICATE_ARN }}
           ENV: production
@@ -81,14 +70,9 @@ jobs:
           echo ENV=$ENV >> .env
           cat .env
       - name: Deploy
-        run: npx nx run-many --target=deploy --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --production --skip-nx-cache
-      - name: Invalidate Staging Distribution
+        run: npx nx deploy siwt.xyz --production --skip-nx-cache
+      - name: Invalidate Distribution
         if: github.ref == 'refs/heads/develop'
-        env:
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.STAGING_SIWT_XYZ_DISTRIBUTION_ID }}
-        run: aws cloudfront create-invalidation --distribution-id=$CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
-      - name: Invalidate Production Distribution
-        if: github.ref == 'refs/heads/main'
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.SIWT_XYZ_DISTRIBUTION_ID }}
         run: aws cloudfront create-invalidation --distribution-id=$CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
