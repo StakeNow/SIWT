@@ -1,4 +1,4 @@
-import { aws_ec2, aws_ecs, aws_elasticache, aws_rds, aws_secretsmanager } from 'aws-cdk-lib'
+import { aws_ec2, aws_ecs, aws_rds, aws_secretsmanager } from 'aws-cdk-lib'
 import * as cdk from 'aws-cdk-lib/core'
 import { StackContext } from 'sst/constructs'
 
@@ -50,48 +50,7 @@ export function OryHydra({ stack }: StackContext) {
     value: rdsCluster.secret?.secretArn || '',
     exportName: `HydraRDSSecretArn:${stack.stage}`,
   })
-
-  /*
-   * Create ElastiCache Redis
-   */
-  const ecSubnetGroup = new aws_elasticache.CfnSubnetGroup(this, 'HydraElastiCacheSubnetGroup', {
-    description: 'Hydra Elasticache Subnet Group',
-    subnetIds: vpc.selectSubnets({ subnetType: aws_ec2.SubnetType.PUBLIC }).subnetIds,
-    cacheSubnetGroupName: 'HydraRedisSubnetGroup',
-  })
-
-  const SecurityGroup = new aws_ec2.SecurityGroup(this, 'HydraRedisSG', {
-    vpc,
-    description: 'Hydra Redis SG',
-    allowAllOutbound: true,
-  })
-
-  const redis = new aws_elasticache.CfnServerlessCache(this, 'HydraRedis', {
-    engine: 'redis',
-    serverlessCacheName: 'HydraRedis',
-    // Usage is set to absolute minimum to limit charges. Revisit when it becomes necessary.
-    cacheUsageLimits: {
-      dataStorage: {
-        maximum: 1,
-        unit: 'GB',
-      },
-      ecpuPerSecond: {
-        maximum: 1000,
-      },
-    },
-    description: 'Hydra Redis',
-    securityGroupIds: [SecurityGroup.securityGroupId],
-    subnetIds: ecSubnetGroup.subnetIds,
-  })
-
-  new cdk.CfnOutput(this, `HydraRedisCacheEndpointUrl${stack.stage}`, {
-    value: redis.attrEndpointAddress,
-  })
-
-  new cdk.CfnOutput(this, `HydraRedisCachePort${stack.stage}`, {
-    value: redis.attrReaderEndpointPort,
-  })
-
+  
   /*
    * Create Hydra secret
    */

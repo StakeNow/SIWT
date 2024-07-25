@@ -25,8 +25,8 @@ urls:
   self:
     issuer: http://localhost:5004
   consent: http://localhost:3000/consent
-  login: http://localhost:3000/signin
-  logout: http://localhost:3000/signout
+  login: http://localhost:4201/signin
+  logout: http://localhost:4201/signout
 
 secrets:
   system:

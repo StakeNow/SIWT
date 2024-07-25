@@ -16,11 +16,11 @@ function CustomApp({ Component, pageProps: { session, ...pageProps } }: AppProps
       <Head>
         <title>Welcome to siwt.xyz!</title>
       </Head>
-      <main className="app">
-        <SessionProvider session={session}>
+      <SessionProvider session={session}>
+        <div className='min-h-screen flex flex-col justify-between'>
           <Component {...pageProps} />
-        </SessionProvider>
-      </main>
+        </div>
+      </SessionProvider>
     </>
   )
 }

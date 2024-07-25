@@ -1,6 +1,7 @@
 /// <reference types='vitest' />
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import react from '@vitejs/plugin-react'
+import externals from "rollup-plugin-node-externals"
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import { defineConfig } from 'vite'
@@ -33,6 +34,11 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: {
+      plugins: [
+        externals()
+      ],
+    },
   },
 
   optimizeDeps: {
@@ -50,5 +56,5 @@ export default defineConfig({
             NodeModulesPolyfillPlugin(),
         ]
     }
-}
+  },
 })
