@@ -1,11 +1,9 @@
-import {
-  aws_certificatemanager as ACM,
-} from 'aws-cdk-lib'
+import { aws_certificatemanager as ACM } from 'aws-cdk-lib'
 import { StackContext, StaticSite } from 'sst/constructs'
 
 export function OIDCClient({ stack }: StackContext) {
   const environment = process.env.ENV || 'staging'
-  
+
   const certificate = ACM.Certificate.fromCertificateArn(
     this,
     `siwt-xyz-certificate-${environment}`,
@@ -21,7 +19,7 @@ export function OIDCClient({ stack }: StackContext) {
       domainName: 'signin.siwt.xyz',
       cdk: {
         certificate,
-      }
+      },
     },
   })
 }

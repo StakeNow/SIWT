@@ -1,14 +1,13 @@
 import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { NextjsSite, StackContext } from 'sst/constructs'
 
-export default function siwtxyz ({ stack }: StackContext) {
-
+export default function siwtxyz({ stack }: StackContext) {
   // Create the Next.js site
   const site = new NextjsSite(stack, 'siwt-xyz', {
     path: './',
     memorySize: '1024 MB',
     timeout: '20 seconds',
-    customDomain: "siwt.xyz",
+    customDomain: 'siwt.xyz',
     cdk: {
       server: {
         logRetention: RetentionDays.ONE_WEEK,

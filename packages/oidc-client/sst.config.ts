@@ -8,10 +8,10 @@ export default {
       name: 'oidc-client',
       region: 'eu-central-1',
       cdk: {
-        qualifier: "sst",
-        fileAssetsBucketName: "sst-cdktoolkit",
-        toolkitStackName: "sst-CDKToolkit",
-      }
+        qualifier: 'sst',
+        fileAssetsBucketName: 'sst-cdktoolkit',
+        toolkitStackName: 'sst-CDKToolkit',
+      },
     }
   },
   stacks(app) {

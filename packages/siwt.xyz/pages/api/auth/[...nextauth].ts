@@ -34,10 +34,10 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         name: token.sub,
       }
-      
+
       return session
-    }
-  }
+    },
+  },
 }
 
 export default NextAuth(authOptions)

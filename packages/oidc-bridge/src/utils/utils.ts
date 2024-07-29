@@ -1,3 +1,3 @@
-import * as crypto from "crypto"
+import * as crypto from 'crypto'
 
-export const generateNonce = () => crypto.randomBytes(16).toString("hex")
+export const generateNonce = () => crypto.randomBytes(16).toString('hex')

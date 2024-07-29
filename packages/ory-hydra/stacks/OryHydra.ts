@@ -50,7 +50,7 @@ export function OryHydra({ stack }: StackContext) {
     value: rdsCluster.secret?.secretArn || '',
     exportName: `HydraRDSSecretArn:${stack.stage}`,
   })
-  
+
   /*
    * Create Hydra secret
    */

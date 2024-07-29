@@ -1,9 +1,9 @@
 import { Configuration, OAuth2Api } from '@ory/client'
 import { NETWORK_IDS, createMessagePayload, verify } from '@siwt/sdk'
+import bodyParser from 'body-parser'
+import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
-import cors from 'cors'
-import bodyParser from 'body-parser'
 
 import { generateNonce } from './utils'
 
@@ -30,21 +30,25 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3000
 const app = express()
 const corsOptions = {
   origin: [process.env.OIDC_PROVIDER_CLIENT_URL],
-  credentials: true
+  credentials: true,
 }
 
 app.use(cors(corsOptions))
-app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false },
-}))
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+  }),
+)
 
 app.get('/message/:address', async (req, res) => {
-  const { params: { address } } = req
+  const {
+    params: { address },
+  } = req
   const nonce = generateNonce()
   req.session.nonce = nonce
 
@@ -67,7 +71,7 @@ app.post('/signin', async (req, res) => {
   try {
     const { loginChallenge, publicKey, message, signature, address } = req.body
     const isValid = verify(message, publicKey, signature, 'siwt.xyz', req.session.nonce)
-    
+
     if (!isValid) {
       return res.status(400).json({ message: 'Invalid request' })
     }
@@ -91,7 +95,9 @@ app.post('/signin', async (req, res) => {
     return res.status(200)
   } catch (e) {
     console.log(e)
-    return res.redirect(`${process.env.CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`)
+    return res.redirect(
+      `${process.env.CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`,
+    )
   }
 })
 
@@ -122,7 +128,9 @@ app.get('/consent', async (req, res) => {
     res.redirect(String(r.redirect_to))
   } catch (e) {
     console.log(e)
-    return res.redirect(`${process.env.CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`)
+    return res.redirect(
+      `${process.env.CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`,
+    )
   }
 })
 

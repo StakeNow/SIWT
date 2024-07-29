@@ -9,10 +9,10 @@ export default {
       region: 'eu-central-1',
       role: process.env.ROLE_TO_ASSUME,
       cdk: {
-        qualifier: "sst",
-        fileAssetsBucketName: "sst-cdktoolkit",
-        toolkitStackName: "sst-CDKToolkit",
-      }
+        qualifier: 'sst',
+        fileAssetsBucketName: 'sst-cdktoolkit',
+        toolkitStackName: 'sst-CDKToolkit',
+      },
     }
   },
   stacks(app) {

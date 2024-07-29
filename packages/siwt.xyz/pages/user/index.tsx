@@ -3,13 +3,13 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import Head from 'next/head'
 import { useSession } from 'next-auth/react'
+import Head from 'next/head'
+import { equals } from 'ramda'
 import React from 'react'
 
 import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
-import { equals } from 'ramda'
 
 const Index = () => {
   const { data: session, status } = useSession()
@@ -22,18 +22,16 @@ const Index = () => {
       </Head>
       <Header />
       <main>
-        <div className='w-full flex justify-center items-center text-center p-8'>
-          {
-            equals(status)('authenticated') ? (
-              <div className='text-4xl'>
-                <p className='font-bold mb-4'>Welcome {session?.user?.name},</p>
-                <p>The OIDC sign in flow has completed successfully.</p>
-                <p>Thank you for stopping by!</p>
-              </div>
-            ) : (
-              <p>Not signed in</p>
-            )
-          }
+        <div className="w-full flex justify-center items-center text-center p-8">
+          {equals(status)('authenticated') ? (
+            <div className="text-4xl">
+              <p className="font-bold mb-4">Welcome {session?.user?.name},</p>
+              <p>The OIDC sign in flow has completed successfully.</p>
+              <p>Thank you for stopping by!</p>
+            </div>
+          ) : (
+            <p>Not signed in</p>
+          )}
         </div>
       </main>
       <Footer />

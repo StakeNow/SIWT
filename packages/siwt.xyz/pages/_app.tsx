@@ -17,7 +17,7 @@ function CustomApp({ Component, pageProps: { session, ...pageProps } }: AppProps
         <title>Welcome to siwt.xyz!</title>
       </Head>
       <SessionProvider session={session}>
-        <div className='min-h-screen flex flex-col justify-between'>
+        <div className="min-h-screen flex flex-col justify-between">
           <Component {...pageProps} />
         </div>
       </SessionProvider>
