@@ -96,7 +96,7 @@ app.post('/signin', async (req, res) => {
   } catch (e) {
     console.log(e)
     return res.redirect(
-      `${process.env.CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`,
+      `${process.env.OIDC_PROVIDER_CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`,
     )
   }
 })
@@ -129,7 +129,7 @@ app.get('/consent', async (req, res) => {
   } catch (e) {
     console.log(e)
     return res.redirect(
-      `${process.env.CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`,
+      `${process.env.OIDC_PROVIDER_CLIENT_URL}/signin?error=${encodeURIComponent('An error occurred while trying to sign you in')}`,
     )
   }
 })

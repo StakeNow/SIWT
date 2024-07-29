@@ -14,7 +14,9 @@ export function OIDCClient({ stack }: StackContext) {
     path: './',
     buildOutput: '../../dist/packages/oidc-client',
     buildCommand: 'cd ../../ && npx nx build oidc-client --prod',
-    environment: {},
+    environment: {
+      VITE_API_URL: process.env.VITE_API_URL || 'https://api.signin.siwt.xyz',
+    },
     customDomain: {
       domainName: 'signin.siwt.xyz',
       cdk: {

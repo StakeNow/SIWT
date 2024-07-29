@@ -19,6 +19,10 @@ export default function siwtxyz({ stack }: StackContext) {
       ENV: process.env.ENV!,
       NEXTAUTH_URL: process.env.NEXTAUTH_URL!,
       NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET!,
+      NEXT_AUTH_OIDC_ADMIN_URL: process.env.NEXT_AUTH_OIDC_ADMIN_URL!,
+      NEXT_PUBLIC_NEXT_AUTH_CLIENT_ID: process.env.NEXT_PUBLIC_NEXT_AUTH_CLIENT_ID!,
+      NEXT_AUTH_CLIENT_SECRET: process.env.NEXT_AUTH_CLIENT_SECRET!,
+      NEXT_PUBLIC_DAPP_URL: process.env.NEXT_PUBLIC_DAPP_URL!,
     },
   })
 
