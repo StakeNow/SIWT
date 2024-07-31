@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session({ session, token }) {
-      if (!(session?.user)) {
+      if (!session?.user) {
         return session
       }
 
