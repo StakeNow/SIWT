@@ -59,6 +59,6 @@ export class AppStack extends Stack {
       certificate,
     }
 
-    new Cloudfront.Distribution(this, `docs-siwt-xyz-ui-distribution-${environment}`, distributionConfig)
+    new Cloudfront.Distribution(this, `siwt-xyz-ui-distribution-${environment}`, distributionConfig)
   }
 }
