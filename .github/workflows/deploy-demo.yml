@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - fix/deployment_workflows
 
 jobs:
   format-and-test:
@@ -26,8 +27,8 @@ jobs:
       - run: npm ci
 
       - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts
-      - run: npx nx run-many --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
-      - run: npx nx run-many --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,docs.siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
+      - run: npx nx test siwt.xyz --skip-nx-cache
+      - run: npx nx build siwt.xyz --skip-nx-cache
 
   deploy:
     runs-on: ubuntu-latest

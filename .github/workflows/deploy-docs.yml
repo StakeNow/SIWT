@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - fix/deployment_workflows
 
 env:
   CERTIFICATE_ARN: ${{ secrets.DOCS_SSL_CERTIFICATE_ARN }}
@@ -32,9 +33,9 @@ jobs:
       - name: Install docusaurus dependencies specifically
         run: npm install --prefix ./packages/docs.siwt.xyz
 
-      - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts
-      - run: npx nx run-many --target=test --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
-      - run: npx nx run-many --target=build --parallel=3 --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
+      - run: npx nx format:check --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts,oidc-client,oidc-bridge,ory-hydra
+      - run: npx nx test docs.siwt.xyz --skip-nx-cache
+      - run: npx nx build docs.siwt.xyz --skip-nx-cache
 
   deploy:
     runs-on: ubuntu-latest
