@@ -4,26 +4,6 @@
   "sourceRoot": "packages/siwt.xyz",
   "projectType": "application",
   "targets": {
-    "build-server": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "root": "packages/siwt.xyz",
-        "outputPath": "dist/packages/siwt.xyz/server",
-        "tsConfig": "./packages/siwt.xyz/tsconfig.json",
-        "main": "./packages/siwt.xyz/server/index.ts",
-        "outputFileName": "index.js",
-        "target": "node",
-        "webpackConfig": "./packages/siwt.xyz/webpack.server.config.js"
-      },
-      "configurations": {
-        "development": {
-          "outputPath": "packages/siwt.xyz"
-        },
-        "production": {}
-      }
-    },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
