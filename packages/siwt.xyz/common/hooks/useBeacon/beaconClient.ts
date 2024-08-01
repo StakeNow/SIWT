@@ -14,7 +14,7 @@ export const dAppClient = () => {
   if (isServer()) return {} as DAppClient
 
   return new DAppClient({
-    name: process.env.NEXT_PUBLIC_APP_NAME || 'SIWT Local',
+    name: 'Sign in with Tezos',
     preferredNetwork: network.type,
   })
 }

@@ -119,7 +119,7 @@ describe('utils/siwt.utils', () => {
         resources: ['RESOURCE1', 'RESOURCE2'],
       }
 
-      expect(() => SUT.generateMessageData(messageData as SignInMessageData)).toThrowError('Invalid message format')
+      expect(() => SUT.generateMessageData(messageData as SignInMessageData)).toThrow('Invalid message format')
     })
   })
   describe('constructSignPayload', () => {

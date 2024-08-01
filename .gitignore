@@ -7,6 +7,8 @@ tmp
 *.db
 .env
 .env.*
+!.env.example
+
 .nx
 
 # dependencies
@@ -44,6 +46,8 @@ Thumbs.db
 
 # Next.js
 .next
+.open-next
+
 out
 
 # Docusaurus
@@ -51,3 +55,5 @@ out
 
 .ligo/
 deploy/
+
+.sst

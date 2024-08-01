@@ -7,17 +7,13 @@ const { withNx } = require('@nx/next/plugins/with-nx')
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  output: 'export',
-  distDir: '../../dist/packages/siwt.xyz/exported',
   nx: {
-    // Set this to true if you would like to to use SVGR
-    // See: https://github.com/gregberge/svgr
     svgr: false,
   },
   images: {
     unoptimized: true,
   },
-  trailingSlash: true,
+  trailingSlash: false,
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve = {

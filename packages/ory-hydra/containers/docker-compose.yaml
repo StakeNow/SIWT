@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  hydra-migrate:
+    image: oryd/hydra:v2.2.0
+    environment:
+      - DSN=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable&max_conns=20&max_idle_conns=4
+    command: migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - ory-hydra-network
+
+  hydra:
+    image: oryd/hydra:v2.2.0
+    ports:
+      - 5004:4444 # Public port
+      - 5001:4445 # Admin port
+    environment:
+      - DSN=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable&max_conns=20&max_idle_conns=4
+    command: serve -c /etc/config/hydra/${ENV}.yml all --dev
+    volumes:
+      - type: bind
+        source: ../config
+        target: /etc/config/hydra
+    restart: on-failure
+    networks:
+      - ory-hydra-network
+
+  redis:
+    image: redis:7.2.2
+    networks:
+      - ory-hydra-network
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+    profiles: ['development']
+
+  postgresd:
+    image: postgres:16
+    networks:
+      - ory-hydra-network
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    restart: on-failure
+    profiles: ['development']
+
+networks:
+  ory-hydra-network:
+    name: ory-hydra-net

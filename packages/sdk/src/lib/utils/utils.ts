@@ -10,7 +10,6 @@ import {
   append,
   divide,
   filter,
-  ifElse,
   isEmpty,
   isNil,
   join,
@@ -22,20 +21,14 @@ import {
   prop,
   propEq,
   reject,
-  replace,
   slice,
+  tap,
   unless,
   values,
 } from 'ramda'
 
 import { OPTIONAL_MESSAGE_PROPERTIES, SIGN_IN_MESSAGE, TEZOS_SIGNED_MESSAGE_PREFIX } from '../constants'
 import { SignInMessageData, UnpackedMessagePayload } from '../types'
-
-export const formatPoliciesString = ifElse(
-  propEq('length', 1),
-  join(''),
-  pipe(join(', '), replace(/,([^,]*)$/, ' and$1')),
-)
 
 export const generateMessageData = (messageData: SignInMessageData) => {
   const { domain, address } = messageData
@@ -45,8 +38,12 @@ export const generateMessageData = (messageData: SignInMessageData) => {
   }
 
   return pipe(
-    mapObjIndexed((value: string, key: string) => (messageData[key] ? `${value}: ${messageData[key]}` : null)),
+    mapObjIndexed((value: string, key: keyof typeof OPTIONAL_MESSAGE_PROPERTIES) =>
+      messageData[key] ? `${value}: ${messageData[key]}` : null,
+    ),
     values,
+    reject(isNil),
+    tap(console.log),
     unless(
       () => isEmpty(messageData?.statement) || isNil(messageData?.statement),
       prepend(`\n${messageData.statement}\n`),
@@ -54,19 +51,18 @@ export const generateMessageData = (messageData: SignInMessageData) => {
     prepend(address),
     prepend(`${domain} ${SIGN_IN_MESSAGE}`),
     unless(
-      () => isEmpty(messageData?.resources) || isNil(messageData?.resources),
-      messageData.resources &&
-        append(
-          pipe(
-            addIndex(map)((resource: string, idx: number) =>
-              idx === 0 ? `Resources:\n- ${resource}` : `- ${resource}`,
-            ) as any,
-            join('\n'),
-          )(messageData.resources) as any,
-        ),
+      () => isEmpty(messageData?.resources) || isNil(messageData.resources),
+      append(
+        pipe(
+          addIndex(map)((resource: unknown, idx: number) =>
+            idx === 0 ? `Resources:\n- ${resource}` : `- ${resource}`,
+          ) as any,
+          join('\n'),
+        )(messageData.resources || []),
+      ),
     ),
     reject(isNil),
-  )(OPTIONAL_MESSAGE_PROPERTIES)
+  )(OPTIONAL_MESSAGE_PROPERTIES) as string[]
 }
 
 export const constructSignPayload = ({ payload, pkh }: { payload: string; pkh: string }) => ({
@@ -110,6 +106,6 @@ export const unpackMessagePayload = (packedMessage: string): UnpackedMessagePayl
   }
 }
 
-export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq('value', pkh))
-export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq('key', pkh))
-export const filterOwnedAssetsFromMultiAssetContract = (pkh: string) => filter(pathEq(['key', 'address'], pkh))
+export const filterOwnedAssetsFromNFTAssetContract = (pkh: string) => filter(propEq(pkh, 'value'))
+export const filterOwnedAssetsFromSingleAssetContract = (pkh: string) => filter(propEq(pkh, 'key'))
+export const filterOwnedAssetsFromMultiAssetContract = (pkh: string) => filter(pathEq(pkh, ['key', 'address']))

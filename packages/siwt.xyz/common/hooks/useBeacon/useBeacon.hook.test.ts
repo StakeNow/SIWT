@@ -57,7 +57,9 @@ describe('common/beaconWallet/useBeaconWallet.hook', () => {
       const { result } = renderHook(() => SUT.beacon(dAppClientStub)())
       await act(async (): Promise<any> => result.current.requestSignPayload({ payload: 'PAYLOAD' }))
 
-      expect(requestSignPayloadStub).toHaveBeenCalledWith({ payload: 'PAYLOAD' })
+      expect(requestSignPayloadStub).toHaveBeenCalledWith({
+        payload: 'PAYLOAD',
+      })
     })
   })
 })

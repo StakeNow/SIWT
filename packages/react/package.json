@@ -1,13 +1,9 @@
 {
   "name": "@siwt/react",
   "version": "0.0.7",
-  "license": "MIT",
+  "dependencies": {},
   "main": "./index.js",
-  "types": "./index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./index.mjs",
-      "require": "./index.js"
-    }
-  }
+  "module": "./index.mjs",
+  "typings": "./index.d.ts",
+  "license": "MIT"
 }

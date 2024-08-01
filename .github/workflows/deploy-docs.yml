@@ -64,13 +64,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'eu-central-1'
-      - run: npx nx run-many --target=build --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts --skip-nx-cache
+      - run: npx nx run docs.siwt.xyz --skip-nx-cache
       - run: |
           touch .env
           echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
           echo ENV=$ENV >> .env
           cat .env
       - name: Deploy
-        run: npx nx run-many --target=deploy --exclude=acq,core,discord,discord-bot-ui,discord-bot-ui-e2e,react,sdk,siwt.xyz,siwt.xyz-e2e,smart-contracts --production --skip-nx-cache
+        run: npx nx deploy docs.siwt.xyz --production --skip-nx-cache
       - name: Invalidate Distribution
         run: aws cloudfront create-invalidation --distribution-id=$CLOUDFRONT_DISTRIBUTION_ID --paths '/*'

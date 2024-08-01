@@ -71,6 +71,7 @@ function MobileNavigation() {
             className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
           >
             <MobileNavLink href="/try">Try</MobileNavLink>
+            <MobileNavLink href="/signin">OIDC</MobileNavLink>
           </Popover.Panel>
         </Transition.Child>
       </Transition.Root>
@@ -93,8 +94,11 @@ export function Header() {
               <NavLink href="/try" className="text-xl">
                 Try it out
               </NavLink>
+              <NavLink href="/signin" className="text-xl">
+                Sign in with OIDC
+              </NavLink>
             </div>
-            <Button href="https://docs.siwt.xyz" color="slate" className="text-xl">
+            <Button href="https://docs.siwt.xyz" color="slate" className="md:text-xl">
               <span>Get started!</span>
             </Button>
             <div className="-mr-1 md:hidden">

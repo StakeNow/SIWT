@@ -1,0 +1,43 @@
+serve:
+  cookies:
+    same_site_mode: Lax
+  admin:
+    cors:
+      debug: true
+      enabled: true
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+  public:
+    cors:
+      debug: true
+      enabled: true
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+urls:
+  self:
+    issuer: http://localhost:5004
+  consent: http://localhost:3000/consent
+  login: http://localhost:4201/signin
+  logout: http://localhost:4201/signout
+
+secrets:
+  system:
+    - e5Mcyq@EU@iT=1hH
+
+oidc:
+  subject_identifiers:
+    supported_types:
+      - pairwise
+      - public
+    pairwise:
+      salt: e5Mcyq@EU@iT=1hH
+log:
+  level: debug

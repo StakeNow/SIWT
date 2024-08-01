@@ -11,7 +11,7 @@ export const getActiveAccountPKH = (): unknown =>
     pipe((activeAccountIdentifier: string) =>
       unless(
         (x: string | null) => isNil(x) || equals('undefined')(x),
-        pipe(JSON.parse, find(propEq('accountIdentifier', activeAccountIdentifier)), propOr(null, 'address')),
+        pipe(JSON.parse, find(propEq(activeAccountIdentifier, 'accountIdentifier')), propOr(null, 'address')),
       )(localStorage.getItem('beacon:accounts') as any),
     ),
     always(null),

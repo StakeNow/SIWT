@@ -3,12 +3,27 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import { AccountInfo, NetworkType, SignPayloadResponse } from '@airgap/beacon-sdk'
+import { AccountInfo, NetworkType, RequestSignPayloadInput, SignPayloadResponse } from '@airgap/beacon-sdk'
 import { AccessControlQuery } from '@siwt/acq/lib/types'
 import { NETWORK_IDS, createMessagePayload } from '@siwt/sdk'
 import { validateContractAddress } from '@taquito/utils'
 import clsx from 'clsx'
-import { assoc, concat, ifElse, includes, isEmpty, map, pipe, propEq, reject, split, test, uniq, without } from 'ramda'
+import {
+  assoc,
+  concat,
+  ifElse,
+  includes,
+  isEmpty,
+  isNil,
+  map,
+  pipe,
+  propEq,
+  reject,
+  split,
+  test,
+  uniq,
+  without,
+} from 'ramda'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 
 import { useBeacon } from '../../common/hooks/useBeacon'
@@ -18,6 +33,19 @@ import { Button } from '../Button'
 import { Container } from '../Container'
 import { CheckboxSet, RadioButtonSet, TextField } from '../Fields/Fields'
 import { TabBar } from '../TabBar'
+
+interface NetworkTab {
+  name: Network
+  label: string
+  current: boolean
+}
+
+interface TypeTab {
+  name: ConditionType
+  label: string
+  current: boolean
+  icon: string
+}
 
 export const Try = () => {
   const { connect, disconnect, requestSignPayload, getActiveAccount } = useBeacon()
@@ -37,7 +65,7 @@ export const Try = () => {
     },
   })
 
-  const [networkTabs, setNetworkTab] = useState<{ name: Network; label: string; current: boolean }[]>([
+  const [networkTabs, setNetworkTab] = useState<NetworkTab[]>([
     { name: Network.mainnet, label: 'Mainnet', current: false },
     { name: Network.ghostnet, label: 'Ghostnet', current: true },
   ])
@@ -66,31 +94,67 @@ export const Try = () => {
   }, [])
 
   useEffect(() => {
+    if (isNil(activeAccount?.address)) {
+      return
+    }
     setAcq({ ...acq, parameters: { pkh: activeAccount?.address } })
-  }, [activeAccount])
+  }, [activeAccount, acq])
 
   const handleNetworkChange = (network: string) => {
     setAcq({ ...acq, network: network as Network })
     setNetworkTab(
-      map(ifElse(propEq('name', network), assoc('current', true), assoc('current', false)))(networkTabs) as any,
+      map(ifElse(propEq('name', network), assoc('current', true), assoc('current', false)) as any)(
+        networkTabs,
+      ) as NetworkTab[],
     )
   }
 
-  const [typeTabs, setTypeTab] = useState<{ name: ConditionType; label: string; current: boolean; icon: string }[]>([
+  const [typeTabs, setTypeTab] = useState<TypeTab[]>([
     { name: ConditionType.nft, label: 'NFT', current: true, icon: 'nft' },
-    { name: ConditionType.xtzBalance, label: 'XTZ Balance', current: false, icon: 'xtz' },
-    { name: ConditionType.tokenBalance, label: 'Token Balance', current: false, icon: 'token' },
-    { name: ConditionType.allowlist, label: 'Allowlist', current: false, icon: 'allowlist' },
+    {
+      name: ConditionType.xtzBalance,
+      label: 'XTZ Balance',
+      current: false,
+      icon: 'xtz',
+    },
+    {
+      name: ConditionType.tokenBalance,
+      label: 'Token Balance',
+      current: false,
+      icon: 'token',
+    },
+    {
+      name: ConditionType.allowlist,
+      label: 'Allowlist',
+      current: false,
+      icon: 'allowlist',
+    },
   ])
 
   const handleTypeChange = (type: string) => {
     if (type === ConditionType.allowlist) {
-      setAcq({ ...acq, test: { ...acq.test, comparator: Comparator.in, type: type as ConditionType } })
+      setAcq({
+        ...acq,
+        test: {
+          ...acq.test,
+          comparator: Comparator.in,
+          type: type as ConditionType,
+        },
+      })
     } else {
-      setAcq({ ...acq, test: { ...acq.test, comparator: Comparator.gte, type: type as ConditionType } })
+      setAcq({
+        ...acq,
+        test: {
+          ...acq.test,
+          comparator: Comparator.gte,
+          type: type as ConditionType,
+        },
+      })
     }
 
-    setTypeTab(map(ifElse(propEq('name', type), assoc('current', true), assoc('current', false)))(typeTabs) as any)
+    setTypeTab(
+      map(ifElse(propEq('name', type), assoc('current', true), assoc('current', false)) as any)(typeTabs) as TypeTab[],
+    )
   }
 
   const comparators = [
@@ -107,7 +171,10 @@ export const Try = () => {
   ]
 
   const onChangeContractAddress = (event: ChangeEvent<HTMLInputElement>) => {
-    setAcq({ ...acq, test: { ...acq.test, contractAddress: event.currentTarget.value } })
+    setAcq({
+      ...acq,
+      test: { ...acq.test, contractAddress: event.currentTarget.value },
+    })
     validateContractAddress(event.currentTarget.value) || event.currentTarget.value === ''
       ? setIsContractAddressValid(true)
       : setIsContractAddressValid(false)
@@ -115,15 +182,24 @@ export const Try = () => {
 
   const onChangeTokenIds = (event: ChangeEvent<HTMLInputElement>) => {
     setTokenIds(event.currentTarget.value)
-    setAcq({ ...acq, test: { ...acq.test, tokenIds: split(',')(event.currentTarget.value) } })
+    setAcq({
+      ...acq,
+      test: { ...acq.test, tokenIds: split(',')(event.currentTarget.value) },
+    })
   }
 
   const onChangeCheckTimeConstraint = (event: ChangeEvent<HTMLInputElement>) => {
-    setAcq({ ...acq, test: { ...acq.test, checkTimeConstraint: event.currentTarget.checked } })
+    setAcq({
+      ...acq,
+      test: { ...acq.test, checkTimeConstraint: event.currentTarget.checked },
+    })
   }
 
   const onChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
-    setAcq({ ...acq, test: { ...acq.test, value: Number(event.currentTarget.value) } })
+    setAcq({
+      ...acq,
+      test: { ...acq.test, value: Number(event.currentTarget.value) },
+    })
   }
 
   const onChangeallowlist = (event: ChangeEvent<HTMLInputElement>) => {
@@ -157,7 +233,7 @@ export const Try = () => {
       domain: 'SIWT',
       address,
       uri: 'https://siwt.xyz',
-      version: 1,
+      version: '1',
       chainId: NETWORK_IDS[acq.network],
       statement: 'By signing this message, you agree to the resources mentioned in this message.',
       nonce: '12345678',
@@ -167,7 +243,9 @@ export const Try = () => {
     })
 
     setMessage(messagePayload.payload)
-    return requestSignPayload(messagePayload).then(({ signature }: SignPayloadResponse) => setSignature(signature))
+    return requestSignPayload(messagePayload as RequestSignPayloadInput).then(({ signature }: SignPayloadResponse) =>
+      setSignature(signature),
+    )
   }
 
   const connectAndSign = () =>

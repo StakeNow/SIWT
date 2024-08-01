@@ -1,0 +1,24 @@
+{
+  "name": "oidc-bridge",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/oidc-bridge/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "oidc-bridge:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "oidc-bridge:build:development"
+        },
+        "production": {
+          "buildTarget": "oidc-bridge:build:production"
+        }
+      }
+    }
+  }
+}

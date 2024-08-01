@@ -6,12 +6,12 @@
 import { signIn as _signIn, createMessagePayload } from '@siwt/sdk'
 
 export const _useSiwt =
-  ({ createMessagePayload, signIn }: { createMessagePayload: Function; signIn: Function }) =>
+  ({ createMessagePayload, signIn }: { createMessagePayload: any; signIn: any }) =>
   (
-    apiUrl: string = '',
+    apiUrl = '',
   ): {
-    signIn: Function
-    createMessagePayload: Function
+    signIn: any
+    createMessagePayload: any
   } => ({ createMessagePayload, signIn: signIn(apiUrl) })
 
 export const useSiwt = _useSiwt({ createMessagePayload, signIn: _signIn })

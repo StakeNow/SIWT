@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "oidc-bridge",
+      "script": "npx",
+      "interpreter": "none",
+      "args": "nx serve oidc-bridge"
+    }
+  ]
+}

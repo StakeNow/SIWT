@@ -1,0 +1,39 @@
+{
+  "name": "ory-hydra",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ory-hydra",
+  "projectType": "application",
+  "targets": {
+    "deploy:staging": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/ory-hydra",
+        "commands": ["sst deploy OryHydra --stage staging"],
+        "parallel": false
+      }
+    },
+    "deploy:production": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/ory-hydra",
+        "commands": ["sst deploy OryHydra --stage production"],
+        "parallel": false
+      }
+    },
+    "run:local:container": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/ory-hydra/containers",
+        "commands": ["ENV=development docker compose --profile development --env-file ../.env.development up --build"],
+        "parallel": false
+      }
+    },
+    "run:local:testClient": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./packages/ory-hydra/containers/testClient.sh"
+      }
+    }
+  },
+  "tags": []
+}

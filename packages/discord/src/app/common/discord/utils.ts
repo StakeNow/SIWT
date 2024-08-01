@@ -14,4 +14,4 @@ export const getMember =
       find(propEq('id', guildId)),
       pathOr([], ['members', 'cache']),
       find(propEq('id', discordUserId)),
-    )(client) as GuildMember
+    )(client) as unknown as GuildMember

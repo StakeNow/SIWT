@@ -1,0 +1,9 @@
+{
+  "name": "siwt.xyz",
+  "scripts": {
+    "build": "next build"
+  },
+  "dependencies": {
+    "next": "14.0.4"
+  }
+}

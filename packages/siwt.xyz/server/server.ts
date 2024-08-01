@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { CloudFrontRequestEvent } from 'aws-lambda'
 import { allPass, append, complement, join, lensProp, over, path, pipe, test, when } from 'ramda'

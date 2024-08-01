@@ -61,14 +61,15 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/siwt.xyz",
-        "commands": ["dotenv -e .env cdk deploy -- --all"]
+        "commands": ["sst deploy siwtxyz --stage production"],
+        "parallel": false
       }
     },
     "destroy": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/siwt.xyz",
-        "commands": ["dotenv -e .env cdk destroy"]
+        "commands": ["sst destroy siwtxyz --stage production"]
       }
     }
   },
