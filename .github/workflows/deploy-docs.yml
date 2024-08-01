@@ -64,7 +64,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: 'eu-central-1'
-      - run: npx nx run docs.siwt.xyz --skip-nx-cache
       - run: |
           touch .env
           echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
