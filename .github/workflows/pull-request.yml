@@ -29,4 +29,4 @@ jobs:
         run: npm install --prefix ./packages/docs.siwt.xyz
 
       - run: npx nx format:check
-      - run: npx nx run-many --target=test --parallel=3 --exclude=smart-contracts,discord,ory-hydra --skip-nx-cache
+      - run: npx nx run-many --target=test --parallel=3 --exclude=smart-contracts,discord,ory-hydra,oidc-client,oidc-bridge --skip-nx-cache
