@@ -70,7 +70,7 @@ jobs:
           NEXT_AUTH_CLIENT_SECRET: ${{ secrets.NEXT_AUTH_CLIENT_SECRET }}
           NEXT_AUTH_OIDC_PUBLIC_URL: ${{ vars.NEXT_AUTH_OIDC_PUBLIC_URL }}
           NEXTAUTH_URL: ${{ vars.NEXTAUTH_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.KuS08kEIMZ68PSo3 }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
         run: |
           touch .env
           echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
