@@ -71,6 +71,8 @@ jobs:
           echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
           echo ENV=$ENV >> .env
           cat .env
+      - name: Build
+        run: npx nx build docs.siwt.xyz --skip-nx-cache
       - name: Deploy
         run: npx nx deploy docs.siwt.xyz --production --skip-nx-cache
       - name: Invalidate Distribution
