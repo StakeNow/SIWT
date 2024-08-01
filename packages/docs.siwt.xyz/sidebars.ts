@@ -29,6 +29,7 @@ const sidebars = {
       label: 'Discord bot',
       items: ['discord-bot/intro', 'discord-bot/ui', 'discord-bot/server'],
     },
+    'oidc',
   ],
 }
 

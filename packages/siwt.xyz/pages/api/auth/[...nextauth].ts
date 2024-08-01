@@ -9,15 +9,15 @@ export const authOptions: NextAuthOptions = {
       type: 'oauth',
       version: '2.0',
       idToken: true,
-      issuer: process.env.NEXT_AUTH_OIDC_ADMIN_URL,
+      issuer: process.env.NEXT_AUTH_OIDC_PUBLIC_URL,
       authorization: {
-        url: `${process.env.NEXT_AUTH_OIDC_ADMIN_URL}/oauth2/auth?response_type=code`,
+        url: `${process.env.NEXT_AUTH_OIDC_PUBLIC_URL}/oauth2/auth?response_type=code`,
         params: {
           scope: 'openid',
         },
       },
-      token: `${process.env.NEXT_AUTH_OIDC_ADMIN_URL}/oauth2/token`,
-      jwks_endpoint: `${process.env.NEXT_AUTH_OIDC_ADMIN_URL}/.well-known/jwks.json`,
+      token: `${process.env.NEXT_AUTH_OIDC_PUBLIC_URL}/oauth2/token`,
+      jwks_endpoint: `${process.env.NEXT_AUTH_OIDC_PUBLIC_URL}/.well-known/jwks.json`,
       clientId: process.env.NEXT_PUBLIC_NEXT_AUTH_CLIENT_ID,
       clientSecret: process.env.NEXT_AUTH_CLIENT_SECRET,
       profile: profile => ({
