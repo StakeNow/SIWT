@@ -14,6 +14,7 @@ env:
 jobs:
   format-and-test:
     runs-on: ubuntu-latest
+    environment: Production
     permissions:
       contents: 'read'
       actions: 'read'
@@ -39,6 +40,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: format-and-test
+    environment: Production
     permissions:
       contents: 'read'
       actions: 'read'
