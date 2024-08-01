@@ -8,7 +8,22 @@ import { AccessControlQuery } from '@siwt/acq/lib/types'
 import { NETWORK_IDS, createMessagePayload } from '@siwt/sdk'
 import { validateContractAddress } from '@taquito/utils'
 import clsx from 'clsx'
-import { assoc, concat, ifElse, includes, isEmpty, isNil, map, pipe, propEq, reject, split, test, uniq, without } from 'ramda'
+import {
+  assoc,
+  concat,
+  ifElse,
+  includes,
+  isEmpty,
+  isNil,
+  map,
+  pipe,
+  propEq,
+  reject,
+  split,
+  test,
+  uniq,
+  without,
+} from 'ramda'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 
 import { useBeacon } from '../../common/hooks/useBeacon'

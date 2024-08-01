@@ -28,5 +28,3 @@ npx nx serve oidc-bridge
 ```
 
 from the root of the project.
-
-

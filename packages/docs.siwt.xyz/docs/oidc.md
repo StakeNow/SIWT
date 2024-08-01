@@ -6,6 +6,7 @@ Siwt.xyz is powered by [Next.js](https://nextjs.org/) and uses [Next Auth v4](ht
 ## How it works
 
 ### Siwt.xyz
+
 To make Next Auth work with SIWT you have to implement a custom provider that has access to the OIDC provider. In this example it looks as follows:
 
 ```
@@ -50,6 +51,4 @@ The OIDC Bridge is the connection between the client and the OIDC Provider (Ory 
 
 The full workflow looks as follows:
 
-![SIWT OIDC Sequence diagram](../static/img/oidc.siwt.png "SIWT OIDC Sequence diagram")
-
-
+![SIWT OIDC Sequence diagram](../static/img/oidc.siwt.png 'SIWT OIDC Sequence diagram')

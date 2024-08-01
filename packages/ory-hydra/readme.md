@@ -5,6 +5,7 @@ Ory Hydra is the most advanced OAuth 2.0 and OIDC Certified® Server, and the on
 [Read more](https://www.ory.sh/hydra/)
 
 ## Requirements
+
 - Docker
 - Docker Compose
 
@@ -13,6 +14,7 @@ Full functionality relies on having the `oidc-client`, `oidc-server` and `ory-hy
 ## Run locally
 
 ### Environment
+
 Copy the `.env.example` file into `.env.development`. Update the variables where necessary.
 
 Update `./config/development.yml` where necessary. The `login` and `logout` properties should point to the address of where you're running the `oidc-client` packages.
@@ -31,5 +33,4 @@ npx nx run:local:testClient ory-hydra
 
 ## Deployment
 
-Refer to the production documentation at https://www.ory.sh/docs/hydra/self-hosted/production. 
-
+Refer to the production documentation at https://www.ory.sh/docs/hydra/self-hosted/production.
