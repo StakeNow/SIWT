@@ -60,7 +60,6 @@ jobs:
           aws-region: 'eu-central-1'
 
       - name: Setup production env file
-        if: github.ref == 'refs/heads/develop'
         env:
           ENV: production
           CERTIFICATE_ARN: ${{ secrets.SIWT_XYZ_SSL_CERTIFICATE_ARN }}
@@ -85,7 +84,6 @@ jobs:
       - name: Deploy
         run: npx nx deploy siwt.xyz --production --skip-nx-cache
       - name: Invalidate Distribution
-        if: github.ref == 'refs/heads/develop'
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.SIWT_XYZ_DISTRIBUTION_ID }}
         run: aws cloudfront create-invalidation --distribution-id=$CLOUDFRONT_DISTRIBUTION_ID --paths '/*'
