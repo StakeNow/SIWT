@@ -65,7 +65,7 @@ jobs:
           ENV: production
           CERTIFICATE_ARN: ${{ secrets.SIWT_XYZ_SSL_CERTIFICATE_ARN }}
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.SIWT_XYZ_DISTRIBUTION_ID }}
-          NEXT_PUBLIC_DAPP_URL: ${{ vars.SIWT_XYZ_DAPP_URL }}
+          NEXT_PUBLIC_DAPP_URL: ${{ vars.NEXT_PUBLIC_DAPP_URL }}
           NEXT_PUBLIC_NEXT_AUTH_CLIENT_ID: ${{ vars.NEXT_PUBLIC_NEXT_AUTH_CLIENT_ID }}
           NEXT_AUTH_CLIENT_SECRET: ${{ secrets.NEXT_AUTH_CLIENT_SECRET }}
           NEXT_AUTH_OIDC_PUBLIC_URL: ${{ vars.NEXT_AUTH_OIDC_PUBLIC_URL }}
@@ -74,6 +74,12 @@ jobs:
         run: |
           touch .env
           echo SSL_CERTIFICATE_ARN=$CERTIFICATE_ARN >> .env
+          echo NEXT_PUBLIC_DAPP_URL= $NEXT_PUBLIC_DAPP_URL >> .env
+          echo NEXT_PUBLIC_NEXT_AUTH_CLIENT_ID= $NEXT_PUBLIC_NEXT_AUTH_CLIENT_ID >> .env
+          echo NEXT_AUTH_CLIENT_SECRET= $NEXT_AUTH_CLIENT_SECRET >> .env
+          echo NEXT_AUTH_OIDC_PUBLIC_URL= $NEXT_AUTH_OIDC_PUBLIC_URL >> .env
+          echo NEXTAUTH_URL= $NEXTAUTH_URL >> .env
+          echo NEXTAUTH_SECRET= $NEXTAUTH_SECRET >> .env
           echo ENV=$ENV >> .env
           cat .env
       - name: Deploy
