@@ -2,6 +2,7 @@ import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { NextjsSite, StackContext } from 'sst/constructs'
 
 export default function siwtxyz({ stack }: StackContext) {
+  console.log('SEC:', process.env.NEXTAUTH_SECRET)
   // Create the Next.js site
   const site = new NextjsSite(stack, 'siwt-xyz', {
     path: './',
